@@ -1,1 +1,245 @@
-temp
+/* -----------------------------------------
+   FONDO GENERAL
+------------------------------------------*/
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+
+    /* Fondo escolar a pantalla completa */
+    background-image: url("../assets/img/fondo-escolar.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* -----------------------------------------
+   CONTENEDOR CENTRAL
+------------------------------------------*/
+
+.main-container {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* -----------------------------------------
+   TÍTULOS BONITOS
+------------------------------------------*/
+
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    color: #ff6f61;
+    text-shadow: 2px 2px #ffffff;
+    margin-bottom: 10px;
+}
+
+/* 🔥 BAJAR SOLO EL TÍTULO DEL LOGIN */
+.login-title {
+    margin-top: 120px;
+}
+
+/* -----------------------------------------
+   BOTONES
+------------------------------------------*/
+
+.btn {
+    background: #ff6f61;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 20px;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #e85a4f;
+}
+
+.btn-secondary {
+    background: #4a4a4a;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* -----------------------------------------
+   TARJETAS DEL MENÚ
+------------------------------------------*/
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    width: 180px;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: center;
+    border: 3px solid #ffcc4d;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 90px;
+    height: 90px;
+}
+
+/* -----------------------------------------
+   AVATARES
+------------------------------------------*/
+
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin: 20px 0;
+}
+
+/* 🔥 AVATARES ESTIRADOS Y VISIBLES */
+.avatar {
+    width: 140px;
+    height: 180px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* SELECCIÓN DEL AVATAR */
+.seleccionado {
+    border: 4px solid #ffcc4d;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
+.avatar-small {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+}
+
+/* -----------------------------------------
+   INPUTS
+------------------------------------------*/
+
+input {
+    padding: 12px;
+    width: 80%;
+    border-radius: 15px;
+    border: 2px solid #ffcc4d;
+    margin: 10px auto;
+    display: block;
+    font-size: 18px;
+}
+
+/* -----------------------------------------
+   TARJETA DEL JUEGO
+------------------------------------------*/
+
+.card-game {
+    background: white;
+    width: 300px;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 3px solid #ffcc4d;
+    text-align: center;
+}
+
+/* -----------------------------------------
+   VIDEO
+------------------------------------------*/
+
+.video-container {
+    text-align: center;
+    margin: 20px auto;
+}
+
+.video-container iframe {
+    width: 100%;
+    max-width: 350px;
+    border-radius: 20px;
+}
+
+/* -----------------------------------------
+   PROGRESO
+------------------------------------------*/
+
+.progreso-box {
+    background: white;
+    width: 300px;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 3px solid #ffcc4d;
+    text-align: center;
+}
+
+.progreso-box p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+/* -----------------------------------------
+   ESTILO DEL MENÚ (solo lo pedido)
+------------------------------------------*/
+
+/* Título PEQUE AULA */
+.menu-logo {
+    font-size: 2.8rem;          /* Más grande */
+    color: #ff6f61;             /* Color bonito */
+    text-shadow: 2px 2px #ffffff;
+}
+
+/* Bajar un poco la barra superior */
+.menu-topbar {
+    margin-top: 40px;           /* 🔥 Baja el título */
+}
+
+/* Bajar el subtítulo */
+.menu-subtitle {
+    margin-top: 30px;           /* 🔥 Baja el texto */
+}
+
+/* Bajar las tarjetas */
+.menu-cards {
+    margin-top: 30px;           /* 🔥 Baja las asignaturas */
+}
+
+/* Bajar el botón de cerrar sesión */
+.menu-bottom {
+    margin-top: 40px;           /* 🔥 Baja el botón */
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <h1 class="login-title">Iniciar sesión</h1>
+
+    <p class="subtitulo">Nombre del alumno</p>
+    <input type="text" id="nombre" placeholder="Escribe tu nombre">
+
+    <p class="subtitulo">Elige tu avatar</p>
+
+    <div class="avatar-container">
+        <img src="assets/img/avatar-chico.png" class="avatar" onclick="seleccionarAvatar('chico')">
+        <img src="assets/img/avatar-chica.png" class="avatar" onclick="seleccionarAvatar('chica')">
+    </div>
+
+    <button class="btn" onclick="entrar()">Entrar</button>
+
+    <script src="js/login.js"></script>
+
+</body>
+</html>

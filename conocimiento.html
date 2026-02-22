@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Conocimiento del Medio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <h2 class="titulo">Juego de Ciencias</h2>
+
+    <div class="card-game">
+        <p id="preguntaCiencias"></p>
+
+        <input id="respuestaCiencias" type="text" placeholder="Escribe tu respuesta">
+
+        <button class="btn" onclick="comprobarCiencias()">Comprobar</button>
+
+        <p id="resultadoCiencias"></p>
+    </div>
+
+    <button class="btn-secondary" onclick="location.href='menu.html'">Volver</button>
+
+</div>
+
+<script src="js/ciencias.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    window.onload = generarPreguntaCiencias;
+</script>
+
+</body>
+</html>

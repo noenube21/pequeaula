@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inglés</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <h2 class="titulo">Juego de Vocabulario</h2>
+
+    <div class="card-game">
+        <p id="preguntaIng"></p>
+
+        <input id="respuestaIng" type="text" placeholder="Tu respuesta en inglés">
+
+        <button class="btn" onclick="comprobarIngles()">Comprobar</button>
+
+        <p id="resultadoIng"></p>
+    </div>
+
+    <button class="btn-secondary" onclick="location.href='menu.html'">Volver</button>
+
+</div>
+
+<script src="js/ingles.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    window.onload = generarPreguntaIngles;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+    <img id="avatarMenu" class="avatar-small">
+</header>
+
+<h2 class="center menu-subtitle">¿Qué quieres practicar hoy?</h2>
+
+<div class="card-container menu-cards">
+
+    <div class="card" onclick="location.href='matematicas.html'">
+        <img src="assets/img/matematicas.png">
+        <h3>Matemáticas</h3>
+    </div>
+
+    <div class="card" onclick="location.href='castellano.html'">
+        <img src="assets/img/castellano.png">
+        <h3>Castellano</h3>
+    </div>
+
+    <div class="card" onclick="location.href='ingles.html'">
+        <img src="assets/img/ingles.png">
+        <h3>Inglés</h3>
+    </div>
+
+    <div class="card" onclick="location.href='conocimiento.html'">
+        <img src="assets/img/conocimiento.png">
+        <h3>Conocimiento del Medio</h3>
+    </div>
+
+    <div class="card" onclick="location.href='progreso.html'">
+        <img src="assets/img/progreso.png">
+        <h3>Progreso</h3>
+    </div>
+
+</div>
+
+<div class="center menu-bottom">
+    <button class="btn-secondary" onclick="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>

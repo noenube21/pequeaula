@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Progreso del alumno</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <span class="logo">App Educativa</span>
+    <img id="avatarMenu" class="avatar-small">
+</header>
+
+<h2 class="center">Progreso del alumno</h2>
+
+<div class="card-game">
+
+    <p><strong>Partidas jugadas:</strong> <span id="partidas">0</span></p>
+    <p><strong>Aciertos:</strong> <span id="aciertos">0</span></p>
+    <p><strong>Errores:</strong> <span id="errores">0</span></p>
+    <p><strong>Porcentaje:</strong> <span id="porcentaje">0%</span></p>
+
+    <button class="btn-secondary" onclick="location.href='menu.html'">Volver al menú</button>
+
+</div>
+
+<script src="js/progreso.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    cargarProgreso();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+<h2 id="tituloJuego"></h2>
+
+<script>
+    const asignatura = localStorage.getItem("asignatura");
+
+    const titulos = {
+        matematicas: "Juego de Sumas",
+        castellano: "Juego de Palabras",
+        ingles: "Vocabulary Game"
+    };
+
+    document.getElementById("tituloJuego").textContent = titulos[asignatura];
+</script>
+

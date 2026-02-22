@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Castellano</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <h2 class="titulo">Juego de Palabras</h2>
+
+    <div class="card-game">
+        <p id="preguntaCast"></p>
+
+        <input id="respuestaCast" type="text" placeholder="Escribe la respuesta">
+
+        <button class="btn" onclick="comprobarCastellano()">Comprobar</button>
+
+        <p id="resultadoCast"></p>
+    </div>
+
+    <button class="btn-secondary" onclick="location.href='menu.html'">Volver</button>
+
+</div>
+
+<script src="js/castellano.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+    window.onload = generarPreguntaCastellano;
+</script>
+
+</body>
+</html>

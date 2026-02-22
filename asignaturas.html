@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignaturas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header data-text="asignaturas">Asignaturas</header>
+
+<div class="idioma-selector">
+    <img src="assets/img/bandera-es.png" onclick="cambiarIdioma('es')">
+    <img src="assets/img/bandera-en.png" onclick="cambiarIdioma('en')">
+</div>
+
+<div class="card-container">
+
+    <div class="card" onclick="seleccionarAsignatura('matematicas')">
+        <img src="assets/img/matematicas.png">
+        <h3>Matemáticas</h3>
+    </div>
+
+    <div class="card" onclick="seleccionarAsignatura('castellano')">
+        <img src="assets/img/castellano.png">
+        <h3>Castellano</h3>
+    </div>
+
+    <div class="card" onclick="seleccionarAsignatura('ingles')">
+        <img src="assets/img/ingles.png">
+        <h3>Inglés</h3>
+    </div>
+
+</div>
+
+<a class="btn-secondary" href="menu.html">Volver</a>
+
+<script src="js/asignaturas.js"></script>
+<script src="js/idioma.js"></script>
+
+</body>
+</html>

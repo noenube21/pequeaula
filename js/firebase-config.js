@@ -6,7 +6,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCNSNwtZ319-EMpsgxm-D23OngJWe_jSyU",
   authDomain: "pequeaula-47b12.firebaseapp.com",
   projectId: "pequeaula-47b12",
-  storageBucket: "pequeaula-47b12.firebasestorage.app",
+  storageBucket: "pequeaula-47b12.appspot.com",   // ← CORREGIDO
   messagingSenderId: "628215823058",
   appId: "1:628215823058:web:f5e5b81b06a359bb2a0b0b",
   measurementId: "G-800FVPXMEF"
@@ -15,3 +15,4 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+

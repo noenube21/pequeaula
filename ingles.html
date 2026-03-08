@@ -15,7 +15,7 @@
     <div class="card-game">
         <p id="preguntaIng"></p>
 
-        <input id="respuestaIng" type="text" placeholder="Tu respuesta en inglés">
+        <input id="respuestaIng" type="text" placeholder="Tu respuesta en español">
 
         <button class="btn" onclick="comprobarIngles()">Comprobar</button>
 
@@ -26,12 +26,9 @@
 
 </div>
 
-<script src="js/ingles.js"></script>
-<script src="js/auth.js"></script>
-
-<script>
-    window.onload = generarPreguntaIngles;
-</script>
+<!-- IMPORTANTE: SOLO ESTE SCRIPT Y COMO MÓDULO -->
+<script type="module" src="js/ingles.js"></script>
 
 </body>
 </html>
+

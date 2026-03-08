@@ -3,7 +3,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  sendEmailVerification
+  sendEmailVerification,
+  signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { 
   doc,
@@ -14,6 +15,7 @@ import {
 const formRegistro = document.getElementById("form-registro");
 const formLogin = document.getElementById("form-login");
 
+/* ------------------ REGISTRO ------------------ */
 if (formRegistro) {
   formRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -34,9 +36,13 @@ if (formRegistro) {
     });
 
     alert("Cuenta creada. Revisa tu correo y verifica tu email antes de iniciar sesión.");
+
+    // Cierra sesión para evitar que entre sin verificar
+    await signOut(auth);
   });
 }
 
+/* ------------------ LOGIN ------------------ */
 if (formLogin) {
   formLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -47,12 +53,23 @@ if (formLogin) {
 
     if (!cred.user.emailVerified) {
       alert("Debes verificar tu correo antes de entrar.");
+      await signOut(auth);
       return;
     }
+
+    // Si está verificado, redirige al menú
+    window.location.href = "menu.html";
   });
 }
 
+/* ------------------ AUTO LOGIN CONTROLADO ------------------ */
 onAuthStateChanged(auth, async (user) => {
+  // Solo auto-login si NO estamos en login o registro
+  const enLogin = document.getElementById("form-login");
+  const enRegistro = document.getElementById("form-registro");
+
+  if (enLogin || enRegistro) return;
+
   if (user && user.emailVerified) {
     const ref = doc(db, "usuarios", user.uid);
     const snap = await getDoc(ref);

@@ -75,9 +75,10 @@ onAuthStateChanged(auth, async (user) => {
     const snap = await getDoc(ref);
     if (snap.exists()) {
       localStorage.setItem("usuario", JSON.stringify(snap.data()));
-      window.location.href = "menu.html";
+window.location.href = "./menu.html";
     }
   }
 });
+
 
 

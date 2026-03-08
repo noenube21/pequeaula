@@ -10,19 +10,22 @@
 
     <h1 class="login-title">Iniciar sesión</h1>
 
-    <p class="subtitulo">Nombre del alumno</p>
-    <input type="text" id="nombre" placeholder="Escribe tu nombre">
+    <form id="form-login" class="login-form">
 
-    <p class="subtitulo">Elige tu avatar</p>
+        <p class="subtitulo">Email</p>
+        <input type="email" name="email" placeholder="Escribe tu email">
 
-    <div class="avatar-container">
-        <img src="assets/img/avatar-chico.png" class="avatar" onclick="seleccionarAvatar('chico')">
-        <img src="assets/img/avatar-chica.png" class="avatar" onclick="seleccionarAvatar('chica')">
-    </div>
+        <p class="subtitulo">Contraseña</p>
+        <input type="password" name="password" placeholder="Escribe tu contraseña">
 
-    <button class="btn" onclick="entrar()">Entrar</button>
+        <button class="btn" type="submit">Entrar</button>
+        <a class="btn" href="registro.html">Crear cuenta</a>
 
-    <script src="js/login.js"></script>
+
+    </form>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
 
 </body>
 </html>

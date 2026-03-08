@@ -1,18 +1,38 @@
-<form id="form-registro" class="login-form">
-    <p class="subtitulo">Nombre del alumno</p>
-    <input type="text" name="nombre" placeholder="Escribe tu nombre" required>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-    <p class="subtitulo">Email</p>
-    <input type="email" name="email" placeholder="Escribe tu email" required>
+    <h2>Crear cuenta</h2>
 
-    <p class="subtitulo">Contraseña</p>
-    <input type="password" name="password" placeholder="Escribe tu contraseña" required>
+    <form id="form-registro" class="login-form">
 
-    <p class="subtitulo">Elige tu avatar</p>
-    <select name="avatar">
-        <option value="chico">Chico</option>
-        <option value="chica">Chica</option>
-    </select>
+        <p>Nombre del alumno</p>
+        <input type="text" name="nombre" placeholder="Escribe tu nombre" required>
 
-    <button class="btn" type="submit">Crear cuenta</button>
-</form>
+        <p>Email</p>
+        <input type="email" name="email" placeholder="Escribe tu email" required>
+
+        <p>Contraseña</p>
+        <input type="password" name="password" placeholder="Escribe tu contraseña" required>
+
+        <p>Elige tu avatar</p>
+        <select name="avatar">
+            <option value="chico">Chico</option>
+            <option value="chica">Chica</option>
+        </select>
+
+        <button type="submit">Crear cuenta</button>
+    </form>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
+
+</body>
+</html>

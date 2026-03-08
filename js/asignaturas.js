@@ -1,4 +1,3 @@
 function seleccionarAsignatura(asignatura) {
-    localStorage.setItem("asignatura", asignatura);
-    window.location.href = "juegos.html";
+    location.href = `niveles.html?asignatura=${asignatura}`;
 }

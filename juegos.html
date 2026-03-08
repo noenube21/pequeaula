@@ -1,14 +1,37 @@
-<h2 id="tituloJuego"></h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Niveles</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="main-container">
+    <h2 class="titulo" id="tituloAsignatura"></h2>
+
+    <div class="card-game">
+        <button class="btn" onclick="abrirNivel(1)">Nivel 1 – Fácil</button>
+        <button class="btn" onclick="abrirNivel(2)">Nivel 2 – Medio</button>
+        <button class="btn" onclick="abrirNivel(3)">Nivel 3 – Difícil</button>
+    </div>
+
+    <button class="btn-secondary" onclick="location.href='asignaturas.html'">Volver</button>
+</div>
 
 <script>
-    const asignatura = localStorage.getItem("asignatura");
+    const params = new URLSearchParams(window.location.search);
+    const asignatura = params.get("asignatura");
 
-    const titulos = {
-        matematicas: "Juego de Sumas",
-        castellano: "Juego de Palabras",
-        ingles: "Vocabulary Game"
-    };
+    document.getElementById("tituloAsignatura").innerText =
+        "Niveles de " + asignatura;
 
-    document.getElementById("tituloJuego").textContent = titulos[asignatura];
+    function abrirNivel(nivel) {
+        location.href = `juego-${asignatura}-nivel${nivel}.html`;
+    }
 </script>
+
+</body>
+</html>
+
 

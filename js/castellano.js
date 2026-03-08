@@ -37,7 +37,6 @@ function generarPreguntaCastellano() {
     document.getElementById("preguntaCast").innerText =
         "Completa la palabra: " + palabraActualCast.pregunta;
 }
-window.comprobarCastellano = comprobarCastellano;
 
 function comprobarCastellano() {
     const respuesta = document.getElementById("respuestaCast").value.toLowerCase();
@@ -63,5 +62,8 @@ function comprobarCastellano() {
     generarPreguntaCastellano();
 }
 
-// 👉 LLAMAMOS A LA FUNCIÓN AQUÍ
+// 👉 HACEMOS LAS FUNCIONES GLOBALES
+window.comprobarCastellano = comprobarCastellano;
+
+// 👉 GENERAMOS LA PRIMERA PREGUNTA AUTOMÁTICAMENTE
 generarPreguntaCastellano();

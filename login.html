@@ -2,30 +2,31 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-    <h1 class="login-title">Iniciar sesión</h1>
+    <h2>Iniciar sesión</h2>
 
     <form id="form-login" class="login-form">
 
-        <p class="subtitulo">Email</p>
-        <input type="email" name="email" placeholder="Escribe tu email">
+        <p>Email</p>
+        <input type="email" name="email" placeholder="Escribe tu email" required>
 
-        <p class="subtitulo">Contraseña</p>
-        <input type="password" name="password" placeholder="Escribe tu contraseña">
+        <p>Contraseña</p>
+        <input type="password" name="password" placeholder="Escribe tu contraseña" required>
 
-        <button class="btn" type="submit">Entrar</button>
-        <a class="btn" href="registro.html">Crear cuenta</a>
-
-
+        <button type="submit">Entrar</button>
     </form>
 
+    <p>¿No tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
+
+    <!-- Scripts -->
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="js/auth.js"></script>
 
 </body>
 </html>
+

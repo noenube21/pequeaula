@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear cuenta</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <h1 class="login-title">Crear cuenta</h1>
+
+    <form id="form-registro" class="login-form">
+
+        <p class="subtitulo">Nombre del alumno</p>
+        <input type="text" name="nombre" placeholder="Escribe tu nombre">
+
+        <p class="subtitulo">Email</p>
+        <input type="email" name="email" placeholder="Escribe tu email">
+
+        <p class="subtitulo">Contraseña</p>
+        <input type="password" name="password" placeholder="Escribe tu contraseña">
+
+        <p class="subtitulo">Elige tu avatar</p>
+        <select name="avatar">
+            <option value="chico">Chico</option>
+            <option value="chica">Chica</option>
+        </select>
+
+        <button class="btn" type="submit">Crear cuenta</button>
+
+    </form>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
+
+</body>
+</html>

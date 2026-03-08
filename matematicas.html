@@ -10,36 +10,25 @@
 
 <div class="main-container">
 
-    <!-- TÍTULO BONITO -->
     <h2 class="titulo">Juego de Sumas</h2>
 
-
-
-
-
-    <!-- TARJETA DEL JUEGO -->
     <div class="card-game">
         <p id="pregunta"></p>
 
         <input id="respuesta" type="number" placeholder="Tu respuesta">
 
-        <button class="btn" onclick="comprobarRespuesta()">Comprobar</button>
+        <button class="btn" onclick="comprobar()">Comprobar</button>
 
         <p id="resultadoJuego"></p>
     </div>
 
-    <!-- BOTÓN VOLVER -->
     <button class="btn-secondary" onclick="location.href='menu.html'">Volver</button>
 
 </div>
 
-<!-- SCRIPTS -->
-<script src="js/juego1.js"></script>
-<script src="js/auth.js"></script>
-
-<script>
-    window.onload = generarPregunta;
-</script>
+<!-- IMPORTANTE: SOLO ESTE SCRIPT Y COMO MÓDULO -->
+<script type="module" src="js/matematicas.js"></script>
 
 </body>
 </html>
+

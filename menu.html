@@ -2,29 +2,64 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <h2>Bienvenido al menú</h2>
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+    <img id="avatarMenu" class="avatar-small">
+</header>
 
-    <button id="btn-logout">Cerrar sesión</button>
+<h2 class="center menu-subtitle">¿Qué quieres practicar hoy?</h2>
 
-    <script type="module">
-        import { auth } from "./firebase-config.js";
-        import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+<div class="card-container menu-cards">
 
-        const btnLogout = document.getElementById("btn-logout");
+    <div class="card" onclick="location.href='matematicas.html'">
+        <img src="assets/img/matematicas.png">
+        <h3>Matemáticas</h3>
+    </div>
 
-        btnLogout.addEventListener("click", async () => {
-            await signOut(auth);              // Cierra sesión en Firebase
-            localStorage.removeItem("usuario"); // Borra datos guardados
-            window.location.href = "login.html"; // Vuelve al login
-        });
-    </script>
+    <div class="card" onclick="location.href='castellano.html'">
+        <img src="assets/img/castellano.png">
+        <h3>Castellano</h3>
+    </div>
+
+    <div class="card" onclick="location.href='ingles.html'">
+        <img src="assets/img/ingles.png">
+        <h3>Inglés</h3>
+    </div>
+
+    <div class="card" onclick="location.href='conocimiento.html'">
+        <img src="assets/img/conocimiento.png">
+        <h3>Conocimiento del Medio</h3>
+    </div>
+
+    <div class="card" onclick="location.href='progreso.html'">
+        <img src="assets/img/progreso.png">
+        <h3>Progreso</h3>
+    </div>
+
+</div>
+
+<div class="center menu-bottom">
+    <button class="btn-secondary" id="btn-logout">Cerrar sesión</button>
+</div>
+
+<!-- SOLO este script, nada más -->
+<script type="module">
+    import { auth } from "./firebase-config.js";
+    import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const btnLogout = document.getElementById("btn-logout");
+
+    btnLogout.addEventListener("click", async () => {
+        await signOut(auth);
+        localStorage.removeItem("usuario");
+        window.location.href = "login.html";
+    });
+</script>
 
 </body>
 </html>
-

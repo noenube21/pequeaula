@@ -30,7 +30,7 @@ const materia = p.get("materia");
 const nivel = p.get("nivel");
 
 document.getElementById("tituloJuego").innerText =
-    materia.toUpperCase() + " - Nivel " + nivel;
+    `${materia.toUpperCase()} - Nivel ${nivel}`;
 
 iniciarJuego(materia + nivel);
 </script>

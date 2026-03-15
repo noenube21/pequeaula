@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Niveles</title>
-css/style.css
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -38,8 +38,8 @@ const materia = params.get("materia");
 document.getElementById("titulo").innerText =
     "Elige un nivel de " + materia.toUpperCase();
 
-function jugar(n){
-    location.href = `juego.html?materia=${materia}&nivel=${n}`;
+function jugar(nivel){
+    location.href = `juego.html?materia=${materia}&nivel=${nivel}`;
 }
 </script>
 

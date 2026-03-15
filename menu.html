@@ -16,23 +16,37 @@
 
 <div class="card-container menu-cards">
 
-    <div class="card" onclick="location.href='matematicas.html'">
+    <div class="card" onclick="location.href='asignaturas.html?materia=matematicas'">
         <img src="assets/img/matematicas.png">
         <h3>Matemáticas</h3>
     </div>
 
-    <div class="card" onclick="location.href='castellano.html'">
+    <div class="card" onclick="location.href='asignaturas.html?materia=castellano'">
         <img src="assets/img/castellano.png">
         <h3>Castellano</h3>
     </div>
 
-    <div class="card" onclick="location.href='ingles.html'">
-="card" onclick="location.href='progreso.html'">
+    <div class="card" onclick="location.href='asignaturas.html?materia=ingles'">
+        <img src="assets/img/ingles.png">
+        <h3>Inglés</h3>
+    </div>
+
+    <div class="card" onclick="location.href='asignaturas.html?materia=ciencias'">
+        <img src="assets/img/conocimiento.png">
+        <h3>Conocimiento del Medio</h3>
+    </div>
+
+    <div class="card" onclick="location.href='progreso.html'">
         <img src="assets/img/progreso.png">
         <h3>Progreso</h3>
     </div>
 
-    <div class="card" onclick="location.href='recomprdPadre" class="card" style="display:none" onclick="location.href='padre-dashboard.html'">
+    <div class="card" onclick="location.href='recompensas.html'">
+        <img src="assets/img/estrella.png">
+        <h3>Recompensas</h3>
+    </div>
+
+    <div class="card" id="cardPadre" style="display:none;" onclick="location.href='padre-panel-de-control.html'">
         <img src="assets/img/familia.png">
         <h3>Supervisión</h3>
     </div>
@@ -59,11 +73,14 @@
 
     auth.onAuthStateChanged(async (u) => {
         if (!u) return;
-        const r = doc(db, "usuarios", u.uid);
-        const s = await getDoc(r);
-        if (!s.exists()) return;
-        const d = s.data();
-        if (d.role === "padre") cardPadre.style.display = "block";
+        const ref = doc(db, "usuarios", u.uid);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return;
+        const d = snap.data();
+
+        if (d.role === "padre") {
+            cardPadre.style.display = "block";
+        }
     });
 </script>
 

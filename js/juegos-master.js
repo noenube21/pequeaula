@@ -1,70 +1,39 @@
-// ======================================================
-//  ⭐ JUEGOS MASTER - ARCHIVO ÚNICO
-//  Contiene:
-//  ✔ Motor general de juegos
-//  ✔ Guardado de progreso
-//  ✔ Múltiples asignaturas
-//  ✔ Fácil de extender
-// ======================================================
-
-// ======================================================
-//  IMPORTS
-// ======================================================
 import { auth, db } from "../firebase-config.js";
 import {
-    doc,
-    updateDoc,
-    getDoc,
-    setDoc,
-    increment
+    doc, updateDoc, getDoc, setDoc, increment
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { comprobarRecompensas } from "./recompensas.js";
 
-
-// ======================================================
-//  ⭐ SISTEMA DE PROGRESO (GENERAL)
-// ======================================================
-export async function guardarProgreso(asignatura, aciertos, errores) {
-    const user = auth.currentUser;
-    if (!user) {
-        console.warn("⚠ No hay usuario logeado. No se guarda progreso.");
-        return;
-    }
-
-    const ref = doc(db, "usuarios", user.uid);
+async function guardarProgreso(asignatura, aciertos, errores) {
+    const u = auth.currentUser;
+    if (!u) return;
+    const ref = doc(db, "usuarios", u.uid);
     const snap = await getDoc(ref);
-    let datosPrevios = snap.exists() ? snap.data() : {};
-
-    // Crear estructura si no existe
-    if (!datosPrevios.progreso) datosPrevios.progreso = {};
-    if (!datosPrevios.progreso[asignatura]) {
-        datosPrevios.progreso[asignatura] = {
-            puntos: 0,
-            completado: false
-        };
+    let d = snap.exists() ? snap.data() : {};
+    if (!d.progreso) d.progreso = {};
+    if (!d.progreso[asignatura]) {
+        d.progreso[asignatura] = { puntos: 0, completado: false };
     }
-
-    // Guardar datos actualizados
     await setDoc(ref, {
         partidas: increment(1),
         aciertos: increment(aciertos),
         errores: increment(errores),
         progreso: {
-            ...datosPrevios.progreso,
+            ...d.progreso,
             [asignatura]: {
-                puntos: (datosPrevios.progreso[asignatura].puntos || 0) + aciertos,
+                puntos: (d.progreso[asignatura].puntos || 0) + aciertos,
                 completado: aciertos > errores
             }
         }
     }, { merge: true });
 
-    console.log(`✔ Progreso guardado en ${asignatura}:`, aciertos, errores);
+    const tot = (d.aciertos || 0) + aciertos;
+    await comprobarRecompensas(tot);
+
+    const puntosTotales = ((d.aciertos || 0) + aciertos) - ((d.errores || 0) + errores);
+    const nivel = Math.max(1, Math.floor(puntosTotales / 10));
+    await updateDoc(ref, { nivel });
 }
-
-
-
-// ======================================================
-//  ⭐ MOTOR GENERAL DE JUEGOS
-// ======================================================
 
 export const Juegos = {
     castellano: {
@@ -74,60 +43,44 @@ export const Juegos = {
             { p: "Ma__o", r: "mango" },
             { p: "Li__o", r: "libro" },
             { p: "Pa__el", r: "papel" }
-        ],
-        tipo: "palabra-incompleta"
+        ]
     },
-
     ingles: {
         preguntas: [
             { p: "House", r: "casa" },
             { p: "Dog", r: "perro" },
             { p: "Apple", r: "manzana" }
-        ],
-        tipo: "traduccion"
+        ]
     },
-
     matematicas1: {
-        tipo: "suma",
         generar: () => {
-            let a = Math.floor(Math.random() * 10);
-            let b = Math.floor(Math.random() * 10);
+            const a = Math.floor(Math.random() * 10);
+            const b = Math.floor(Math.random() * 10);
             return { p: `${a} + ${b}`, r: (a + b).toString() };
         }
     },
-
     matematicas2: {
-        tipo: "resta",
         generar: () => {
-            let a = Math.floor(Math.random() * 15 + 5);
-            let b = Math.floor(Math.random() * 10);
+            const a = Math.floor(Math.random() * 10 + 5);
+            const b = Math.floor(Math.random() * 10);
             return { p: `${a} - ${b}`, r: (a - b).toString() };
         }
     },
-
     matematicas3: {
-        tipo: "multiplicacion",
         generar: () => {
-            let a = Math.floor(Math.random() * 10);
-            let b = Math.floor(Math.random() * 10);
+            const a = Math.floor(Math.random() * 10);
+            const b = Math.floor(Math.random() * 10);
             return { p: `${a} × ${b}`, r: (a * b).toString() };
         }
     },
-
     ciencias: {
         preguntas: [
-            { p: "¿Cuál es el planeta rojo?", r: "marte" },
-            { p: "¿Qué gas respiramos?", r: "oxígeno" }
-        ],
-        tipo: "pregunta"
+            { p: "Planeta rojo", r: "marte" },
+            { p: "Gas que respiramos", r: "oxígeno" }
+        ]
     }
 };
 
-
-
-// ======================================================
-//  ⭐ INICIAR UN JUEGO
-// ======================================================
 let juegoActual = null;
 let preguntaActual = null;
 let asignaturaActual = null;
@@ -135,70 +88,31 @@ let asignaturaActual = null;
 export function iniciarJuego(asignatura) {
     asignaturaActual = asignatura;
     juegoActual = Juegos[asignatura];
-
-    console.log("🎮 Juego iniciado:", asignatura);
-
     generarPregunta();
 }
 
-
-
-// ======================================================
-//  ⭐ GENERAR PREGUNTA (para cualquier tipo de juego)
-// ======================================================
 export function generarPregunta() {
     if (!juegoActual) return;
-
-    let pregunta;
-
-    // Tipo 1: lista fija
+    let q = null;
     if (juegoActual.preguntas) {
-        pregunta = juegoActual.preguntas[
-            Math.floor(Math.random() * juegoActual.preguntas.length)
-        ];
+        q = juegoActual.preguntas[Math.floor(Math.random() * juegoActual.preguntas.length)];
+    } else if (juegoActual.generar) {
+        q = juegoActual.generar();
     }
-
-    // Tipo 2: generada automáticamente (mates)
-    else if (juegoActual.generar) {
-        pregunta = juegoActual.generar();
-    }
-
-    preguntaActual = pregunta;
-
-    // Mostrar en HTML
-    document.getElementById("pregunta").innerText = pregunta.p;
+    preguntaActual = q;
+    document.getElementById("pregunta").innerText = q.p;
 }
 
-
-
-// ======================================================
-//  ⭐ COMPROBAR RESPUESTA
-// ======================================================
 export function comprobar() {
-    const input = document.getElementById("respuesta").value.trim().toLowerCase();
-    const correcta = preguntaActual.r.toLowerCase();
-
-    let acierto = input === correcta ? 1 : 0;
-    let error = input !== correcta ? 1 : 0;
-
-    // Mostrar en pantalla
-    const res = document.getElementById("resultado");
-    res.innerText = acierto ? "¡Correcto!" : `Incorrecto. Era ${correcta}`;
-    res.style.color = acierto ? "green" : "red";
-
-    // Guardar progreso
-    guardarProgreso(asignaturaActual, acierto, error);
-
-    // Limpiar
+    const inp = document.getElementById("respuesta").value.trim().toLowerCase();
+    const ok = preguntaActual.r.toLowerCase();
+    let a = inp === ok ? 1 : 0;
+    let e = inp !== ok ? 1 : 0;
+    document.getElementById("resultado").innerText = inp === ok ? "Correcto" : "Incorrecto";
+    guardarProgreso(asignaturaActual, a, e);
     document.getElementById("respuesta").value = "";
-
-    // Siguiente pregunta
-    setTimeout(() => generarPregunta(), 700);
+    setTimeout(() => generarPregunta(), 500);
 }
 
-
-// ======================================================
-//  ⭐ HACER ACCESIBLE AL HTML
-// ======================================================
 window.iniciarJuego = iniciarJuego;
 window.comprobar = comprobar;

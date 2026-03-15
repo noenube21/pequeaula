@@ -12,61 +12,27 @@
     <img id="avatarMenu" class="avatar-small">
 </header>
 
-<h2Qué quieres practicar hoy?</h2>
+<h2 class="center menu-subtitle">¿Qué quieres practicar hoy?</h2>
 
 <div class="card-container menu-cards">
 
-    matematicas.html
-        assets/img/matematicas.png
+    <div class="card" onclick="location.href='matematicas.html'">
+        <img src="assets/img/matematicas.png">
         <h3>Matemáticas</h3>
     </div>
 
-    <divellano.html
-        assets/img/castellano.png
+    <div class="card" onclick="location.href='castellano.html'">
+        <img src="assets/img/castellano.png">
         <h3>Castellano</h3>
     </div>
 
-    ingles.html
-        assets/img/ingles.png
-        <h3>Inglés</h3>
-    </div>
-
-    conocimiento.html
-        assets/img/conocimiento.png
-        <h3>Conocimiento del Medio</h3>
-    </div>
-
-    <div class="card" onclick="location.href='progreso.html'">
+    <div class="card" onclick="location.href='ingles.html'">
+="card" onclick="location.href='progreso.html'">
         <img src="assets/img/progreso.png">
         <h3>Progreso</h3>
     </div>
 
-    <div class="card" onclick="location.href='recompensas.html'">
-        <img src="assets/img/estrella.png">
-        <h3>Recompensas</h3>
-    </div>
-
-    <div class="card" onclick="location.href='juego.html'">
-        <img src="assets/img/jugar.png">
-        <h3>Juego Universal</h3>
-    </div>
-
-    <agdrop.png">
-        <h3>Arrastrar y Soltar</h3>
-    </div>
-
-    <div class="card" onclick="location.href='silabas.html'">
-        <img src="assets/img/silabas.png">
-        <h3>Ordenar Sílabas</h3>
-    </div>
-
-    <div class="card" onclick="location.href='quiz.html'">
-        <img src="assets/img/quiz.png">
-        <h3>Quiz</h3>
-    </div>
-
-    <!-- SOLO visible si el usuario es padre -->
-    <div class="card" id="btnPadre" style="display:none" onclick="location.href='padre-dashboard.html'">
+    <div class="card" onclick="location.href='recomprdPadre" class="card" style="display:none" onclick="location.href='padre-dashboard.html'">
         <img src="assets/img/familia.png">
         <h3>Supervisión</h3>
     </div>
@@ -83,22 +49,21 @@
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const btnLogout = document.getElementById("btn-logout");
-    const btnPadre = document.getElementById("btnPadre");
+    const cardPadre = document.getElementById("cardPadre");
 
-    btnLogout.addEventListener("click", async () => {
+    btnLogout.onclick = async () => {
         await signOut(auth);
         localStorage.removeItem("usuario");
-        window.location.href = "login.html";
-    });
+        location.href = "login.html";
+    };
 
-    auth.onAuthStateChanged(async (user) => {
-        if (!user) return;
-        const ref = doc(db, "usuarios", user.uid);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) return;
-
-        const d = snap.data();
-        if (d.role === "padre") btnPadre.style.display = "block";
+    auth.onAuthStateChanged(async (u) => {
+        if (!u) return;
+        const r = doc(db, "usuarios", u.uid);
+        const s = await getDoc(r);
+        if (!s.exists()) return;
+        const d = s.data();
+        if (d.role === "padre") cardPadre.style.display = "block";
     });
 </script>
 

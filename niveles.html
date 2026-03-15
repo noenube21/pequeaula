@@ -35,6 +35,7 @@
 <script>
 const p = new URLSearchParams(location.search);
 const materia = p.get("materia");
+
 document.getElementById("titulo").innerText =
     "Elige un nivel de " + materia.toUpperCase();
 

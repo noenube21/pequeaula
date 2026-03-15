@@ -1,37 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Menú</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Menú</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="topbar menu-topbar">
     <span class="logo menu-logo">PEQUE AULA 🌟</span>
-    <img id="avatarMenu" class="avatar-small">
 </header>
 
 <h2 class="center menu-subtitle">¿Qué quieres practicar hoy?</h2>
 
 <div class="card-container menu-cards">
 
-    <div class="card" onclick="location.href='asignaturas.html?materia=matematicas'">
+    <div class="card" onclick="location.href='niveles.html?materia=matematicas'">
         <img src="assets/img/matematicas.png">
         <h3>Matemáticas</h3>
     </div>
 
-    <div class="card" onclick="location.href='asignaturas.html?materia=castellano'">
+    <div class="card" onclick="location.href='niveles.html?materia=castellano'">
         <img src="assets/img/castellano.png">
         <h3>Castellano</h3>
     </div>
 
-    <div class="card" onclick="location.href='asignaturas.html?materia=ingles'">
+    <div class="card" onclick="location.href='niveles.html?materia=ingles'">
         <img src="assets/img/ingles.png">
         <h3>Inglés</h3>
     </div>
 
-    <div class="card" onclick="location.href='asignaturas.html?materia=ciencias'">
+    <div class="card" onclick="location.href='niveles.html?materia=ciencias'">
         <img src="assets/img/conocimiento.png">
         <h3>Conocimiento del Medio</h3>
     </div>
@@ -46,43 +45,11 @@
         <h3>Recompensas</h3>
     </div>
 
-    <div class="card" id="cardPadre" style="display:none;" onclick="location.href='padre-panel-de-control.html'">
-        <img src="assets/img/familia.png">
-        <h3>Supervisión</h3>
-    </div>
-
 </div>
 
 <div class="center menu-bottom">
-    <button class="btn-secondary" id="btn-logout">Cerrar sesión</button>
+    <button class="btn-secondary" onclick="location.href='login.html'">Cerrar sesión</button>
 </div>
-
-<script type="module">
-    import { auth, db } from "./firebase-config.js";
-    import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    const btnLogout = document.getElementById("btn-logout");
-    const cardPadre = document.getElementById("cardPadre");
-
-    btnLogout.onclick = async () => {
-        await signOut(auth);
-        localStorage.removeItem("usuario");
-        location.href = "login.html";
-    };
-
-    auth.onAuthStateChanged(async (u) => {
-        if (!u) return;
-        const ref = doc(db, "usuarios", u.uid);
-        const snap = await getDoc(ref);
-        if (!snap.exists()) return;
-        const d = snap.data();
-
-        if (d.role === "padre") {
-            cardPadre.style.display = "block";
-        }
-    });
-</script>
 
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Juego</title>
-<link rel="stylesheet" href="css/style.css">
+css/style.css
 </head>
 <body>
 
@@ -26,8 +26,8 @@
     <p id="resultado"></p>
 </div>
 
-script src="firebase-config.js" type="module"></script>
-script src="js/juegos-master.js" type="module"></script>
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="js/juegos-master.js"></script>
 
 <script>
 const p = new URLSearchParams(location.search);
@@ -35,7 +35,7 @@ const materia = p.get("materia");
 const nivel = p.get("nivel");
 
 document.getElementById("tituloJuego").innerText =
-    `${materia.toUpperCase()} - Nivel ${nivel}`;
+    materia.toUpperCase() + " - Nivel " + nivel;
 
 iniciarJuego(materia + nivel);
 </script>

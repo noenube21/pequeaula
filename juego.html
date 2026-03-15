@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PequeAula - Juego</title>
+
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: #f2f8ff;
+            padding: 20px;
+        }
+
+        .contenedor {
+            background: white;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 10px #0002;
+        }
+
+        button {
+            background: #4285f4;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            font-size: 18px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #3367d6;
+        }
+
+        #pregunta {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        #resultado {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>PequeAula - Juego Universal</h1>
+
+    <div class="contenedor">
+
+        <h2>Elige un juego</h2>
+
+        <button onclick="iniciarJuego('castellano')">Castellano</button>
+        <button onclick="iniciarJuego('ingles')">Inglés</button>
+        <button onclick="iniciarJuego('matematicas1')">Matemáticas Nivel 1</button>
+        <button onclick="iniciarJuego('matematicas2')">Matemáticas Nivel 2</button>
+        <button onclick="iniciarJuego('matematicas3')">Matemáticas Nivel 3</button>
+        <button onclick="iniciarJuego('ciencias')">Ciencias</button>
+
+        <hr>
+
+        <!-- JUEGO ACTUAL -->
+        <p id="pregunta">Elige un juego para empezar</p>
+
+        <input 
+            id="respuesta" 
+            type="text" 
+            placeholder="Escribe tu respuesta"
+            style="padding: 10px; font-size: 18px; width: 80%; margin-top: 10px;"
+        />
+
+        <br><br>
+
+        <button onclick="comprobar()">Comprobar</button>
+
+        <p id="resultado"></p>
+    </div>
+
+    <!-- Firebase config -->
+    <script type="module" src="firebase-config.js"></script>
+
+    <!-- Archivo maestro -->
+    <script type="module" src="js/juegos-master.js"></script>
+
+</body>
+</html>

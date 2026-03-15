@@ -3,29 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <title>Juego</title>
-<style>
-body { font-family: Arial; padding:20px; text-align:center; }
-button { padding:10px 20px; margin:5px; }
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<h1>PequeAula</h1>
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+</header>
 
-<button onclick="iniciarJuego('castellano')">Castellano</button>
-<button onclick="iniciarJuego('ingles')">Inglés</button>
-<button onclick="iniciarJuego('matematicas1')">Mates 1</button>
-<button onclick="iniciarJuego('matematicas2')">Mates 2</button>
-<button onclick="iniciarJuego('matematicas3')">Mates 3</button>
-<button onclick="iniciarJuego('ciencias')">Ciencias</button>
+<h2 class="center menu-subtitle" id="tituloJuego"></h2>
 
-<p id="pregunta"></p>
-<input id="respuesta" type="text">
-<button onclick="comprobar()">Comprobar</button>
-<p id="resultado"></p>
+<div class="game-box">
 
-firebase-config.js</script>
-js/juegos-master.js</script>
+    <p id="pregunta"></p>
+
+    <div id="zona"></div>
+
+    <input id="respuesta" type="text">
+
+    <button class="btn-primary" onclick="comprobar()">Comprobar</button>
+
+    <p id="resultado"></p>
+</div>
+
+script src="firebase-config.js" type="module"></script>
+script src="js/juegos-master.js" type="module"></script>
+
+<script>
+const p = new URLSearchParams(location.search);
+const materia = p.get("materia");
+const nivel = p.get("nivel");
+
+document.getElementById("tituloJuego").innerText =
+    `${materia.toUpperCase()} - Nivel ${nivel}`;
+
+iniciarJuego(materia + nivel);
+</script>
 
 </body>
 </html>

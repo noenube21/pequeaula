@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Niveles</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Juego</title>
+css/style.css
 </head>
 <body>
 
-<div class="main-container">
-    <h2 class="titulo" id="tituloAsignatura"></h2>
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+</header>
 
-    <div class="card-game">
-        <button class="btn" onclick="abrirNivel(1)">Nivel 1 – Fácil</button>
-        <button class="btn" onclick="abrirNivel(2)">Nivel 2 – Medio</button>
-        <button class="btn" onclick="abrirNivel(3)">Nivel 3 – Difícil</button>
-    </div>
+<h2 id="tituloJuego" class="center"></h2>
 
-    <button class="btn-secondary" onclick="location.href='asignaturas.html'">Volver</button>
+<div class="game-box">
+    <p id="pregunta"></p>
+    <input id="respuesta" type="text">
+    <button onclick="comprobar()">Comprobar</button>
+    <p id="resultado"></p>
 </div>
 
+firebase-config.js</script>
+js/juegos-master.js</script>
+
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const asignatura = params.get("asignatura");
+const params = new URLSearchParams(location.search);
+const materia = params.get("materia");
+const nivel = params.get("nivel");
 
-    document.getElementById("tituloAsignatura").innerText =
-        "Niveles de " + asignatura;
+document.getElementById("tituloJuego").innerText =
+    materia.toUpperCase() + " - Nivel " + nivel;
 
-    function abrirNivel(nivel) {
-        location.href = `juego-${asignatura}-nivel${nivel}.html`;
-    }
+iniciarJuego(materia + nivel);
 </script>
 
 </body>
 </html>
-
-

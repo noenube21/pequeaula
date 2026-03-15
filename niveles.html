@@ -1,39 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Niveles</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Niveles</title>
+css/style.css
 </head>
-
 <body>
 
-<div class="main-container">
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+</header>
 
-    <h2 class="titulo" id="tituloAsignatura"></h2>
+<h2 class="center menu-subtitle" id="titulo"></h2>
 
-    <div class="card-game">
-        <button class="btn" onclick="abrirNivel(1)">Nivel 1 – Fácil</button>
-        <button class="btn" onclick="abrirNivel(2)">Nivel 2 – Medio</button>
-        <button class="btn" onclick="abrirNivel(3)">Nivel 3 – Difícil</button>
+<div class="card-container menu-cards">
+
+    <div class="card" onclick="jugar(1)">
+        <img src="assets/img/nivel1.png">
+        <h3>Nivel 1</h3>
     </div>
 
-    <button class="btn-secondary" onclick="location.href='asignaturas.html'">Volver</button>
+    <div class="card" onclick="jugar(2)">
+        <img src="assets/img/nivel2.png">
+        <h3>Nivel 2</h3>
+    </div>
+
+    <div class="card" onclick="jugar(3)">
+        <img src="assets/img/nivel3.png">
+        <h3>Nivel 3</h3>
+    </div>
 
 </div>
 
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const asignatura = params.get("asignatura");
+const params = new URLSearchParams(window.location.search);
+const materia = params.get("materia");
+document.getElementById("titulo").innerText =
+    "Elige un nivel de " + materia.toUpperCase();
 
-    document.getElementById("tituloAsignatura").innerText =
-        "Niveles de " + asignatura;
-
-    function abrirNivel(nivel) {
-        location.href = `juego-${asignatura}-nivel${nivel}.html`;
-    }
+function jugar(nivel) {
+    location.href = `juego.html?materia=${materia}&nivel=${nivel}`;
+}
 </script>
 
 </body>
 </html>
-

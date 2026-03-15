@@ -165,6 +165,7 @@ function generarPregunta() {
 
     document.getElementById("pregunta").innerHTML = "";
     document.getElementById("resultado").innerText = "";
+    document.getElementById("zona").innerHTML = "";
 
     if (modo === "texto") {
         if (juegoActual.preguntas) {
@@ -208,15 +209,20 @@ function generarPregunta() {
     if (modo === "memory") {
         const base = juegoActual.memory;
         let lista = [];
+
         base.forEach(([txt, img]) => {
-            lista.push({tipo:"txt",valor:txt});
-            lista.push({tipo:"img",valor:img,txt});
+            lista.push({tipo:"txt", valor:txt});
+            lista.push({tipo:"img", valor:img, txt});
         });
+
         memoryCartas = barajar(lista);
+        memorySeleccion = [];
+
         let html = "";
         memoryCartas.forEach((c, i) => {
-            html += `<div class='carta' id='c${i}' onclick="clickMemory(${i})"></div>`;
+            html += `<div class="memory-card" id="c${i}" onclick="clickMemory(${i})"></div>`;
         });
+
         document.getElementById("pregunta").innerHTML = html;
         return;
     }
@@ -226,88 +232,6 @@ function generarPregunta() {
         juegoActual.drag.forEach((obj,i)=>{
             html += `
             <div class="dragitem">
-                <img src="${obj.img}" width="80">
+                <img src="${obj.img}" style="height:50px;">
                 <div class="dropzone" ondrop="drop(event,'${obj.palabra}')" ondragover="event.preventDefault();"></div>
             </div>
-            <button draggable="true" ondragstart="drag(event,'${obj.palabra}')">${obj.palabra}</button>
-            `;
-        });
-        document.getElementById("pregunta").innerHTML = html;
-        preguntaActual = juegoActual.drag;
-    }
-}
-
-export function comprobar() {
-    if (modo !== "texto") return;
-    const inp = document.getElementById("respuesta").value.trim().toLowerCase();
-    const ok = preguntaActual.r.toLowerCase();
-    let a = inp === ok ? 1 : 0;
-    let e = inp !== ok ? 1 : 0;
-    document.getElementById("resultado").innerText = inp === ok ? "Correcto!" : "Incorrecto";
-    guardarProgreso(asignaturaActual, a, e);
-    document.getElementById("respuesta").value="";
-    setTimeout(generarPregunta, 700);
-}
-
-window.comprobar = comprobar;
-
-window.comprobarQuiz = (o)=>{
-    let a = o === preguntaActual.r ? 1 : 0;
-    let e = o !== preguntaActual.r ? 1 : 0;
-    document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
-    guardarProgreso(asignaturaActual, a, e);
-    setTimeout(generarPregunta, 700);
-};
-
-let palabraConstruida = "";
-window.agregarSilaba = (si)=>{
-    palabraConstruida += si;
-    document.getElementById("zona").innerText = palabraConstruida;
-    if (palabraConstruida.length >= preguntaActual.r.length) {
-        let a = palabraConstruida === preguntaActual.r ? 1 : 0;
-        let e = a ? 0 : 1;
-        document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
-        palabraConstruida = "";
-        guardarProgreso(asignaturaActual, a, e);
-        setTimeout(generarPregunta, 700);
-    }
-};
-
-window.clickMemory = (i)=>{
-    const carta = memoryCartas[i];
-    const elem = document.getElementById("c"+i);
-    if (!elem.innerHTML) {
-        elem.innerHTML = carta.tipo === "txt" ? carta.valor : `<img src="${carta.valor}" width="60">`;
-        memorySeleccion.push({i,carta});
-    }
-    if (memorySeleccion.length === 2) {
-        const [a,b] = memorySeleccion;
-        if (a.carta.tipo !== b.carta.tipo &&
-            (a.carta.valor === b.carta.txt || b.carta.valor === a.carta.txt)) {
-            let el1 = document.getElementById("c"+a.i);
-            let el2 = document.getElementById("c"+b.i);
-            setTimeout(()=>{
-                el1.style.visibility="hidden";
-                el2.style.visibility="hidden";
-            },700);
-            guardarProgreso(asignaturaActual,1,0);
-        }
-        else guardarProgreso(asignaturaActual,0,1);
-
-        setTimeout(()=>{
-            memorySeleccion=[];
-            generarPregunta();
-        },800);
-    }
-};
-
-window.drag = (e,p)=>{ e.dataTransfer.setData("t",p); };
-window.drop = (e,p)=>{
-    const t = e.dataTransfer.getData("t");
-    let a = t===p?1:0;
-    let e2 = t!==p?1:0;
-    guardarProgreso(asignaturaActual,a,e2);
-    generarPregunta();
-};
-
-window.iniciarJuego = iniciarJuego;

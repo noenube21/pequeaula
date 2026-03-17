@@ -4,25 +4,6 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 <link rel="stylesheet" href="css/style.css">
-<style>
-    .memory-card {
-        width: 110px;
-        height: 110px;
-        background: white;
-        border: 3px solid #333;
-        border-radius: 10px;
-        margin: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-    }
-    #pregunta {
-        min-height: 180px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-</style>
 </head>
 
 <body>
@@ -35,22 +16,21 @@
 
 <div class="game-box">
     <div id="pregunta"></div>
-
     <div id="zona"></div>
 
     <input id="respuesta" type="text">
-    <button class="btn-primary" onclick="comprobar()">Comprobar</button>
+    <button onclick="comprobar()">Comprobar</button>
 
     <p id="resultado"></p>
 </div>
 
-<script type="module" src="js/juegos-master.js"></script>
+<script src="js/firebase-config.js" type="module"></script>
+<script src="js/juegos-master.js" type="module"></script>
 
 <script>
 const p = new URLSearchParams(location.search);
 const materia = p.get("materia");
 const nivel = p.get("nivel");
-
 document.getElementById("tituloJuego").innerText =
     materia.toUpperCase() + " - Nivel " + nivel;
 

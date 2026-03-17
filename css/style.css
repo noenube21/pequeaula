@@ -46,7 +46,7 @@ h1, h2, h3 {
    BOTONES
 ------------------------------------------*/
 
-.btn, button {
+button, .btn {
     background: #ff6f61;
     color: white;
     padding: 12px 25px;
@@ -81,9 +81,9 @@ input {
 
 .game-box {
     background: white;
-    width: 320px;
+    width: 350px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 25px;
     border-radius: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border: 3px solid #ffcc4d;
@@ -98,40 +98,55 @@ input {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 10px;
+    align-items: center;
+    min-height: 200px;
+    margin-bottom: 20px;
 }
 
 /* -----------------------------------------
-   CARTAS MEMORY
+   CARTAS DEL MEMORY
 ------------------------------------------*/
 
-.carta {
-    width: 90px;
-    height: 90px;
+.memory-card {
+    width: 100px;
+    height: 100px;
     background: #ffd166;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 8px;
     cursor: pointer;
-    border-radius: 12px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
+    border-radius: 15px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+    border: 3px solid #333;
+    transition: transform 0.2s ease;
 }
 
-.carta:hover {
+.memory-card:hover {
     transform: scale(1.05);
 }
 
-/* IMAGEN DENTRO */
-.carta img {
+/* IMAGEN DENTRO DE LA CARTA */
+
+.memory-card img {
     width: 70px;
     height: 70px;
     object-fit: contain;
 }
 
 /* -----------------------------------------
-   TEXTO RESULTADO
+   ZONA PARA SÍLABAS Y DRAG
+------------------------------------------*/
+
+#zona {
+    min-height: 60px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 24px;
+}
+
+/* -----------------------------------------
+   RESULTADO
 ------------------------------------------*/
 
 #resultado {

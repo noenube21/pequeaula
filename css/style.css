@@ -17,13 +17,14 @@ body {
 }
 
 /* -----------------------------------------
-   TARJETAS DEL MENÚ
+   TARJETAS DEL MENÚ / ASIGNATURAS
 ------------------------------------------*/
 .card-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 25px;
+    margin-top: 20px;
 }
 
 .card {
@@ -45,6 +46,7 @@ body {
 .card img {
     width: 90px;
     height: 90px;
+    object-fit: contain;
 }
 
 /* -----------------------------------------
@@ -52,9 +54,9 @@ body {
 ------------------------------------------*/
 .game-box {
     background: white;
-    width: 320px;
+    width: 330px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 25px;
     border-radius: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border: 3px solid #ffcc4d;
@@ -62,18 +64,8 @@ body {
 }
 
 /* -----------------------------------------
-   INPUTS Y BOTONES
+   BOTONES
 ------------------------------------------*/
-input {
-    padding: 12px;
-    width: 80%;
-    border-radius: 15px;
-    border: 2px solid #ffcc4d;
-    margin: 10px auto;
-    display: block;
-    font-size: 18px;
-}
-
 button {
     background: #ff6f61;
     color: white;
@@ -90,18 +82,31 @@ button:hover {
 }
 
 /* -----------------------------------------
-   MEMORY — versión original que SÍ funcionaba
+   INPUTS
+------------------------------------------*/
+input {
+    padding: 12px;
+    width: 80%;
+    border-radius: 15px;
+    border: 2px solid #ffcc4d;
+    margin: 10px auto;
+    display: block;
+    font-size: 18px;
+}
+
+/* -----------------------------------------
+   MEMORY (el que funcionaba antes)
 ------------------------------------------*/
 .carta {
     width: 100px;
     height: 100px;
     background: #ccc;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px;
-    cursor: pointer;
     border-radius: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: 5px;
 }
 
 .carta img {

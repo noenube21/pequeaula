@@ -24,7 +24,6 @@ const Juegos = {
         }
     },
 
-
     ingles3: {
         memory: [
             ["dog","assets/img/dog.png"],
@@ -42,10 +41,8 @@ const Juegos = {
     }
 };
 
-// VARIABLES
 let juegoActual = null;
 
-// INICIAR JUEGO
 export function iniciarJuego(key) {
 
     juegoActual = Juegos[key];
@@ -56,7 +53,7 @@ export function iniciarJuego(key) {
     pregunta.innerHTML = "";
     zona.innerHTML = "";
 
-    // SI ES TEXTO
+    // ────────────── TEXTOS ──────────────
     if (juegoActual.generar) {
         const q = juegoActual.generar();
 
@@ -71,15 +68,13 @@ export function iniciarJuego(key) {
         return;
     }
 
-    // SI ES MEMORY (versión original simple)
+    // ────────────── MEMORY ──────────────
     if (juegoActual.memory) {
 
         let cartas = [...juegoActual.memory, ...juegoActual.memory];
-
         cartas.sort(() => Math.random() - 0.5);
 
         cartas.forEach(carta => {
-
             const div = document.createElement("div");
             div.classList.add("carta");
 
@@ -98,5 +93,4 @@ export function iniciarJuego(key) {
 
         return;
     }
-
 }

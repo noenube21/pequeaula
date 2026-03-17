@@ -41,6 +41,31 @@ async function guardarProgreso(asignatura, aciertos, errores) {
 
 // ================== JUEGOS ==================
 const Juegos = {
+
+    matematicas1: {
+        generar: () => {
+            const a = Math.floor(Math.random() * 10);
+            const b = Math.floor(Math.random() * 10);
+            return { p: `${a} + ${b}`, r: (a + b).toString() };
+        }
+    },
+
+    matematicas2: {
+        generar: () => {
+            const a = Math.floor(Math.random() * 10 + 5);
+            const b = Math.floor(Math.random() * 10);
+            return { p: `${a} - ${b}`, r: (a - b).toString() };
+        }
+    },
+
+    matematicas3: {
+        generar: () => {
+            const a = Math.floor(Math.random() * 10);
+            const b = Math.floor(Math.random() * 10);
+            return { p: `${a} × ${b}`, r: (a * b).toString() };
+        }
+    },
+
     ingles3: {
         memory: [
             ["dog","/assets/img/dog.png"],
@@ -61,27 +86,32 @@ const Juegos = {
 // ================== VARIABLES ==================
 let juegoActual = null;
 let asignaturaActual = null;
+let modo = "";
 let memoryCartas = [];
 let memorySeleccion = [];
 
-// ================== INICIAR ==================
+// ================== INICIAR JUEGO ==================
 export function iniciarJuego(key) {
     asignaturaActual = key;
     juegoActual = Juegos[key];
 
-    const contenedor = document.getElementById("pregunta");
+    const contenedor = document.getElementById("juego");
     contenedor.innerHTML = "";
 
+    // ===== MEMORY =====
     if (juegoActual.memory) {
+        modo = "memory";
+
         memoryCartas = [...juegoActual.memory, ...juegoActual.memory];
         memoryCartas.sort(() => Math.random() - 0.5);
+
         mostrarMemory();
     }
 }
 
-// ================== MOSTRAR ==================
+// ================== MOSTRAR MEMORY ==================
 function mostrarMemory() {
-    const contenedor = document.getElementById("pregunta");
+    const contenedor = document.getElementById("juego");
     contenedor.innerHTML = "";
 
     memorySeleccion = [];
@@ -102,7 +132,7 @@ function mostrarMemory() {
     });
 }
 
-// ================== LÓGICA ==================
+// ================== LÓGICA MEMORY ==================
 function voltearCarta(div, img, carta) {
     if (memorySeleccion.length === 2) return;
 

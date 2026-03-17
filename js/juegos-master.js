@@ -4,14 +4,19 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { comprobarRecompensas } from "./recompensas.js";
 
+// ================== GUARDAR PROGRESO ==================
 async function guardarProgreso(asignatura, aciertos, errores) {
     const u = auth.currentUser;
     if (!u) return;
+
     const ref = doc(db, "usuarios", u.uid);
     const snap = await getDoc(ref);
     let d = snap.exists() ? snap.data() : {};
+
     if (!d.progreso) d.progreso = {};
-    if (!d.progreso[asignatura]) d.progreso[asignatura] = { puntos: 0, completado: false };
+    if (!d.progreso[asignatura]) {
+        d.progreso[asignatura] = { puntos: 0, completado: false };
+    }
 
     await setDoc(ref, {
         partidas: increment(1),
@@ -34,6 +39,7 @@ async function guardarProgreso(asignatura, aciertos, errores) {
     await updateDoc(ref, { nivel });
 }
 
+// ================== JUEGOS ==================
 const Juegos = {
 
     matematicas1: {
@@ -60,87 +66,90 @@ const Juegos = {
         }
     },
 
-    castellano1: {
-        preguntas: [
-            { p: "C__sa", r: "casa" },
-            { p: "Pe__o", r: "perro" },
-            { p: "Ma__o", r: "mango" },
-            { p: "Li__o", r: "libro" },
-            { p: "Pa__el", r: "papel" }
-        ]
-    },
-
-    castellano2: {
-        silabas: [
-            { p: ["ca", "sa"], r: "casa" },
-            { p: ["pe", "rro"], r: "perro" },
-            { p: ["li", "bro"], r: "libro" }
-        ]
-    },
-
-    castellano3: {
-        quiz: [
-            { p: "¿Cuál es un sustantivo?", o: ["correr", "mesa", "rápido", "allí"], r: "mesa" },
-            { p: "¿Cuál es un verbo?", o: ["perro", "cantar", "frío", "taza"], r: "cantar" }
-        ]
-    },
-
-    ingles1: {
-        preguntas: [
-            { p: "House", r: "casa" },
-            { p: "Dog", r: "perro" },
-            { p: "Apple", r: "manzana" }
-        ]
-    },
-
-    ingles2: {
-        quiz: [
-            { p: "Cat = ?", o: ["gato", "perro", "libro", "mesa"], r: "gato" },
-            { p: "Book = ?", o: ["cielo", "manzana", "libro", "pez"], r: "libro" }
-        ]
-    },
-
     ingles3: {
         memory: [
-            ["dog","assets/img/dog.png"],
-            ["house","assets/img/house.png"],
-            ["apple","assets/img/apple.png"]
-        ]
-    },
-
-    ciencias1: {
-        preguntas: [
-            { p: "Planeta rojo", r: "marte" },
-            { p: "Gas que respiramos", r: "oxígeno" }
-        ]
-    },
-
-    ciencias2: {
-        drag: [
-            { palabra: "Sol", img: "assets/img/sol.png" },
-            { palabra: "Árbol", img: "assets/img/arbol.png" }
+            ["dog","/assets/img/dog.png"],
+            ["house","/assets/img/house.png"],
+            ["apple","/assets/img/apple.png"]
         ]
     },
 
     ciencias3: {
         memory: [
-            ["sol","assets/img/sol.png"],
-            ["luna","assets/img/luna.png"],
-            ["mar","assets/img/mar.png"]
+            ["sol","/assets/img/sol.png"],
+            ["luna","/assets/img/luna.png"],
+            ["mar","/assets/img/mar.png"]
         ]
     }
 };
 
+// ================== VARIABLES ==================
 let juegoActual = null;
-let preguntaActual = null;
 let asignaturaActual = null;
-let modo = "texto";
-let opcionesActuales = [];
-let silabasActuales = [];
+let modo = "";
 let memoryCartas = [];
 let memorySeleccion = [];
 
+// ================== INICIAR JUEGO ==================
 export function iniciarJuego(key) {
     asignaturaActual = key;
     juegoActual = Juegos[key];
 
+    const contenedor = document.getElementById("juego");
+    contenedor.innerHTML = "";
+
+    // ===== MEMORY =====
+    if (juegoActual.memory) {
+        modo = "memory";
+
+        memoryCartas = [...juegoActual.memory, ...juegoActual.memory];
+        memoryCartas.sort(() => Math.random() - 0.5);
+
+        mostrarMemory();
+    }
+}
+
+// ================== MOSTRAR MEMORY ==================
+function mostrarMemory() {
+    const contenedor = document.getElementById("juego");
+    contenedor.innerHTML = "";
+
+    memorySeleccion = [];
+
+    memoryCartas.forEach((carta) => {
+        const div = document.createElement("div");
+        div.classList.add("carta");
+
+        const img = document.createElement("img");
+        img.src = carta[1];
+        img.style.display = "none";
+
+        div.appendChild(img);
+
+        div.addEventListener("click", () => voltearCarta(div, img, carta));
+
+        contenedor.appendChild(div);
+    });
+}
+
+// ================== LÓGICA MEMORY ==================
+function voltearCarta(div, img, carta) {
+    if (memorySeleccion.length === 2) return;
+
+    img.style.display = "block";
+    memorySeleccion.push({ div, img, carta });
+
+    if (memorySeleccion.length === 2) {
+        const [c1, c2] = memorySeleccion;
+
+        if (c1.carta[0] === c2.carta[0]) {
+            memorySeleccion = [];
+        } else {
+            setTimeout(() => {
+                c1.img.style.display = "none";
+                c2.img.style.display = "none";
+                memorySeleccion = [];
+            }, 800);
+        }
+    }
+}

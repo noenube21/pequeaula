@@ -4,39 +4,60 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 <link rel="stylesheet" href="css/style.css">
+<style>
+    .memory-card {
+        width: 110px;
+        height: 110px;
+        background: white;
+        border: 3px solid #333;
+        border-radius: 10px;
+        margin: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    #pregunta {
+        min-height: 180px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+</style>
 </head>
 
 <body>
 
-<h1>PEQUE AULA 🌟</h1>
-<h2 id="tituloJuego"></h2>
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+</header>
+
+<h2 class="center menu-subtitle" id="tituloJuego"></h2>
 
 <div class="game-box">
-
-    <!-- 🔥 ESTE ES EL IMPORTANTE -->
     <div id="pregunta"></div>
 
+    <div id="zona"></div>
+
     <input id="respuesta" type="text">
-    <button onclick="comprobar()">Comprobar</button>
+    <button class="btn-primary" onclick="comprobar()">Comprobar</button>
 
     <p id="resultado"></p>
-
 </div>
 
-<script type="module">
-import { iniciarJuego } from "./js/juegos-master.js";
+<script type="module" src="js/juegos-master.js"></script>
 
+<script>
 const p = new URLSearchParams(location.search);
 const materia = p.get("materia");
 const nivel = p.get("nivel");
 
 document.getElementById("tituloJuego").innerText =
-    materia + " - Nivel " + nivel;
+    materia.toUpperCase() + " - Nivel " + nivel;
 
 window.onload = () => {
     iniciarJuego(materia + nivel);
 
-    if (nivel === "3") {
+    if (nivel === "3" && (materia === "ingles" || materia === "ciencias")) {
         document.getElementById("respuesta").style.display = "none";
     }
 };

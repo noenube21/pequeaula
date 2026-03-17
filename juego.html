@@ -12,7 +12,15 @@
 <h2 id="tituloJuego"></h2>
 
 <div class="game-box">
+
+    <!-- 🔥 ESTE ES EL IMPORTANTE -->
     <div id="pregunta"></div>
+
+    <input id="respuesta" type="text">
+    <button onclick="comprobar()">Comprobar</button>
+
+    <p id="resultado"></p>
+
 </div>
 
 <script type="module">
@@ -27,6 +35,10 @@ document.getElementById("tituloJuego").innerText =
 
 window.onload = () => {
     iniciarJuego(materia + nivel);
+
+    if (nivel === "3") {
+        document.getElementById("respuesta").style.display = "none";
+    }
 };
 </script>
 

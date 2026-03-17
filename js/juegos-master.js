@@ -253,6 +253,7 @@ export function comprobar() {
     guardarProgreso(asignaturaActual, a, e);
     document.getElementById("respuesta").value="";
     setTimeout(generarPregunta, 700);
+
 }
 
 window.comprobar = comprobar;
@@ -262,71 +263,3 @@ window.comprobarQuiz = (o)=>{
     let e = o !== preguntaActual.r ? 1 : 0;
     document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
     guardarProgreso(asignaturaActual, a, e);
-    setTimeout(generarPregunta, 700);
-};
-
-let palabraConstruida = "";
-window.agregarSilaba = (si)=>{
-    palabraConstruida += si;
-    document.getElementById("zona").innerText = palabraConstruida;
-    if (palabraConstruida.length >= preguntaActual.r.length) {
-        let a = palabraConstruida === preguntaActual.r ? 1 : 0;
-        let e = a ? 0 : 1;
-        document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
-        palabraConstruida = "";
-        guardarProgreso(asignaturaActual, a, e);
-        setTimeout(generarPregunta, 700);
-    }
-};
-
-window.clickMemory = (i) => {
-    const carta = memoryCartas[i];
-    const elem = document.getElementById("c"+i);
-
-    if (!elem.dataset.destapada) {
-        elem.dataset.destapada = "1";
-        elem.innerHTML = carta.tipo === "txt" ? carta.valor : `${carta.valor}`;
-        memorySeleccion.push({i, carta});
-    }
-
-    if (memorySeleccion.length === 2) {
-        const [a, b] = memorySeleccion;
-
-        const match =
-            (a.carta.tipo === "txt" && b.carta.tipo === "img" && a.carta.valor === b.carta.txt) ||
-            (b.carta.tipo === "txt" && a.carta.tipo === "img" && b.carta.valor === a.carta.txt);
-
-        if (match) {
-            setTimeout(() => {
-                document.getElementById("c"+a.i).style.visibility = "hidden";
-                document.getElementById("c"+b.i).style.visibility = "hidden";
-            }, 500);
-
-            guardarProgreso(asignaturaActual,1,0);
-        } else {
-            setTimeout(() => {
-                document.getElementById("c"+a.i).innerHTML = "";
-                document.getElementById("c"+b.i).innerHTML = "";
-                delete document.getElementById("c"+a.i).dataset.destapada;
-                delete document.getElementById("c"+b.i).dataset.destapada;
-            }, 700);
-
-            guardarProgreso(asignaturaActual,0,1);
-        }
-
-        setTimeout(() => {
-            memorySeleccion = [];
-        }, 800);
-    }
-};
-
-window.drag = (e,p)=>{ e.dataTransfer.setData("t",p); };
-window.drop = (e,p)=>{
-    const t = e.dataTransfer.getData("t");
-    let a = t===p?1:0;
-    let e2 = t!==p?1:0;
-    guardarProgreso(asignaturaActual,a,e2);
-    generarPregunta();
-};
-
-window.iniciarJuego = iniciarJuego;

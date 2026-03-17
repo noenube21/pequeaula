@@ -243,3 +243,19 @@ input {
 .menu-bottom {
     margin-top: 40px;           /* 🔥 Baja el botón */
 }
+
+.carta {
+    width: 100px;
+    height: 100px;
+    background: #ccc;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.carta img {
+    width: 80%;
+}

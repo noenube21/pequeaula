@@ -24,7 +24,6 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     gap: 25px;
-    margin-top: 20px;
 }
 
 .card {
@@ -49,13 +48,13 @@ body {
 }
 
 /* -----------------------------------------
-   JUEGO BOX
+   CAJA DEL JUEGO
 ------------------------------------------*/
 .game-box {
     background: white;
-    width: 300px;
+    width: 320px;
     margin: 20px auto;
-    padding: 25px;
+    padding: 20px;
     border-radius: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border: 3px solid #ffcc4d;
@@ -91,7 +90,7 @@ button:hover {
 }
 
 /* -----------------------------------------
-   MEMORY (ORIGINAL)
+   MEMORY — versión original que SÍ funcionaba
 ------------------------------------------*/
 .carta {
     width: 100px;

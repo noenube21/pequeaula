@@ -19,8 +19,19 @@
         cursor: pointer;
         border-radius: 10px;
     }
+
+    #pregunta {
+        min-height: 150px;
+        padding: 10px;
+    }
+
+    #zona {
+        min-height: 50px;
+        margin-top: 10px;
+    }
 </style>
 </head>
+
 <body>
 
 <header class="topbar menu-topbar">
@@ -31,13 +42,13 @@
 
 <div class="game-box">
 
-    <!-- ESTE ES EL BUENO -->
+    <!-- AQUÍ SE DIBUJAN LAS CARTAS / PREGUNTAS / BOTONES -->
     <div id="pregunta"></div>
 
-    <!-- Contenedor secundario -->
+    <!-- PARA SÍLABAS O DRAGDROP -->
     <div id="zona"></div>
 
-    <!-- Input solo para texto/quiz -->
+    <!-- SOLO TEXTO/QUIZ -->
     <input id="respuesta" type="text">
 
     <button class="btn-primary" onclick="comprobar()">Comprobar</button>
@@ -46,8 +57,8 @@
 
 </div>
 
-<script src="js/firebase-config.js" type="module"></script>
-<script src="js/juegos-master.js" type="module"></script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/juegos-master.js"></script>
 
 <script>
 const p = new URLSearchParams(location.search);
@@ -68,4 +79,3 @@ window.onload = () => {
 
 </body>
 </html>
-``

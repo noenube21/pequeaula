@@ -7,11 +7,15 @@ import { comprobarRecompensas } from "./recompensas.js";
 async function guardarProgreso(asignatura, aciertos, errores) {
     const u = auth.currentUser;
     if (!u) return;
+
     const ref = doc(db, "usuarios", u.uid);
     const snap = await getDoc(ref);
     let d = snap.exists() ? snap.data() : {};
+
     if (!d.progreso) d.progreso = {};
-    if (!d.progreso[asignatura]) d.progreso[asignatura] = { puntos: 0, completado: false };
+    if (!d.progreso[asignatura]) {
+        d.progreso[asignatura] = { puntos: 0, completado: false };
+    }
 
     await setDoc(ref, {
         partidas: increment(1),
@@ -31,11 +35,11 @@ async function guardarProgreso(asignatura, aciertos, errores) {
 
     const puntosTotales = ((d.aciertos || 0) + aciertos) - ((d.errores || 0) + errores);
     const nivel = Math.max(1, Math.floor(puntosTotales / 10));
+
     await updateDoc(ref, { nivel });
 }
 
 const Juegos = {
-
     matematicas1: {
         generar: () => {
             const a = Math.floor(Math.random() * 10);
@@ -134,9 +138,8 @@ const Juegos = {
 let juegoActual = null;
 let preguntaActual = null;
 let asignaturaActual = null;
-let modo = "texto";
-let opcionesActuales = [];
-let silabasActuales = [];
+let modo = null;
+
 let memoryCartas = [];
 let memorySeleccion = [];
 
@@ -164,56 +167,17 @@ function barajar(a) {
 function generarPregunta() {
 
     document.getElementById("pregunta").innerHTML = "";
-    document.getElementById("resultado").innerText = "";
     document.getElementById("zona").innerHTML = "";
+    document.getElementById("resultado").innerText = "";
 
-    if (modo === "texto") {
-        if (juegoActual.preguntas) {
-            preguntaActual = juegoActual.preguntas[Math.floor(Math.random() * juegoActual.preguntas.length)];
-        } else {
-            preguntaActual = juegoActual.generar();
-        }
-        document.getElementById("pregunta").innerText = preguntaActual.p;
-        return;
-    }
-
-    if (modo === "quiz") {
-        const q = juegoActual.quiz[Math.floor(Math.random() * juegoActual.quiz.length)];
-        preguntaActual = q;
-        document.getElementById("pregunta").innerHTML = q.p;
-
-        opcionesActuales = [...q.o];
-        barajar(opcionesActuales);
-
-        let html = "";
-        opcionesActuales.forEach((op) => {
-            html += `<button onclick="comprobarQuiz('${op}')">${op}</button>`;
-        });
-        document.getElementById("pregunta").innerHTML += "<br>" + html;
-        return;
-    }
-
-    if (modo === "silabas") {
-        const s = juegoActual.silabas[Math.floor(Math.random() * juegoActual.silabas.length)];
-        preguntaActual = s;
-        silabasActuales = barajar([...s.p]);
-        let html = "";
-        silabasActuales.forEach((si) => {
-            html += `<button onclick="agregarSilaba('${si}')">${si}</button>`;
-        });
-        document.getElementById("pregunta").innerHTML =
-            "Ordena las sílabas:<br><div id='zona'></div><br>" + html;
-        return;
-    }
-
+    /* ---------------- MEMORY ---------------- */
     if (modo === "memory") {
-
-        const base = juegoActual.memory;
+        const juegoActual.memory;
         let lista = [];
 
         base.forEach(([txt, img]) => {
             lista.push({ tipo: "txt", valor: txt });
-            lista.push({ tipo: "img", valor: `<img src='${img}' style='width:90px; height:90px;'>`, txt });
+            lista.push({ tipo: "img", valor: `<img src="${img}">`, txt });
         });
 
         memoryCartas = barajar(lista);
@@ -228,27 +192,169 @@ function generarPregunta() {
         return;
     }
 
+    /* --------------- TEXTO ---------------- */
+    if (modo === "texto") {
+        preguntaActual = juegoActual.preguntas
+            ? juegoActual.preguntas[Math.floor(Math.random() * juegoActual.preguntas.length)]
+            : juegoActual.generar();
+
+        document.getElementById("pregunta").innerText = preguntaActual.p;
+        return;
+    }
+
+    /* --------------- QUIZ ---------------- */
+    if (modo === "quiz") {
+        const q = juegoActual.quiz[Math.floor(Math.random() * juegoActual.quiz.length)];
+        preguntaActual = q;
+
+        let html = q.p + "<br>";
+        barajar(q.o).forEach(op => {
+            html += `<button onclick="comprobarQuiz('${op}')">${op}</button>`;
+        });
+
+        document.getElementById("pregunta").innerHTML = html;
+        return;
+    }
+
+    /* --------------- SÍLABAS ---------------- */
+    if (modo === "silabas") {
+        const s = juegoActual.silabas[Math.floor(Math.random() * juegoActual.silabas.length)];
+        preguntaActual = s;
+
+        let html = "Ordena las sílabas:<br><div id='zona'></div><br>";
+
+        barajar([...s.p]).forEach(si => {
+            html += `<button onclick="agregarSilaba('${si}')">${si}</button>`;
+        });
+
+        document.getElementById("pregunta").innerHTML = html;
+        return;
+    }
+
+    /* --------------- DRAG ---------------- */
     if (modo === "drag") {
         let html = "";
-        juegoActual.drag.forEach((obj,i)=>{
+
+        juegoActual.drag.forEach(obj => {
             html += `
-            <div class="dragitem">
-                <img src="${obj.img}" style="width:80px;">
-                <div class="dropzone" ondrop="drop(event,'${obj.palabra}')" ondragover="event.preventDefault();"></div>
-            </div>
-            <button draggable="true" ondragstart="drag(event,'${obj.palabra}')">${obj.palabra}</button>
+                <div class="dragitem">
+                    <img src="${obj.img}" width="80">
+                    <div class="dropzone" ondrop="drop(event,'${obj.palabra}')" ondragover="event.preventDefault();"></div>
+                </div>
+                <button draggable="true" ondragstart="drag(event,'${obj.palabra}')">${obj.palabra}</button>
             `;
         });
+
         document.getElementById("pregunta").innerHTML = html;
-        preguntaActual = juegoActual.drag;  
+        return;
     }
 }
 
+/* ------------------------------------------------------------------------
+    TEXTO
+------------------------------------------------------------------------ */
 export function comprobar() {
     if (modo !== "texto") return;
+
     const inp = document.getElementById("respuesta").value.trim().toLowerCase();
     const ok = preguntaActual.r.toLowerCase();
-    let a = inp === ok ? 1 : 0;
-    let e = inp !== ok ? 1 : 0;
-    document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
-    guardarProgreso(asignaturaActual, a, e);
+
+    guardarProgreso(asignaturaActual, inp === ok ? 1 : 0, inp !== ok ? 1 : 0);
+
+    document.getElementById("resultado").innerText =
+        inp === ok ? "Correcto!" : "Incorrecto";
+
+    document.getElementById("respuesta").value = "";
+
+    setTimeout(generarPregunta, 700);
+}
+
+window.comprobar = comprobar;
+
+/* ------------------------------------------------------------------------
+    QUIZ
+------------------------------------------------------------------------ */
+window.comprobarQuiz = (o) => {
+    guardarProgreso(asignaturaActual, o === preguntaActual.r ? 1 : 0, o !== preguntaActual.r ? 1 : 0);
+
+    document.getElementById("resultado").innerText =
+        o === preguntaActual.r ? "Correcto!" : "Incorrecto";
+
+    setTimeout(generarPregunta, 700);
+};
+
+/* ------------------------------------------------------------------------
+    SÍLABAS
+------------------------------------------------------------------------ */
+let palabraConstruida = "";
+
+window.agregarSilaba = (si) => {
+    palabraConstruida += si;
+    document.getElementById("zona").innerText = palabraConstruida;
+
+    if (palabraConstruida.length >= preguntaActual.r.length) {
+        guardarProgreso(asignaturaActual,
+            palabraConstruida === preguntaActual.r ? 1 : 0,
+            palabraConstruida !== preguntaActual.r ? 1 : 0
+        );
+
+        palabraConstruida = "";
+        setTimeout(generarPregunta, 700);
+    }
+};
+
+/* ------------------------------------------------------------------------
+    MEMORY
+------------------------------------------------------------------------ */
+window.clickMemory = (i) => {
+    const carta = memoryCartas[i];
+    const elem = document.getElementById("c"+i);
+
+    if (!elem.dataset.destapada) {
+        elem.dataset.destapada = "1";
+        elem.innerHTML = carta.valor;
+        memorySeleccion.push({ i, carta });
+    }
+
+    if (memorySeleccion.length === 2) {
+        const [a, b] = memorySeleccion;
+
+        const match =
+            (a.carta.tipo === "txt" && b.carta.tipo === "img" && a.carta.valor === b.carta.txt) ||
+            (b.carta.tipo === "txt" && a.carta.tipo === "img" && b.carta.valor === a.carta.txt);
+
+        if (match) {
+            setTimeout(() => {
+                document.getElementById("c"+a.i).style.visibility = "hidden";
+                document.getElementById("c"+b.i).style.visibility = "hidden";
+            }, 500);
+
+            guardarProgreso(asignaturaActual, 1, 0);
+
+        } else {
+            setTimeout(() => {
+                document.getElementById("c"+a.i).innerHTML = "";
+                document.getElementById("c"+b.i).innerHTML = "";
+                delete document.getElementById("c"+a.i).dataset.destapada;
+                delete document.getElementById("c"+b.i).dataset.destapada;
+            }, 600);
+
+            guardarProgreso(asignaturaActual, 0, 1);
+        }
+
+        setTimeout(() => { memorySeleccion = []; }, 700);
+    }
+};
+
+/* ------------------------------------------------------------------------
+    DRAG & DROP
+------------------------------------------------------------------------ */
+window.drag = (e,p)=>{ e.dataTransfer.setData("t",p); };
+
+window.drop = (e,p)=>{
+    const t = e.dataTransfer.getData("t");
+    guardarProgreso(asignaturaActual, t === p ? 1 : 0, t !== p ? 1 : 0);
+    generarPregunta();
+};
+
+window.iniciarJuego = iniciarJuego;

@@ -161,7 +161,9 @@ function barajar(a) {
     return a;
 }
 
-("pregunta").innerHTML = "";
+function generarPregunta() {
+
+    document.getElementById("pregunta").innerHTML = "";
     document.getElementById("resultado").innerText = "";
     document.getElementById("zona").innerHTML = "";
 
@@ -211,7 +213,7 @@ function barajar(a) {
 
         base.forEach(([txt, img]) => {
             lista.push({ tipo: "txt", valor: txt });
-            lista.push({ tipo: "img", valor: `<img src="${img}" width="80" height="80">`, txt });
+            lista.push({ tipo: "img", valor: `<img src='${img}' style='width:90px; height:90px;'>`, txt });
         });
 
         memoryCartas = barajar(lista);
@@ -231,14 +233,14 @@ function barajar(a) {
         juegoActual.drag.forEach((obj,i)=>{
             html += `
             <div class="dragitem">
-                ${obj.img}
+                <img src="${obj.img}" style="width:80px;">
                 <div class="dropzone" ondrop="drop(event,'${obj.palabra}')" ondragover="event.preventDefault();"></div>
             </div>
             <button draggable="true" ondragstart="drag(event,'${obj.palabra}')">${obj.palabra}</button>
             `;
         });
         document.getElementById("pregunta").innerHTML = html;
-        preguntaActual = juegoActual.drag;
+        preguntaActual = juegoActual.drag;  
     }
 }
 
@@ -250,80 +252,3 @@ export function comprobar() {
     let e = inp !== ok ? 1 : 0;
     document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
     guardarProgreso(asignaturaActual, a, e);
-    document.getElementById("respuesta").value="";
-    setTimeout(generarPregunta, 700);
-}
-
-window.comprobar = comprobar;
-
-window.comprobarQuiz = (o)=>{
-    let a = o === preguntaActual.r ? 1 : 0;
-    let e = o !== preguntaActual.r ? 1 : 0;
-    document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
-    guardarProgreso(asignaturaActual, a, e);
-    setTimeout(generarPregunta, 700);
-};
-
-let palabraConstruida = "";
-window.agregarSilaba = (si)=>{
-    palabraConstruida += si;
-    document.getElementById("zona").innerText = palabraConstruida;
-    if (palabraConstruida.length >= preguntaActual.r.length) {
-        let a = palabraConstruida === preguntaActual.r ? 1 : 0;
-        let e = a ? 0 : 1;
-        document.getElementById("resultado").innerText = a ? "Correcto!" : "Incorrecto";
-        palabraConstruida = "";
-        guardarProgreso(asignaturaActual, a, e);
-        setTimeout(generarPregunta, 700);
-    }
-};
-
-window.clickMemory = (i) => {
-    const carta = memoryCartas[i];
-    const elem = document.getElementById("c"+i);
-
-    if (!elem.dataset.destapada) {
-        elem.dataset.destapada = "1";
-        elem.innerHTML = carta.valor;
-        memorySeleccion.push({i, carta});
-    }
-
-    if (memorySeleccion.length === 2) {
-        const [a, b] = memorySeleccion;
-
-        const match =
-            (a.carta.tipo === "txt" && b.carta.tipo === "img" && a.carta.valor === b.carta.txt) ||
-            (b.carta.tipo === "txt" && a.carta.tipo === "img" && b.cartaf (match) {
-            setTimeout(() => {
-                document.getElementById("c"+a.i).style.visibility = "hidden";
-                document.getElementById("c"+b.i).style.visibility = "hidden";
-            }, 400);
-
-            guardarProgreso(asignaturaActual,1,0);
-        } else {
-            setTimeout(() => {
-                document.getElementById("c"+a.i).innerHTML = "";
-                document.getElementById("c"+b.i).innerHTML = "";
-                delete document.getElementById("c"+a.i).dataset.destapada;
-                delete document.getElementById("c"+b.i).dataset.destapada;
-            }, 500);
-
-            guardarProgreso(asignaturaActual,0,1);
-        }
-
-        setTimeout(() => {
-            memorySeleccion = [];
-        }, 700);
-    }
-};
-
-window.drag = (e,p)=>{ e.dataTransfer.setData("t",p); };
-window.drop = (e,p)=>{
-    const t = e.dataTransfer.getData("t");
-    let a = t===p?1:0;
-    let e2 = t!==p?1:0;
-    guardarProgreso(asignaturaActual,a,e2);
-    generarPregunta();
-};
-
-window.iniciarJuego = iniciarJuego;

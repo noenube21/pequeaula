@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 <link rel="stylesheet" href="css/style.css">
+
 <style>
     .memory-card {
         width: 100px;
@@ -30,13 +31,13 @@
 
 <div class="game-box">
 
-    <!-- CONTENEDOR PARA TEXTO O MEMORIA -->
+    <!-- ESTE ES EL BUENO -->
     <div id="pregunta"></div>
 
-    <!-- CONTENEDOR SECUNDARIO (para sílabas y drag&drop) -->
+    <!-- Contenedor secundario -->
     <div id="zona"></div>
 
-    <!-- SOLO SE USA EN TEXTO/QUIZ -->
+    <!-- Input solo para texto/quiz -->
     <input id="respuesta" type="text">
 
     <button class="btn-primary" onclick="comprobar()">Comprobar</button>
@@ -45,8 +46,8 @@
 
 </div>
 
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="js/juegos-master.js"></script>
+<script src="js/firebase-config.js" type="module"></script>
+<script src="js/juegos-master.js" type="module"></script>
 
 <script>
 const p = new URLSearchParams(location.search);
@@ -67,3 +68,4 @@ window.onload = () => {
 
 </body>
 </html>
+``

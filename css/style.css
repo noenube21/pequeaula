@@ -6,13 +6,11 @@ body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
     padding: 0;
-
     background-image: url("../assets/img/fondo-escolar.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,78 +18,7 @@ body {
 }
 
 /* -----------------------------------------
-   CONTENEDOR CENTRAL
-------------------------------------------*/
-
-.main-container {
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-/* -----------------------------------------
-   TÍTULOS
-------------------------------------------*/
-
-h1, h2, h3 {
-    font-family: 'Poppins', sans-serif;
-    color: #ff6f61;
-    text-shadow: 2px 2px #ffffff;
-    margin-bottom: 10px;
-}
-
-/* -----------------------------------------
-   BOTONES
-------------------------------------------*/
-
-button, .btn {
-    background: #ff6f61;
-    color: white;
-    padding: 12px 25px;
-    border-radius: 15px;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-button:hover {
-    background: #e85a4f;
-}
-
-/* -----------------------------------------
-   INPUTS
-------------------------------------------*/
-
-input {
-    padding: 12px;
-    width: 80%;
-    border-radius: 15px;
-    border: 2px solid #ffcc4d;
-    margin: 10px auto;
-    display: block;
-    font-size: 18px;
-}
-
-/* -----------------------------------------
-   CAJA DEL JUEGO
-------------------------------------------*/
-
-.game-box {
-    background: white;
-    width: 320px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border: 3px solid #ffcc4d;
-    text-align: center;
-}
-
-/* -----------------------------------------
-   TARJETAS MENÚ Y NIVELES
+   TARJETAS DEL MENÚ
 ------------------------------------------*/
 
 .card-container {
@@ -124,21 +51,56 @@ input {
 }
 
 /* -----------------------------------------
-   RESULTADO
+   CAJA DEL JUEGO
 ------------------------------------------*/
 
-#resultado {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: bold;
+.game-box {
+    background: white;
+    width: 320px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 3px solid #ffcc4d;
+    text-align: center;
 }
+
 /* -----------------------------------------
-   MEMORY CARDS (NO TOCAR MENÚ)
+   INPUTS Y BOTONES
+------------------------------------------*/
+
+input {
+    padding: 12px;
+    width: 80%;
+    border-radius: 15px;
+    border: 2px solid #ffcc4d;
+    margin: 10px auto;
+    display: block;
+    font-size: 18px;
+}
+
+button, .btn {
+    background: #ff6f61;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:hover {
+    background: #e85a4f;
+}
+
+/* -----------------------------------------
+   MEMORY (solo esto se añade)
 ------------------------------------------*/
 
 .memory-card {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     background: white;
     border: 3px solid #333;
     border-radius: 12px;
@@ -159,5 +121,5 @@ input {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    min-height: 160px;
+    min-height: 150px;
 }

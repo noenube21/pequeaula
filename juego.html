@@ -17,29 +17,24 @@
 <div class="game-box">
     <div id="pregunta"></div>
     <div id="zona"></div>
-
     <input id="respuesta" type="text">
     <button onclick="comprobar()">Comprobar</button>
-
     <p id="resultado"></p>
 </div>
 
-<script src="js/firebase-config.js" type="module"></script>
-<script src="js/juegos-master.js" type="module"></script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/juegos-master.js"></script>
 
 <script>
 const p = new URLSearchParams(location.search);
 const materia = p.get("materia");
 const nivel = p.get("nivel");
+
 document.getElementById("tituloJuego").innerText =
     materia.toUpperCase() + " - Nivel " + nivel;
 
 window.onload = () => {
     iniciarJuego(materia + nivel);
-
-    if (nivel === "3" && (materia === "ingles" || materia === "ciencias")) {
-        document.getElementById("respuesta").style.display = "none";
-    }
 };
 </script>
 

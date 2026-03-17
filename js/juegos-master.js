@@ -1,7 +1,5 @@
-import { auth, db } from "../firebase-config.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
 const Juegos = {
+
     matematicas1: {
         generar: () => {
             const a = Math.floor(Math.random() * 10);
@@ -26,25 +24,31 @@ const Juegos = {
         }
     },
 
+
     ingles3: {
         memory: [
-            ["dog", "assets/img/dog.png"],
-            ["house", "assets/img/house.png"],
-            ["apple", "assets/img/apple.png"]
+            ["dog","assets/img/dog.png"],
+            ["house","assets/img/house.png"],
+            ["apple","assets/img/apple.png"]
         ]
     },
 
     ciencias3: {
         memory: [
-            ["sol", "assets/img/sol.png"],
-            ["luna", "assets/img/luna.png"],
-            ["mar", "assets/img/mar.png"]
+            ["sol","assets/img/sol.png"],
+            ["luna","assets/img/luna.png"],
+            ["mar","assets/img/mar.png"]
         ]
     }
 };
 
+// VARIABLES
+let juegoActual = null;
+
+// INICIAR JUEGO
 export function iniciarJuego(key) {
-    const juego = Juegos[key];
+
+    juegoActual = Juegos[key];
 
     const pregunta = document.getElementById("pregunta");
     const zona = document.getElementById("zona");
@@ -52,9 +56,10 @@ export function iniciarJuego(key) {
     pregunta.innerHTML = "";
     zona.innerHTML = "";
 
-    // TEXTOS
-    if (juego.generar) {
-        const q = juego.generar();
+    // SI ES TEXTO
+    if (juegoActual.generar) {
+        const q = juegoActual.generar();
+
         pregunta.innerText = q.p;
 
         window.comprobar = () => {
@@ -62,14 +67,19 @@ export function iniciarJuego(key) {
             document.getElementById("resultado").innerText =
                 r === q.r ? "Correcto" : "Incorrecto";
         };
+
+        return;
     }
 
-    // MEMORY (versión estable)
-    if (juego.memory) {
-        let cartas = [...juego.memory, ...juego.memory];
+    // SI ES MEMORY (versión original simple)
+    if (juegoActual.memory) {
+
+        let cartas = [...juegoActual.memory, ...juegoActual.memory];
+
         cartas.sort(() => Math.random() - 0.5);
 
         cartas.forEach(carta => {
+
             const div = document.createElement("div");
             div.classList.add("carta");
 
@@ -85,5 +95,8 @@ export function iniciarJuego(key) {
 
             zona.appendChild(div);
         });
+
+        return;
     }
+
 }

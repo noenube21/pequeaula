@@ -141,3 +141,44 @@ let memoryCartas = [];
 let memorySeleccion = [];
 
 export function iniciarJuego(key) {
+    asignaturaActual = key;
+    juegoActual = Juegos[key];
+
+    if (juegoActual.quiz) modo = "quiz";
+    else if (juegoActual.silabas) modo = "silabas";
+    else if (juegoActual.drag) modo = "drag";
+    else if (juegoActual.memory) modo = "memory";
+    else modo = "texto";
+
+    generarPregunta();
+}
+
+function barajar(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function generarPregunta() {
+
+    document.getElementById("pregunta").innerHTML = "";
+    document.getElementById("resultado").innerText = "";
+    document.getElementById("zona").innerHTML = "";
+
+    if (modo === "texto") {
+        if (juegoActual.preguntas) {
+            preguntaActual = juegoActual.preguntas[Math.floor(Math.random() * juegoActual.preguntas.length)];
+        } else {
+            preguntaActual = juegoActual.generar();
+        }
+        document.getElementById("pregunta").innerText = preguntaActual.p;
+        return;
+    }
+
+    if (modo === "quiz") {
+        const q = juegoActual.quiz[Math.floor(Math.random() * juegoActual.quiz.length)];
+        preguntaActual = q;
+        document.getElementById("pregunta").innerHTML = q.p;
+

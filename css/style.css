@@ -1,7 +1,6 @@
 /* -----------------------------------------
    FONDO GENERAL
 ------------------------------------------*/
-
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -20,24 +19,24 @@ body {
 /* -----------------------------------------
    TARJETAS DEL MENÚ
 ------------------------------------------*/
-
 .card-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin-top: 20px;
 }
 
 .card {
     background: white;
-    width: 130px;
-    padding: 15px;
-    border-radius: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    border: 3px solid #ffcc4d;
+    width: 180px;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: 0.2s;
     text-align: center;
+    border: 3px solid #ffcc4d;
 }
 
 .card:hover {
@@ -45,20 +44,18 @@ body {
 }
 
 .card img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
+    width: 90px;
+    height: 90px;
 }
 
 /* -----------------------------------------
-   CAJA DEL JUEGO
+   JUEGO BOX
 ------------------------------------------*/
-
 .game-box {
     background: white;
-    width: 320px;
+    width: 300px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 25px;
     border-radius: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border: 3px solid #ffcc4d;
@@ -68,7 +65,6 @@ body {
 /* -----------------------------------------
    INPUTS Y BOTONES
 ------------------------------------------*/
-
 input {
     padding: 12px;
     width: 80%;
@@ -79,7 +75,7 @@ input {
     font-size: 18px;
 }
 
-button, .btn {
+button {
     background: #ff6f61;
     color: white;
     padding: 12px 25px;
@@ -95,31 +91,20 @@ button:hover {
 }
 
 /* -----------------------------------------
-   MEMORY (solo esto se añade)
+   MEMORY (ORIGINAL)
 ------------------------------------------*/
-
-.memory-card {
+.carta {
     width: 100px;
     height: 100px;
-    background: white;
-    border: 3px solid #333;
-    border-radius: 12px;
-    margin: 10px;
+    background: #ccc;
     display: inline-flex;
-    justify-content: center;
     align-items: center;
-    cursor: pointer;
-}
-
-.memory-card img {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-}
-
-#pregunta {
-    display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    min-height: 150px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.carta img {
+    width: 80%;
 }

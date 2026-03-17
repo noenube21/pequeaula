@@ -4,74 +4,39 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 <link rel="stylesheet" href="css/style.css">
-
-<style>
-    .memory-card {
-        width: 100px;
-        height: 100px;
-        background: white;
-        border: 2px solid #333;
-        margin: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        cursor: pointer;
-        border-radius: 10px;
-    }
-
-    #pregunta {
-        min-height: 150px;
-        padding: 10px;
-    }
-
-    #zona {
-        min-height: 50px;
-        margin-top: 10px;
-    }
-</style>
 </head>
 
 <body>
 
-<header class="topbar menu-topbar">
-    <span class="logo menu-logo">PEQUE AULA 🌟</span>
-</header>
-
-<h2 class="center menu-subtitle" id="tituloJuego"></h2>
+<h1>PEQUE AULA 🌟</h1>
+<h2 id="tituloJuego"></h2>
 
 <div class="game-box">
 
-    <!-- AQUÍ SE DIBUJAN LAS CARTAS / PREGUNTAS / BOTONES -->
+    <!-- 🔥 ESTE ES EL IMPORTANTE -->
     <div id="pregunta"></div>
 
-    <!-- PARA SÍLABAS O DRAGDROP -->
-    <div id="zona"></div>
-
-    <!-- SOLO TEXTO/QUIZ -->
     <input id="respuesta" type="text">
-
-    <button class="btn-primary" onclick="comprobar()">Comprobar</button>
+    <button onclick="comprobar()">Comprobar</button>
 
     <p id="resultado"></p>
 
 </div>
 
-<script type="module" src="js/firebase-config.js"></script>
-<script type="module" src="js/juegos-master.js"></script>
+<script type="module">
+import { iniciarJuego } from "./js/juegos-master.js";
 
-<script>
 const p = new URLSearchParams(location.search);
 const materia = p.get("materia");
 const nivel = p.get("nivel");
 
 document.getElementById("tituloJuego").innerText =
-    materia.toUpperCase() + " - Nivel " + nivel;
+    materia + " - Nivel " + nivel;
 
 window.onload = () => {
     iniciarJuego(materia + nivel);
 
-    if (nivel === "3" && (materia === "ingles" || materia === "ciencias")) {
+    if (nivel === "3") {
         document.getElementById("respuesta").style.display = "none";
     }
 };

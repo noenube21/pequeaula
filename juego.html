@@ -4,21 +4,6 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 css/style.css
-<style>
-    .memory-card {
-        width: 100px;
-        height: 100px;
-        background: white;
-        border: 2px solid #333;
-        margin: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        cursor: pointer;
-        border-radius: 10px;
-    }
-</style>
 </head>
 <body>
 
@@ -29,39 +14,28 @@ css/style.css
 <h2 class="center menu-subtitle" id="tituloJuego"></h2>
 
 <div class="game-box">
-
-    <!-- CONTENEDOR PARA TEXTO O MEMORIA -->
-    <div id="pregunta"></div>
-
-    <!-- CONTENEDOR SECUNDARIO (para sílabas y drag&drop) -->
+    <p id="pregunta"></p>
     <div id="zona"></div>
 
-    <!-- SOLO SE USA EN TEXTO/QUIZ -->
     <input id="respuesta" type="text">
-
     <button class="btn-primary" onclick="comprobar()">Comprobar</button>
 
     <p id="resultado"></p>
-
 </div>
 
 firebase-config.js</script>
 js/juegos-master.js</script>
 
 <script>
-const p = new URLSearchParams(location.search);
-const materia = p.get("materia");
-const nivel = p.get("nivel");
+const params = new URLSearchParams(location.search);
+const materia = params.get("materia");
+const nivel = params.get("nivel");
 
 document.getElementById("tituloJuego").innerText =
     materia.toUpperCase() + " - Nivel " + nivel;
 
-window.onload = () => {
+window.onload = function() {
     iniciarJuego(materia + nivel);
-
-    if (nivel === "3" && (materia === "ingles" || materia === "ciencias")) {
-        document.getElementById("respuesta").style.display = "none";
-    }
 };
 </script>
 

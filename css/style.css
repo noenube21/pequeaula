@@ -1,6 +1,4 @@
-/* -----------------------------------------
-   FONDO GENERAL
-------------------------------------------*/
+/* FONDO GENERAL */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -9,51 +7,46 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    background-attachment: fixed;
     min-height: 100vh;
 }
 
-/* -----------------------------------------
-   TARJETAS (MENÚ / ASIGNATURAS / NIVELES)
-------------------------------------------*/
-.card-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 25px;
-    margin-top: 20px;
-}
-
-.card {
-    background: white;
-    width: 180px;
-    padding: 20px;
-    border-radius: 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border: 3px solid #ffcc4d;
+/* HEADER */
+.topbar {
+    width: 100%;
     text-align: center;
-    cursor: pointer;
+    padding: 20px 0;
 }
-.card:hover { transform: scale(1.05); }
-.card img { width: 90px; height: 90px; }
+.logo {
+    font-size: 35px;
+    font-weight: bold;
+}
 
-/* -----------------------------------------
-   CAJA DEL JUEGO
-------------------------------------------*/
+/* TÍTULO DEL JUEGO */
+.titulo-juego {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 28px;
+}
+
+/* CAJA DEL JUEGO */
 .game-box {
     background: white;
-    width: 330px;
+    width: 360px;
     padding: 25px;
-    border-radius: 25px;
+    border-radius: 20px;
     border: 3px solid #ffcc4d;
     text-align: center;
-    margin: 20px auto;
-    font-size: 20px;
+    margin: 40px auto;
 }
 
-/* -----------------------------------------
-   INPUTS Y BOTONES
-------------------------------------------*/
+/* PREGUNTA */
+.pregunta {
+    font-size: 26px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* INPUT */
 input {
     padding: 12px;
     width: 80%;
@@ -64,6 +57,7 @@ input {
     font-size: 18px;
 }
 
+/* BOTÓN */
 button {
     background: #ff6f61;
     color: white;
@@ -74,22 +68,6 @@ button {
     cursor: pointer;
     margin-top: 15px;
 }
-button:hover { background: #e85a4f; }
-
-/* -----------------------------------------
-   MEMORY (FUNCIONAL)
-------------------------------------------*/
-.carta {
-    width: 100px;
-    height: 100px;
-    background: #ccc;
-    border-radius: 10px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    margin: 7px;
-}
-.carta img {
-    width: 80%;
+button:hover {
+    background: #e85a4f;
 }

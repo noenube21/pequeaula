@@ -7,7 +7,6 @@ const Juegos = {
     // ===============================
     // MATEMÁTICAS
     // ===============================
-
     matematicas1: {
         generar: () => {
             const a = Math.floor(Math.random()*10);
@@ -88,7 +87,7 @@ const Juegos = {
     ingles1: {
         preguntas: [
             { p:"Dog =", r:"perro" }, { p:"House =", r:"casa" }, { p:"Car =", r:"coche" },
-            { p:"Sun =", r:"sol" },   { p:"Moon =", r:"luna" }, { p:"Milk =", r:"leche" },
+            { p:"Sun =", r:"sol" }, { p:"Moon =", r:"luna" }, { p:"Milk =", r:"leche" },
             { p:"Book =", r:"libro" }, { p:"Cat =", r:"gato" }, { p:"Water =", r:"agua" },
             { p:"Bed =", r:"cama" }
         ]
@@ -157,6 +156,7 @@ const Juegos = {
     }
 };
 
+
 // =======================================
 // MOTOR DEL JUEGO
 // =======================================
@@ -169,7 +169,7 @@ export function iniciarJuego(key) {
     juegoActual = Juegos[key];
 
     const pregunta = document.getElementById("pregunta");
-    const zona = document.getElementById("zona");
+        const zona = document.getElementById("zona");
     const resultado = document.getElementById("resultado");
     const input = document.getElementById("respuesta");
 
@@ -192,8 +192,9 @@ export function iniciarJuego(key) {
     }
 }
 
+
 // =======================================
-// COMPROBAR RESPUESTA (VERSIÓN FINAL)
+// COMPROBAR RESPUESTA — VERSIÓN FINAL
 // =======================================
 
 export function comprobar() {
@@ -202,22 +203,22 @@ export function comprobar() {
     const ok = preguntaActual.r.toLowerCase();
     const resultado = document.getElementById("resultado");
 
-    // Mostrar resultado
+    // Mostrar resultado al niño
     if (r === ok) {
         resultado.innerText = "✔ Correcto";
     } else {
-        resultado.innerText = `✘ Incorrecto. La respuesta correcta es: ${preguntaActual.r}`;
+        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
-    // ⭐ REGISTRAR PROGRESO GLOBAL
-    import("./js/progreso.js").then(mod => {
-        mod.registrarResultado(
-            materia + nivel,       // ejemplo: ingles3
-            r === ok ? 1 : 0,      // acierto
-            r !== ok ? 1 : 0       // error
-        );
-    }).catch(err => console.error("Error cargando progreso.js:", err));
+    // ⭐ REGISTRAR PROGRESO GLOBAL ⭐
+    import("./progreso.js")
+        .then(mod => mod.registrarResultado(
+            materia + nivel,       // ej: ingles3, castellano2
+            r === ok ? 1 : 0,      // aciertos
+            r !== ok ? 1 : 0       // errores
+        ))
+        .catch(err => console.error("ERROR IMPORT:", err));
 
-    // Siguiente pregunta
+    // siguiente pregunta
     setTimeout(() => iniciarJuego(materia + nivel), 800);
 }

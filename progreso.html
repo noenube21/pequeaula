@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Progreso del Alumno</title>
-    <link rel="stylesheet" href="css/style.css">
+    css/style.css
 </head>
 
 <body>
@@ -15,22 +15,27 @@
 
 <h2 class="center">Progreso del alumno</h2>
 
-<div class="card-game">
+<!-- 🔥 CONTENEDOR NUEVO PARA CENTRAR -->
+<div class="progreso-container">
 
-    <p><strong>Partidas jugadas:</strong> <span id="partidas">0</span></p>
-    <p><strong>Aciertos:</strong> <span id="aciertos">0</span></p>
-    <p><strong>Errores:</strong> <span id="errores">0</span></p>
-    <p><strong>Porcentaje de acierto:</strong> <span id="porcentaje">0%</span></p>
+    <!-- 🔥 CAJA BLANCA (TU CONTENIDO DENTRO) -->
+    <div class="progreso-box">
 
-    <h3>Progreso por asignatura</h3>
-    <div id="progresoAsignaturas"></div>
+        <p><strong>Partidas jugadas:</strong> <span id="partidas">0</span></p>
+        <p><strong>Aciertos:</strong> <span id="aciertos">0</span></p>
+        <p><strong>Errores:</strong> <span id="errores">0</span></p>
+        <p><strong>Porcentaje de acierto:</strong> <span id="porcentaje">0%</span></p>
 
-    <button class="btn-secondary" onclick="location.href='menu.html'">Volver al menú</button>
+        <h3>Progreso por asignatura</h3>
+        <div id="progresoAsignaturas"></div>
 
+        menu.htmlVolver al menú</button>
+
+    </div>
 </div>
 
-<!-- IMPORTANTE: SOLO ESTE SCRIPT Y COMO MÓDULO -->
-<script type="module" src="js/progreso.js"></script>
+<!-- Script del progreso -->
+js/progreso.js</script>
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 // =====================================================
-// IMPORTS
+//  IMPORTS
 // =====================================================
 import { auth, db } from "../firebase-config.js";
 import {
@@ -10,9 +10,10 @@ import {
 
 
 // =====================================================
-// 1. REGISTRAR RESULTADOS
+//  1. REGISTRAR RESULTADOS (VERSIÓN QUE FUNCIONABA)
 // =====================================================
 export async function registrarResultado(asignatura, correctas, incorrectas) {
+
     const user = auth.currentUser;
     if (!user) return;
 
@@ -21,26 +22,34 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
     let datos = snap.exists() ? snap.data() : {};
 
+    // Crear estructura si no existe
     if (!datos.progreso) datos.progreso = {};
     if (!datos.progreso[asignatura]) {
         datos.progreso[asignatura] = {
-            aciertos: 0,
-            errores: 0
+            puntos: 0,
+            completado: false
         };
     }
 
-    datos.progreso[asignatura].aciertos += correctas;
-    datos.progreso[asignatura].errores += incorrectas;
+    // SUMAR SOLO PUNTOS (tal como funcionaba antes)
+    datos.progreso[asignatura].puntos += correctas;
 
+    // COMPLETADO = antes era “si acierta más que falla”
+    if (correctas > incorrectas) {
+        datos.progreso[asignatura].completado = true;
+    }
+
+    // Guardar
     await setDoc(ref, { progreso: datos.progreso }, { merge: true });
 }
 
 
 
 // =====================================================
-// 2. CARGAR PROGRESO AGRUPADO POR ASIGNATURA REAL
+//  2. CARGAR PROGRESO (VERSIÓN QUE FUNCIONABA)
 // =====================================================
 async function cargarProgreso() {
+
     const user = auth.currentUser;
     if (!user) return;
 
@@ -50,70 +59,34 @@ async function cargarProgreso() {
 
     const datos = snap.data();
 
-    // ====== TOTALES GENERALES ======
+    // Mostrar totales (estos funcionan bien)
+    document.getElementById("partidas").textContent = datos.partidas || 0;
+    document.getElementById("aciertos").textContent = datos.aciertos || 0;
+    document.getElementById("errores").textContent = datos.errores || 0;
+
     const partidas = datos.partidas || 0;
     const aciertos = datos.aciertos || 0;
-    const errores = datos.errores || 0;
-
-    const porcentajeGlobal =
-        partidas > 0 ? Math.round(aciertos / partidas * 100) : 0;
-
-    document.getElementById("partidas").textContent = partidas;
-    document.getElementById("aciertos").textContent = aciertos;
-    document.getElementById("errores").textContent = errores;
-    document.getElementById("porcentaje").textContent = porcentajeGlobal + "%";
+    const porcentaje = partidas > 0 ? Math.round((aciertos / partidas) * 100) : 0;
+    document.getElementById("porcentaje").textContent = porcentaje + "%";
 
 
-    // GRUPOS FLEXIBLES — DETECTA TU FIRESTORE REAL
-    const grupos = {
-        matematicas: [],
-        castellano: [],
-        ingles: [],
-        ciencias: []
-    };
-
-    for (const clave in datos.progreso) {
-        const claveMin = clave.toLowerCase();
-
-        if (claveMin.startsWith("matematicas")) grupos.matematicas.push(clave);
-        else if (claveMin.startsWith("castellano")) grupos.castellano.push(clave);
-        else if (claveMin.startsWith("ingles")) grupos.ingles.push(clave);
-        else if (claveMin.startsWith("ciencias")) grupos.ciencias.push(clave);
-    }
-
-    // ORDEN FIJO QUE TÚ PEDISTE
-    const orden = ["matematicas", "castellano", "ingles", "ciencias"];
-
+    // === MOSTRAR ASIGNATURAS (VERSION QUE FUNCIONABA ANTES) ===
     const contenedor = document.getElementById("progresoAsignaturas");
     contenedor.innerHTML = "";
 
-    for (const materia of orden) {
+    if (!datos.progreso) return;
 
-        const clavesMateria = grupos[materia];
-        if (clavesMateria.length === 0) continue;
+    for (const asignatura in datos.progreso) {
 
-        let aciertosSum = 0;
-        let erroresSum = 0;
-
-        clavesMateria.forEach(k => {
-            const info = datos.progreso[k] || {};
-            aciertosSum += info.aciertos || 0;
-            erroresSum  += info.errores  || 0;
-        });
-
-        const total = aciertosSum + erroresSum;
-        const porcentaje =
-            total > 0 ? Math.round(aciertosSum / total * 100) : 0;
+        const info = datos.progreso[asignatura];
 
         const div = document.createElement("div");
         div.classList.add("asignatura-box");
 
         div.innerHTML = `
-            <p><strong>${materia.toUpperCase()}</strong></p>
-            <p>Aciertos: ${aciertosSum}</p>
-            <p>Errores: ${erroresSum}</p>
-            <p>Porcentaje: ${porcentaje}%</p>
-            <p>Completado: ${porcentaje >= 70 ? "✔ Sí" : "✘ No"}</p>
+            <p><strong>${asignatura.toUpperCase()}</strong></p>
+            <p>Puntos: ${info.puntos}</p>
+            <p>Completado: ${info.completado ? "Sí" : "No"}</p>
         `;
 
         contenedor.appendChild(div);
@@ -123,7 +96,7 @@ async function cargarProgreso() {
 
 
 // =====================================================
-// 3. ACTIVAR
+//  3. ACTIVAR
 // =====================================================
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();

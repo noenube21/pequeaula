@@ -10,14 +10,11 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     min-height: 100vh;
 }
 
 /* -----------------------------------------
-   TARJETAS
+   TARJETAS (MENÚ / ASIGNATURAS / NIVELES)
 ------------------------------------------*/
 .card-container {
     display: flex;
@@ -33,30 +30,28 @@ body {
     padding: 20px;
     border-radius: 25px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    cursor: pointer;
-    transition: 0.2s;
-    text-align: center;
     border: 3px solid #ffcc4d;
+    text-align: center;
+    cursor: pointer;
 }
 .card:hover { transform: scale(1.05); }
 .card img { width: 90px; height: 90px; }
 
 /* -----------------------------------------
-   JUEGO BOX
+   CAJA DEL JUEGO
 ------------------------------------------*/
 .game-box {
     background: white;
     width: 330px;
-    margin: 20px auto;
     padding: 25px;
     border-radius: 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     border: 3px solid #ffcc4d;
     text-align: center;
+    margin: 20px auto;
 }
 
 /* -----------------------------------------
-   INPUT Y BOTÓN
+   INPUTS Y BOTONES
 ------------------------------------------*/
 input {
     padding: 12px;
@@ -81,7 +76,7 @@ button {
 button:hover { background: #e85a4f; }
 
 /* -----------------------------------------
-   MEMORY
+   MEMORY (FUNCIONAL)
 ------------------------------------------*/
 .carta {
     width: 100px;
@@ -94,4 +89,7 @@ button:hover { background: #e85a4f; }
     cursor: pointer;
     margin: 7px;
 }
-.carta img { width: 80%; }
+.carta img {
+    width: 80%;
+}
+``

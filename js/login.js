@@ -1,38 +1,32 @@
-let avatarSeleccionado = "";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesión</title>
+    css/style.css
+</head>
 
-function seleccionarAvatar(tipo) {
-    avatarSeleccionado = tipo;
-}
+<body>
 
-function entrar() {
-    const nombre = document.getElementById("nombre").value.trim();
+<div class="login-container">
+    <div class="login-box">
 
-    if (nombre === "") {
-        alert("Escribe tu nombre.");
-        return;
-    }
+        <h2>Iniciar sesión</h2>
 
-    if (avatarSeleccionado === "") {
-        alert("Elige un avatar.");
-        return;
-    }
+        <label>Nombre</label>
+        <input id="nombre" type="text" placeholder="Escribe tu nombre">
 
-    // Guardar igual que auth.js hacía antes
-    localStorage.setItem("alumno", nombre);
-    localStorage.setItem("avatar", avatarSeleccionado);
+        <div class="avatar-selector">
+            assets/img/avatar-chico.png
+            assets/img/avatar-chica.png
+        </div>
 
-    // Ir al menú como antes
-    window.location.href = "menu.html";
-}
+        <button onclick="entrar()">Entrar</button>
 
-// Cargar avatar en el menú
-window.onload = () => {
-    const avatar = localStorage.getItem("avatar");
-    const avatarMenu = document.getElementById("avatarMenu");
+    </div>
+</div>
 
-    if (avatarMenu && avatar) {
-        avatarMenu.src = avatar === "chico"
-            ? "assets/img/avatar-chico.png"
-            : "assets/img/avatar-chica.png";
-    }
-};
+js/login-avatars.js</script>
+
+</body>
+</html>

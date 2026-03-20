@@ -23,12 +23,10 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
     let datos = snap.exists() ? snap.data() : {};
 
-    // Sumar totales globales
     const partidasTotales = (datos.partidas || 0) + 1;
     const aciertosTotales = (datos.aciertos || 0) + correctas;
     const erroresTotales = (datos.errores || 0) + incorrectas;
 
-    // Guardar
     await setDoc(ref, {
         partidas: partidasTotales,
         aciertos: aciertosTotales,
@@ -38,10 +36,9 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
 
 // =====================================================
-// 2. BORRAR / RESETEAR TODO EL PROGRESO GLOBAL
+// 2. RESETEAR PROGRESO
 // =====================================================
 export async function resetearProgreso() {
-
     const user = auth.currentUser;
     if (!user) return;
 
@@ -59,7 +56,7 @@ export async function resetearProgreso() {
 
 
 // =====================================================
-// 3. CARGAR PROGRESO GLOBAL (SIMPLE Y CLARO)
+// 3. CARGAR PROGRESO GLOBAL
 // =====================================================
 async function cargarProgreso() {
 
@@ -73,15 +70,13 @@ async function cargarProgreso() {
 
     const datos = snap.data();
 
-    // Valores globales
     const partidas = datos.partidas || 0;
     const aciertos = datos.aciertos || 0;
     const errores = datos.errores || 0;
 
-    const porcentaje =
-        partidas > 0 ? Math.round((aciertos / (aciertos + errores)) * 100) : 0;
+    const total = aciertos + errores;
+    const porcentaje = total > 0 ? Math.round(aciertos / total * 100) : 0;
 
-    // Pintar datos
     document.getElementById("partidas").textContent = partidas;
     document.getElementById("aciertos").textContent = aciertos;
     document.getElementById("errores").textContent = errores;
@@ -95,4 +90,3 @@ async function cargarProgreso() {
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();
 });
-``

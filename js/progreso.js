@@ -1,17 +1,16 @@
 // =====================================================
-//  🔵 IMPORTS
+//  IMPORTS
 // =====================================================
 import { auth, db } from "../firebase-config.js";
 import {
     doc,
     getDoc,
-    setDoc,
-    updateDoc
+    setDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 
 // =====================================================
-//  🔵 1. REGISTRAR RESULTADOS DE LOS JUEGOS
+//  1. REGISTRAR RESULTADOS DE UN JUEGO
 // =====================================================
 export async function registrarResultado(asignatura, correctas, incorrectas) {
     const user = auth.currentUser;
@@ -22,50 +21,41 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
     let datos = snap.exists() ? snap.data() : {};
 
-    // Totales globales
-    const partidasTotales = (datos.partidas || 0) + 1;
-    const aciertosTotales = (datos.aciertos || 0) + correctas;
-    const erroresTotales = (datos.errores || 0) + incorrectas;
-
-    // Crear estructura si no existe
+    // Inicializar estructura si no existe
     if (!datos.progreso) datos.progreso = {};
     if (!datos.progreso[asignatura]) {
         datos.progreso[asignatura] = {
-            puntos: 0,
-            completado: false,
-            intentos: 0,
-            aciertosAsignatura: 0
+            aciertos: 0,
+            errores: 0,
+            completado: false
         };
     }
 
-    // Sumar datos
-    datos.progreso[asignatura].puntos += correctas;
-    datos.progreso[asignatura].intentos =
-        (datos.progreso[asignatura].intentos || 0) + 1;
+    // Sumar totales
+    datos.progreso[asignatura].aciertos += correctas;
+    datos.progreso[asignatura].errores += incorrectas;
 
-    datos.progreso[asignatura].aciertosAsignatura =
-        (datos.progreso[asignatura].aciertosAsignatura || 0) + correctas;
+    // Calcular porcentaje
+    const total = datos.progreso[asignatura].aciertos + datos.progreso[asignatura].errores;
+    const porcentaje = total > 0
+        ? Math.round((datos.progreso[asignatura].aciertos / total) * 100)
+        : 0;
 
-    // ⭐ COMPLETADO = si supera el 70%
-    const porcentajeAsignatura =
-        (datos.progreso[asignatura].aciertosAsignatura /
-         datos.progreso[asignatura].intentos) * 100;
-
-    datos.progreso[asignatura].completado = porcentajeAsignatura >= 70;
+    // COMPLETADO = 70%
+    datos.progreso[asignatura].completado = porcentaje >= 70;
 
     // Guardar en Firestore
     await setDoc(ref, {
-        partidas: partidasTotales,
-        aciertos: aciertosTotales,
-        errores: erroresTotales,
         progreso: datos.progreso
     }, { merge: true });
+
+    console.log("✔ Progreso actualizado:", datos.progreso[asignatura]);
 }
 
 
 
 // =====================================================
-//  🔵 2. CARGAR PROGRESO EN PANTALLA
+//  2. CARGAR PROGRESO EN LA PÁGINA
 // =====================================================
 async function cargarProgreso() {
     const user = auth.currentUser;
@@ -83,7 +73,6 @@ async function cargarProgreso() {
     const aciertos = datos.aciertos || 0;
     const errores = datos.errores || 0;
 
-    // Porcentaje global
     const porcentaje = partidas > 0
         ? Math.round((aciertos / partidas) * 100)
         : 0;
@@ -93,7 +82,7 @@ async function cargarProgreso() {
     document.getElementById("errores").textContent = errores;
     document.getElementById("porcentaje").textContent = porcentaje + "%";
 
-    // Mostrar por asignatura
+    // Mostrar progreso por asignatura
     const contenedor = document.getElementById("progresoAsignaturas");
     contenedor.innerHTML = "";
 
@@ -101,23 +90,18 @@ async function cargarProgreso() {
         for (const asignatura in datos.progreso) {
             const info = datos.progreso[asignatura];
 
-            // 💛 Evitar undefined dejando valores por defecto
-            const puntos = info.puntos || 0;
-            const aciertosA = info.aciertosAsignatura || 0;
-            const intentos = info.intentos || 0;
-            const porcentajeAsign = intentos > 0
-                ? Math.round((aciertosA / intentos) * 100)
-                : 0;
+            const total = info.aciertos + info.errores;
+            const porcentajeAsig =
+                total > 0 ? Math.round((info.aciertos / total) * 100) : 0;
 
             const div = document.createElement("div");
             div.classList.add("asignatura-box");
 
             div.innerHTML = `
                 <p><strong>${asignatura.toUpperCase()}</strong></p>
-                <p>Puntos: ${puntos}</p>
-                <p>Aciertos totales: ${aciertosA}</p>
-                <p>Intentos: ${intentos}</p>
-                <p>Porcentaje: ${porcentajeAsign}%</p>
+                <p>Aciertos: ${info.aciertos}</p>
+                <p>Errores: ${info.errores}</p>
+                <p>Porcentaje: ${porcentajeAsig}%</p>
                 <p>Completado: ${info.completado ? "✔ Sí" : "✘ No"}</p>
             `;
 
@@ -129,7 +113,7 @@ async function cargarProgreso() {
 
 
 // =====================================================
-//  🔵 3. ACTIVAR CARGA
+//  3. CARGAR AUTOMÁTICAMENTE AL ENTRAR
 // =====================================================
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();

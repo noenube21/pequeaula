@@ -5,7 +5,7 @@
 const Juegos = {
 
     // ===============================
-    // MATEMÁTICAS — YA FUNCIONA PERFECTO
+    // MATEMÁTICAS
     // ===============================
 
     matematicas1: {
@@ -87,45 +87,27 @@ const Juegos = {
 
     ingles1: {
         preguntas: [
-            { p:"Dog =", r:"perro" },
-            { p:"House =", r:"casa" },
-            { p:"Car =", r:"coche" },
-            { p:"Sun =", r:"sol" },
-            { p:"Moon =", r:"luna" },
-            { p:"Milk =", r:"leche" },
-            { p:"Book =", r:"libro" },
-            { p:"Cat =", r:"gato" },
-            { p:"Water =", r:"agua" },
+            { p:"Dog =", r:"perro" }, { p:"House =", r:"casa" }, { p:"Car =", r:"coche" },
+            { p:"Sun =", r:"sol" },   { p:"Moon =", r:"luna" }, { p:"Milk =", r:"leche" },
+            { p:"Book =", r:"libro" }, { p:"Cat =", r:"gato" }, { p:"Water =", r:"agua" },
             { p:"Bed =", r:"cama" }
         ]
     },
 
     ingles2: {
         preguntas: [
-            { p:"Apple =", r:"manzana" },
-            { p:"Cat =", r:"gato" },
-            { p:"Orange =", r:"naranja" },
-            { p:"Mouse =", r:"ratón" },
-            { p:"School =", r:"escuela" },
-            { p:"Tree =", r:"árbol" },
-            { p:"Fish =", r:"pez" },
-            { p:"Chair =", r:"silla" },
-            { p:"Window =", r:"ventana" },
+            { p:"Apple =", r:"manzana" }, { p:"Cat =", r:"gato" }, { p:"Orange =", r:"naranja" },
+            { p:"Mouse =", r:"ratón" }, { p:"School =", r:"escuela" }, { p:"Tree =", r:"árbol" },
+            { p:"Fish =", r:"pez" }, { p:"Chair =", r:"silla" }, { p:"Window =", r:"ventana" },
             { p:"Milk =", r:"leche" }
         ]
     },
 
     ingles3: {
         preguntas: [
-            { p:"Sun =", r:"sol" },
-            { p:"Water =", r:"agua" },
-            { p:"Tree =", r:"arbol" },
-            { p:"Door =", r:"puerta" },
-            { p:"Flower =", r:"flor" },
-            { p:"Bird =", r:"pajaro" },
-            { p:"Food =", r:"comida" },
-            { p:"Happy =", r:"feliz" },
-            { p:"Cold =", r:"frio" },
+            { p:"Sun =", r:"sol" }, { p:"Water =", r:"agua" }, { p:"Tree =", r:"arbol" },
+            { p:"Door =", r:"puerta" }, { p:"Flower =", r:"flor" }, { p:"Bird =", r:"pajaro" },
+            { p:"Food =", r:"comida" }, { p:"Happy =", r:"feliz" }, { p:"Cold =", r:"frio" },
             { p:"Hot =", r:"caliente" }
         ]
     },
@@ -136,16 +118,11 @@ const Juegos = {
 
     ciencias1: {
         preguntas: [
-            { p:"¿Planeta rojo?", r:"marte" },
-            { p:"¿Gas que respiramos?", r:"oxigeno" },
-            { p:"¿Animal que pone huevos?", r:"ave" },
-            { p:"¿Estrella del sistema solar?", r:"sol" },
-            { p:"¿Planeta azul?", r:"tierra" },
-            { p:"¿Ser vivo que hace fotosíntesis?", r:"planta" },
-            { p:"¿Animal que vive en el agua?", r:"pez" },
-            { p:"¿Estación más fría?", r:"invierno" },
-            { p:"¿Animal mamífero?", r:"perro" },
-            { p:"¿Necesario para vivir?", r:"agua" }
+            { p:"¿Planeta rojo?", r:"marte" }, { p:"¿Gas que respiramos?", r:"oxigeno" },
+            { p:"¿Animal que pone huevos?", r:"ave" }, { p:"¿Estrella del sistema solar?", r:"sol" },
+            { p:"¿Planeta azul?", r:"tierra" }, { p:"¿Ser vivo que hace fotosíntesis?", r:"planta" },
+            { p:"¿Animal que vive en el agua?", r:"pez" }, { p:"¿Estación más fría?", r:"invierno" },
+            { p:"¿Animal mamífero?", r:"perro" }, { p:"¿Necesario para vivir?", r:"agua" }
         ]
     },
 
@@ -214,6 +191,11 @@ export function iniciarJuego(key) {
         return;
     }
 }
+
+// =======================================
+// COMPROBAR RESPUESTA (VERSIÓN FINAL)
+// =======================================
+
 export function comprobar() {
 
     const r = document.getElementById("respuesta").value.trim().toLowerCase();
@@ -227,15 +209,15 @@ export function comprobar() {
         resultado.innerText = `✘ Incorrecto. La respuesta correcta es: ${preguntaActual.r}`;
     }
 
-    // 🔥 REGISTRAR PROGRESO GLOBAL (Aciertos, Fallos y Partidas)
-    import("./progreso.js").then(mod => {
+    // ⭐ REGISTRAR PROGRESO GLOBAL
+    import("./js/progreso.js").then(mod => {
         mod.registrarResultado(
-            materia + nivel,       // asignatura real: ingles3, castellano2, etc
-            r === ok ? 1 : 0,      // aciertos
-            r !== ok ? 1 : 0       // errores
+            materia + nivel,       // ejemplo: ingles3
+            r === ok ? 1 : 0,      // acierto
+            r !== ok ? 1 : 0       // error
         );
-    }).catch(()=>{});
+    }).catch(err => console.error("Error cargando progreso.js:", err));
 
-    // Cambiar a siguiente pregunta
-    setTimeout(() => iniciarJuego(materia + nivel), 1000);
+    // Siguiente pregunta
+    setTimeout(() => iniciarJuego(materia + nivel), 800);
 }

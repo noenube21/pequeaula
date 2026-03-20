@@ -164,3 +164,52 @@ body {
     transform: scale(1.09);
     border-color: #ffcc4d;
 }
+
+/* --- CENTRAR LOGIN --- */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Caja blanca */
+.login-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px 20px;
+    width: 300px;
+    border-radius: 20px;
+    text-align: center;
+    border: 3px solid #ffcc4d;
+}
+
+/* Inputs */
+.login-box input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 2px solid #ffcc4d;
+    font-size: 16px;
+}
+
+/* Botón */
+.login-box button {
+    background: #ff6f61;
+    color: white;
+    padding: 12px;
+    border: none;
+    width: 100%;
+    border-radius: 15px;
+    font-size: 18px;
+    cursor: pointer;
+}
+.login-box button:hover {
+    background: #e85a4f;
+}
+
+.login-box a {
+    color: #ff6f61;
+    font-weight: bold;
+    text-decoration: none;
+}

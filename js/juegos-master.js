@@ -1,7 +1,9 @@
 // =======================================
 // JUEGOS DEFINIDOS
 // =======================================
-
+// hacer accesible materia y nivel
+const materia = window.materia;
+const nivel = window.nivel;
 const Juegos = {
 
     // ===============================

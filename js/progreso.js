@@ -5,12 +5,13 @@ import { auth, db } from "../firebase-config.js";
 import {
     doc,
     getDoc,
-    setDoc
+    setDoc,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 
 // =====================================================
-// 1. REGISTRAR RESULTADOS
+// 1. REGISTRAR RESULTADOS (ACERTADOS / FALLADOS)
 // =====================================================
 export async function registrarResultado(asignatura, correctas, incorrectas) {
 
@@ -22,29 +23,43 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
     let datos = snap.exists() ? snap.data() : {};
 
-    if (!datos.progreso) datos.progreso = {};
+    // Sumar totales globales
+    const partidasTotales = (datos.partidas || 0) + 1;
+    const aciertosTotales = (datos.aciertos || 0) + correctas;
+    const erroresTotales = (datos.errores || 0) + incorrectas;
 
-    // Si no existe la asignatura, crearla
-    if (!datos.progreso[asignatura]) {
-        datos.progreso[asignatura] = {
-            aciertos: 0,
-            errores: 0
-        };
-    }
-
-    // Añadir aciertos y errores
-    datos.progreso[asignatura].aciertos += correctas;
-    datos.progreso[asignatura].errores += incorrectas;
-
+    // Guardar
     await setDoc(ref, {
-        progreso: datos.progreso
+        partidas: partidasTotales,
+        aciertos: aciertosTotales,
+        errores: erroresTotales
     }, { merge: true });
 }
 
 
+// =====================================================
+// 2. BORRAR / RESETEAR TODO EL PROGRESO GLOBAL
+// =====================================================
+export async function resetearProgreso() {
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const ref = doc(db, "usuarios", user.uid);
+
+    await updateDoc(ref, {
+        partidas: 0,
+        aciertos: 0,
+        errores: 0
+    });
+
+    alert("Progreso reiniciado");
+    location.reload();
+}
+
 
 // =====================================================
-// 2. CARGAR PROGRESO AGRUPADO POR ASIGNATURA
+// 3. CARGAR PROGRESO GLOBAL (SIMPLE Y CLARO)
 // =====================================================
 async function cargarProgreso() {
 
@@ -53,77 +68,31 @@ async function cargarProgreso() {
 
     const ref = doc(db, "usuarios", user.uid);
     const snap = await getDoc(ref);
+
     if (!snap.exists()) return;
 
     const datos = snap.data();
 
-    // ---- TOTALES GENERALES (superiores) ----
+    // Valores globales
     const partidas = datos.partidas || 0;
     const aciertos = datos.aciertos || 0;
     const errores = datos.errores || 0;
-    const porcentaje =
-        partidas > 0 ? Math.round(aciertos / partidas * 100) : 0;
 
+    const porcentaje =
+        partidas > 0 ? Math.round((aciertos / (aciertos + errores)) * 100) : 0;
+
+    // Pintar datos
     document.getElementById("partidas").textContent = partidas;
     document.getElementById("aciertos").textContent = aciertos;
     document.getElementById("errores").textContent = errores;
     document.getElementById("porcentaje").textContent = porcentaje + "%";
-
-
-    // ---- AGRUPAR CLAVES (DETECTANDO NIVEL 1,2,3) ----
-    const grupos = {
-        matematicas: ["matematicas1","matematicas2","matematicas3","matematicas"],
-        castellano: ["castellano1","castellano2","castellano3","castellano"],
-        ingles:     ["ingles1","ingles2","ingles3","ingles"],
-        ciencias:   ["ciencias1","ciencias2","ciencias3","ciencias"]
-    };
-
-    // ---- ORDEN REAL QUE TÚ QUIERES ----
-    const orden = ["matematicas", "castellano", "ingles", "ciencias"];
-
-    const contenedor = document.getElementById("progresoAsignaturas");
-    contenedor.innerHTML = "";
-
-    // ---- MOSTRAR RESULTADOS ----
-    for (const materia of orden) {
-
-        let aciertosSum = 0;
-        let erroresSum = 0;
-        let tieneDatos = false;
-
-        grupos[materia].forEach(nombre => {
-            if (datos.progreso && datos.progreso[nombre]) {
-                aciertosSum += datos.progreso[nombre].aciertos || 0;
-                erroresSum  += datos.progreso[nombre].errores  || 0;
-                tieneDatos = true;
-            }
-        });
-
-        if (!tieneDatos) continue;
-
-        const total = aciertosSum + erroresSum;
-        const porcentajeMat =
-            total > 0 ? Math.round(aciertosSum / total * 100) : 0;
-
-        const div = document.createElement("div");
-        div.classList.add("asignatura-box");
-
-        div.innerHTML = `
-            <p><strong>${materia.toUpperCase()}</strong></p>
-            <p>Aciertos: ${aciertosSum}</p>
-            <p>Errores: ${erroresSum}</p>
-            <p>Porcentaje: ${porcentajeMat}%</p>
-        `;
-
-        contenedor.appendChild(div);
-    }
 }
 
 
-
 // =====================================================
-// 3. ACTIVAR CARGA AUTOMÁTICA AL ENTRAR
+// 4. ACTIVAR AUTO-CARGA
 // =====================================================
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();
 });
+``

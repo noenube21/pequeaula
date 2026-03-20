@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Niveles</title>
+
     css/style.css
 </head>
 
@@ -19,17 +20,17 @@
 <div class="card-container">
 
     <div class="card" onclick="jugar(1)">
-        <img src="assets/img/nivel1.png">
+        assets/img/nivel1.png
         <h3>Nivel 1</h3>
     </div>
 
     <div class="card" onclick="jugar(2)">
-        <img src="assets/img/nivel2.png">
+        assets/img/nivel2.png
         <h3>Nivel 2</h3>
     </div>
 
     <div class="card" onclick="jugar(3)">
-        <img src="assets/img/nivel3.png">
+        assets/img/nivel3.png
         <h3>Nivel 3</h3>
     </div>
 
@@ -42,7 +43,7 @@ const materia = params.get("materia");
 document.getElementById("titulo").innerText =
     "Elige un nivel de " + materia.toUpperCase();
 
-function jugar(nivel) {
+function jugar(nivel){
     location.href = `juego.html?materia=${materia}&nivel=${nivel}`;
 }
 </script>

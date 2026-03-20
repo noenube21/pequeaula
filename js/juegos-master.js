@@ -1,9 +1,14 @@
 // =======================================
-// JUEGOS DEFINIDOS
+// ACCESO A VARIABLES DEL JUEGO
 // =======================================
-// hacer accesible materia y nivel
 const materia = window.materia;
 const nivel = window.nivel;
+
+
+// =======================================
+// JUEGOS DEFINIDOS
+// =======================================
+
 const Juegos = {
 
     // ===============================
@@ -171,7 +176,7 @@ export function iniciarJuego(key) {
     juegoActual = Juegos[key];
 
     const pregunta = document.getElementById("pregunta");
-        const zona = document.getElementById("zona");
+    const zona = document.getElementById("zona");
     const resultado = document.getElementById("resultado");
     const input = document.getElementById("respuesta");
 
@@ -179,6 +184,9 @@ export function iniciarJuego(key) {
     zona.innerHTML = "";
     resultado.innerHTML = "";
     input.value = "";
+
+    // ⭐ MUY IMPORTANTE: reasignar el botón en cada pregunta
+    document.getElementById("btnComprobar").onclick = comprobar;
 
     if (juegoActual.generar) {
         preguntaActual = juegoActual.generar();
@@ -196,7 +204,7 @@ export function iniciarJuego(key) {
 
 
 // =======================================
-// COMPROBAR RESPUESTA — VERSIÓN FINAL
+// COMPROBAR RESPUESTA — VERSIÓN REVISADA
 // =======================================
 
 export function comprobar() {
@@ -205,22 +213,22 @@ export function comprobar() {
     const ok = preguntaActual.r.toLowerCase();
     const resultado = document.getElementById("resultado");
 
-    // Mostrar resultado al niño
+    // Mostrar resultado
     if (r === ok) {
         resultado.innerText = "✔ Correcto";
     } else {
         resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
-    // ⭐ REGISTRAR PROGRESO GLOBAL (RUTA CORRECTA)
+    // ⭐ REGISTRAR PROGRESO GLOBAL
     import("./progreso.js").then(mod => {
         mod.registrarResultado(
-            materia + nivel,       // ej: ingles3
-            r === ok ? 1 : 0,      // aciertos
-            r !== ok ? 1 : 0       // errores
+            materia + nivel,
+            r === ok ? 1 : 0,
+            r !== ok ? 1 : 0
         );
-    }).catch(err => console.error("ERROR:", err));
+    });
 
-    // Siguiente pregunta
+    // Cambiar a siguiente pregunta
     setTimeout(() => iniciarJuego(materia + nivel), 800);
 }

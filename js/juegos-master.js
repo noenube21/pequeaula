@@ -214,19 +214,28 @@ export function iniciarJuego(key) {
         return;
     }
 }
-
 export function comprobar() {
+
     const r = document.getElementById("respuesta").value.trim().toLowerCase();
     const ok = preguntaActual.r.toLowerCase();
-
     const resultado = document.getElementById("resultado");
 
+    // Mostrar resultado
     if (r === ok) {
         resultado.innerText = "✔ Correcto";
     } else {
         resultado.innerText = `✘ Incorrecto. La respuesta correcta es: ${preguntaActual.r}`;
     }
 
-    // siguiente pregunta automática
+    // 🔥 REGISTRAR PROGRESO GLOBAL (Aciertos, Fallos y Partidas)
+    import("./progreso.js").then(mod => {
+        mod.registrarResultado(
+            materia + nivel,       // asignatura real: ingles3, castellano2, etc
+            r === ok ? 1 : 0,      // aciertos
+            r !== ok ? 1 : 0       // errores
+        );
+    }).catch(()=>{});
+
+    // Cambiar a siguiente pregunta
     setTimeout(() => iniciarJuego(materia + nivel), 1000);
 }

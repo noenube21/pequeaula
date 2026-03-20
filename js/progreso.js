@@ -21,8 +21,10 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
     let datos = snap.exists() ? snap.data() : {};
 
-    // Inicializar estructura si no existe
+    // Crear estructura global si no existe
     if (!datos.progreso) datos.progreso = {};
+
+    // Crear estructura de asignatura si no existe
     if (!datos.progreso[asignatura]) {
         datos.progreso[asignatura] = {
             aciertos: 0,
@@ -31,17 +33,19 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
         };
     }
 
-    // Sumar totales
+    // Sumar
     datos.progreso[asignatura].aciertos += correctas;
     datos.progreso[asignatura].errores += incorrectas;
 
     // Calcular porcentaje
-    const total = datos.progreso[asignatura].aciertos + datos.progreso[asignatura].errores;
+    const total = datos.progreso[asignatura].aciertos +
+                  datos.progreso[asignatura].errores;
+
     const porcentaje = total > 0
         ? Math.round((datos.progreso[asignatura].aciertos / total) * 100)
         : 0;
 
-    // COMPLETADO = 70%
+    // COMPLETADO = ≥70%
     datos.progreso[asignatura].completado = porcentaje >= 70;
 
     // Guardar en Firestore
@@ -55,7 +59,7 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
 
 // =====================================================
-//  2. CARGAR PROGRESO EN LA PÁGINA
+//  2. CARGAR PROGRESO EN PÁGINA (ORDENADO)
 // =====================================================
 async function cargarProgreso() {
     const user = auth.currentUser;
@@ -82,27 +86,44 @@ async function cargarProgreso() {
     document.getElementById("errores").textContent = errores;
     document.getElementById("porcentaje").textContent = porcentaje + "%";
 
-    // Mostrar progreso por asignatura
+    // Contenedor
     const contenedor = document.getElementById("progresoAsignaturas");
     contenedor.innerHTML = "";
 
-    if (datos.progreso) {
-        for (const asignatura in datos.progreso) {
-            const info = datos.progreso[asignatura];
+    // 🎯 ORDEN DE ASIGNATURAS CORRECTO
+    const orden = ["matematicas", "castellano", "ingles", "ciencias"];
 
-            const total = info.aciertos + info.errores;
+    // Mostrar progreso en orden
+    if (datos.progreso) {
+        for (const materia of orden) {
+
+            // Buscar niveles: matematicas1, matematicas2, matematicas3...
+            let totalAciertos = 0;
+            let totalErrores = 0;
+
+            for (const clave in datos.progreso) {
+                if (clave.startsWith(materia)) {
+                    totalAciertos += datos.progreso[clave].aciertos || 0;
+                    totalErrores += datos.progreso[clave].errores || 0;
+                }
+            }
+
+            // Si no hay datos, no mostrar
+            if (totalAciertos === 0 && totalErrores === 0) continue;
+
+            const total = totalAciertos + totalErrores;
             const porcentajeAsig =
-                total > 0 ? Math.round((info.aciertos / total) * 100) : 0;
+                total > 0 ? Math.round((totalAciertos / total) * 100) : 0;
 
             const div = document.createElement("div");
             div.classList.add("asignatura-box");
 
             div.innerHTML = `
-                <p><strong>${asignatura.toUpperCase()}</strong></p>
-                <p>Aciertos: ${info.aciertos}</p>
-                <p>Errores: ${info.errores}</p>
+                <p><strong>${materia.toUpperCase()}</strong></p>
+                <p>Aciertos: ${totalAciertos}</p>
+                <p>Errores: ${totalErrores}</p>
                 <p>Porcentaje: ${porcentajeAsig}%</p>
-                <p>Completado: ${info.completado ? "✔ Sí" : "✘ No"}</p>
+                <p>Completado: ${porcentajeAsig >= 70 ? "✔ Sí" : "✘ No"}</p>
             `;
 
             contenedor.appendChild(div);
@@ -113,7 +134,7 @@ async function cargarProgreso() {
 
 
 // =====================================================
-//  3. CARGAR AUTOMÁTICAMENTE AL ENTRAR
+//  3. ACTIVAR CARGA AUTOMÁTICA DEL PROGRESO
 // =====================================================
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();

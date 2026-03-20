@@ -103,10 +103,7 @@ body {
     margin-bottom: 15px;
 }
 
-/* ------------------------------------------------ */
-/* 🔥 CENTRADO PERFECTO DEL LOGIN */
-/* ------------------------------------------------ */
-
+/* CENTRADO LOGIN */
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -165,7 +162,7 @@ body {
     border-color: #ffcc4d;
 }
 
-/* === CENTRADO PARA LA PÁGINA DE PROGRESO === */
+/* CENTRADO PROGRESO */
 .progreso-container {
     min-height: 100vh;
     display: flex;
@@ -182,40 +179,23 @@ body {
     text-align: left;
 }
 
-.progreso-box h2 {
-    text-align: center;
-}
-
 .progreso-box p {
     margin: 6px 0;
     font-size: 18px;
 }
 
-/* ------------------------------------------------ */
-/* ⭐ TÍTULOS VISIBLES, GRANDES Y CON COLORES ⭐ */
-/* ------------------------------------------------ */
-
-h1, h2, h3,
-.menu-subtitle,
-.titulo-juego,
-.inicio-title,
-.logo,
-.center {
+/* ⭐ TÍTULOS VISIBLES Y GRANDES (VERSIÓN SIMPLE Y SEGURA) ⭐ */
+h1, h2, h3, .menu-subtitle, .titulo-juego, .inicio-title {
     font-family: 'Poppins', Arial, sans-serif !important;
     font-weight: 900 !important;
     text-align: center !important;
-    letter-spacing: 1px !important;
     text-transform: uppercase !important;
-    margin: 10px auto !important;
-    color: #1a1a1a !important;
-    text-shadow: 
-        2px 2px 5px rgba(255,255,255,0.85),
-        -2px -2px 5px rgba(255,255,255,0.4) !important;
-    display: block !important;
+    color: #222 !important;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.9) !important;
 }
 
 /* Tamaños */
-h1, .inicio-title, h2.center {
+h1, .inicio-title {
     font-size: 3rem !important;
 }
 
@@ -225,11 +205,4 @@ h2, .menu-subtitle, .titulo-juego {
 
 h3 {
     font-size: 1.6rem !important;
-    color: #222 !important;
 }
-
-/* COLORES POR ASIGNATURA */
-.matematicas-titulo { color: #0057ff !important; }
-.castellano-titulo  { color: #ff0033 !important; }
-.ingles-titulo      { color: #009933 !important; }
-.ciencias-titulo    { color: #ff7b00 !important; }

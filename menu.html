@@ -3,48 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <title>Menú</title>
-css/style.css
+<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
+<!-- BOTÓN VOLVER -->
 <button class="btn-volver" onclick="history.back()">⬅ Volver</button>
 
+<!-- CABECERA -->
 <header class="topbar">
     <span class="logo">PEQUE AULA 🌟</span>
 </header>
 
+<!-- TÍTULO -->
 <h2 class="menu-subtitle">¿Qué quieres practicar hoy?</h2>
 
+<!-- TARJETAS -->
 <div class="card-container">
 
-    niveles.html?materia=matematicas
-        assets/img/matematicas.png
+    <div class="card" onclick="location.href='niveles.html?materia=matematicas'">
+        <img src="assets/img/matematicas.png">
         <h3>Matemáticas</h3>
     </div>
 
-    niveles.html?materia=castellano
-        assets/img/castellano.png
+    <div class="card" onclick="location.href='niveles.html?materia=castellano'">
+        <img src="assets/img/castellano.png">
         <h3>Castellano</h3>
     </div>
 
-    niveles.html?materia=ingles
-        assets/img/ingles.png
+    <div class="card" onclick="location.href='niveles.html?materia=ingles'">
+        <img src="assets/img/ingles.png">
         <h3>Inglés</h3>
     </div>
 
-    niveles.html?materia=ciencias
-        assets/img/conocimiento.png
+    <div class="card" onclick="location.href='niveles.html?materia=ciencias'">
+        <img src="assets/img/conocimiento.png">
         <h3>Conocimiento del Medio</h3>
     </div>
 
-    progreso.html
-        assets/img/progreso.png
+    <div class="card" onclick="location.href='progreso.html'">
+        <img src="assets/img/progreso.png">
         <h3>Progreso</h3>
     </div>
 
-    recompensas.html
-        assets/img/estrella.png
+    <div class="card" onclick="location.href='recompensas.html'">
+        <img src="assets/img/estrella.png">
         <h3>Recompensas</h3>
     </div>
 

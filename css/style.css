@@ -1,4 +1,9 @@
-/* FONDO GENERAL */
+/* ----------- CENTRADO GLOBAL ----------- */
+.center {
+    text-align: center;
+}
+
+/* ----------- PÁGINA PRINCIPAL ----------- */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -9,24 +14,45 @@ body {
     background-position: center;
 }
 
-/* HEADER */
+h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin-top: 120px;
+}
+
+.subtitulo {
+    text-align: center;
+    font-size: 1.4rem;
+    color: #ff6f91;
+    margin-bottom: 20px;
+}
+
+.logo-img {
+    width: 220px;
+    display: block;
+    margin: 20px auto;
+}
+
+/* ----------- HEADER DEL MENÚ ----------- */
 .topbar {
     width: 100%;
     text-align: center;
-    padding: 20px 0;
+    padding: 25px 0;
 }
+
 .logo {
     font-size: 40px;
     font-weight: bold;
 }
 
-/* SUBTÍTULOS GENERALES */
+/* ----------- MENÚ PRINCIPAL ----------- */
 .menu-subtitle {
     text-align: center;
-    font-size: 22px;
+    font-size: 26px;
+    margin-top: 10px;
 }
 
-/* TARJETAS DEL MENÚ */
+/* Contenedor de tarjetas */
 .card-container {
     display: flex;
     justify-content: center;
@@ -35,41 +61,44 @@ body {
     margin-top: 30px;
 }
 
+/* Tarjetas */
 .card {
     background: white;
     width: 180px;
     padding: 20px;
-    border-radius: 25px;
+    border-radius: 20px;
     border: 3px solid #ffcc4d;
     text-align: center;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 .card:hover {
     transform: scale(1.05);
 }
 
-/* 🔥 AQUÍ SE ARREGLA TU PROBLEMA */
+/* ----------- EL ARREGLO IMPORTANTE ----------- */
+/* 🔥 Esto corrige tus imágenes enormes */
 .card img {
-    width: 100px !important;
-    height: 100px !important;
+    width: 110px !important;
+    height: 110px !important;
     object-fit: contain;
+    margin: 0 auto;
     display: block;
-    margin: auto;
 }
 
-/* CAJA DEL JUEGO */
-.game-box {
-    background: white;
-    width: 350px;
-    padding: 25px;
-    border-radius: 25px;
-    border: 3px solid #ffcc4d;
-    text-align: center;
-    margin: 40px auto;
+/* Botón inferior */
+.btn-secondary {
+    background: #ff6f61;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 15px;
 }
 
-#pregunta {
-    font-size: 26px;
-    margin-bottom: 15px;
+.btn-secondary:hover {
+    background: #e85a4f;
 }

@@ -64,6 +64,15 @@ const Juegos = {
         ]
     },
 
+    // 🔥 NUEVO JUEGO AÑADIDO (INGLÉS NIVEL 3)
+    ingles3: {
+        preguntas: [
+            { p:"Sun =", r:"sol" },
+            { p:"Water =", r:"agua" },
+            { p:"Tree =", r:"arbol" }
+        ]
+    },
+
     ciencias1: {
         preguntas: [
             { p:"¿Planeta rojo?", r:"marte" },
@@ -75,6 +84,15 @@ const Juegos = {
         preguntas: [
             { p:"El sol es una... ¿estrella o planeta?", r:"estrella" },
             { p:"¿Quién produce oxígeno? planta / piedra", r:"planta" }
+        ]
+    },
+
+    // 🔥 NUEVO JUEGO AÑADIDO (CIENCIAS NIVEL 3)
+    ciencias3: {
+        preguntas: [
+            { p:"¿Qué órgano bombea la sangre?", r:"corazon" },
+            { p:"¿Qué necesitamos para vivir? agua / plastico", r:"agua" },
+            { p:"¿Qué astro da luz al planeta?", r:"sol" }
         ]
     }
 };
@@ -127,4 +145,3 @@ export function comprobar() {
     document.getElementById("resultado").innerText =
         (r === ok) ? "✔ Correcto" : "✘ Incorrecto";
 }
-``

@@ -5,14 +5,15 @@ import { auth, db } from "../firebase-config.js";
 import {
     doc,
     getDoc,
-    setDoc
+    setDoc,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 
 // =====================================================
-//  🔵  1. FUNCIÓN NUEVA: GUARDAR RESULTADOS DE LOS JUEGOS
+//  🔵  1. GUARDAR RESULTADOS DE LOS JUEGOS
 // =====================================================
-// Se llama desde cada juego: registrarResultado("matematicas", correctas, incorrectas)
+// Se llama desde los juegos: registrarResultado("matematicas", aciertos, errores)
 export async function registrarResultado(asignatura, correctas, incorrectas) {
     const user = auth.currentUser;
     if (!user) {
@@ -23,15 +24,15 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
     const ref = doc(db, "usuarios", user.uid);
     const snap = await getDoc(ref);
 
-    // Cargar datos existentes o crear nuevos
+    // Cargar datos anteriores
     let datos = snap.exists() ? snap.data() : {};
 
-    // Valores generales
+    // Totales globales
     const partidasTotales = (datos.partidas || 0) + 1;
     const aciertosTotales = (datos.aciertos || 0) + correctas;
     const erroresTotales = (datos.errores || 0) + incorrectas;
 
-    // Objeto de progreso por asignatura
+    // Progreso por asignatura
     if (!datos.progreso) datos.progreso = {};
     if (!datos.progreso[asignatura]) {
         datos.progreso[asignatura] = {
@@ -43,12 +44,12 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
     // Sumar puntos
     datos.progreso[asignatura].puntos += correctas;
 
-    // Si acertó más que falló, marcamos como completado
+    // Si acertó más de los que falló
     if (correctas > incorrectas) {
         datos.progreso[asignatura].completado = true;
     }
 
-    // Guardar en Firestore
+    // Guardar
     await setDoc(ref, {
         partidas: partidasTotales,
         aciertos: aciertosTotales,
@@ -56,13 +57,37 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
         progreso: datos.progreso
     }, { merge: true });
 
-    console.log("✔ Progreso actualizado en Firestore (colección 'usuarios').");
+    console.log("✔ Progreso actualizado en Firestore");
 }
 
 
 
 // =====================================================
-//  🔵  2. FUNCIÓN QUE YA TENÍAS: CARGAR EL PROGRESO
+//  🔵  2. ASIGNAR RECOMPENSAS AUTOMÁTICAS SEGÚN PORCENTAJE
+// =====================================================
+async function comprobarRecompensas(porcentaje) {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const ref = doc(db, "usuarios", user.uid);
+
+    // Objeto con recompensas simples
+    const recompensas = {};
+
+    if (porcentaje >= 30) recompensas.moneda = true;     // 💰
+    if (porcentaje >= 50) recompensas.estrella = true;   // ⭐
+    if (porcentaje >= 70) recompensas.medalla = true;    // 🥇
+    if (porcentaje >= 90) recompensas.trofeo = true;     // 🏆
+
+    await updateDoc(ref, { recompensas }, { merge: true });
+
+    console.log("🏅 Recompensas actualizadas:", recompensas);
+}
+
+
+
+// =====================================================
+//  🔵  3. CARGAR PROGRESO EN PANTALLA
 // =====================================================
 async function cargarProgreso() {
     const user = auth.currentUser;
@@ -75,19 +100,24 @@ async function cargarProgreso() {
 
     const datos = snap.data();
 
-    // Valores generales
+    // Datos generales
     const partidas = datos.partidas || 0;
     const aciertos = datos.aciertos || 0;
     const errores = datos.errores || 0;
 
+    // Cálculo de porcentaje global
     const porcentaje = partidas > 0
         ? Math.round((aciertos / partidas) * 100)
         : 0;
 
+    // Pintar valores
     document.getElementById("partidas").textContent = partidas;
     document.getElementById("aciertos").textContent = aciertos;
     document.getElementById("errores").textContent = errores;
     document.getElementById("porcentaje").textContent = porcentaje + "%";
+
+    // Dar recompensas si toca
+    comprobarRecompensas(porcentaje);
 
     // Progreso por asignatura
     const contenedor = document.getElementById("progresoAsignaturas");
@@ -111,7 +141,11 @@ async function cargarProgreso() {
     }
 }
 
+
+
 // =====================================================
-//  🔵  3. MANTENER TU LÍNEA ORIGINAL DE ESCUCHAR LOGIN
+//  🔵  4. ESPERAR A QUE EL USUARIO SE LOGUEE Y CARGAR
 // =====================================================
-auth.onAuthStateChanged(() => cargarProgreso());
+auth.onAuthStateChanged((u) => {
+    if (u) cargarProgreso();
+});

@@ -1,9 +1,4 @@
-/* ----------- CENTRADO GLOBAL ----------- */
-.center {
-    text-align: center;
-}
-
-/* ----------- PÁGINA PRINCIPAL ----------- */
+/* ----------- FONDO GENERAL ----------- */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -12,16 +7,24 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    min-height: 100vh; /* 🔥 evita barra blanca */
 }
 
-h1 {
+/* ----------- INICIO ----------- */
+.inicio-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
     text-align: center;
+    padding-top: 140px; /* CENTRADO REAL */
+}
+
+.inicio-title {
     font-size: 3rem;
-    margin-top: 120px;
+    margin: 0 0 15px 0;
 }
 
 .subtitulo {
-    text-align: center;
     font-size: 1.4rem;
     color: #ff6f91;
     margin-bottom: 20px;
@@ -29,30 +32,39 @@ h1 {
 
 .logo-img {
     width: 220px;
-    display: block;
     margin: 20px auto;
+    display: block;
 }
 
-/* ----------- HEADER DEL MENÚ ----------- */
+.btn {
+    display: inline-block;
+    background: #ff6f61;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/* ----------- HEADER ----------- */
 .topbar {
     width: 100%;
     text-align: center;
-    padding: 25px 0;
+    padding: 20px 0;
 }
 
 .logo {
-    font-size: 40px;
+    font-size: 35px;
     font-weight: bold;
 }
 
-/* ----------- MENÚ PRINCIPAL ----------- */
+/* ----------- MENÚ ----------- */
 .menu-subtitle {
     text-align: center;
     font-size: 26px;
     margin-top: 10px;
 }
 
-/* Contenedor de tarjetas */
 .card-container {
     display: flex;
     justify-content: center;
@@ -61,7 +73,6 @@ h1 {
     margin-top: 30px;
 }
 
-/* Tarjetas */
 .card {
     background: white;
     width: 180px;
@@ -72,23 +83,45 @@ h1 {
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
 .card:hover {
     transform: scale(1.05);
 }
 
-/* ----------- EL ARREGLO IMPORTANTE ----------- */
-/* 🔥 Esto corrige tus imágenes enormes */
+/* 🔥 CORRECCIÓN DEFINITIVA DE IMÁGENES ENORMES */
 .card img {
     width: 110px !important;
     height: 110px !important;
     object-fit: contain;
-    margin: 0 auto;
     display: block;
+    margin: 0 auto;
 }
 
-/* Botón inferior */
-.btn-secondary {
+/* ----------- JUEGO ----------- */
+.titulo-juego {
+    text-align: center;
+    font-size: 26px;
+    margin-top: 10px;
+}
+
+.game-box {
+    background: white;
+    width: 330px;
+    padding: 25px;
+    border-radius: 20px;
+    border: 3px solid #ffcc4d;
+    text-align: center;
+    margin: 30px auto;
+}
+
+.pregunta {
+    font-size: 26px;
+    margin-bottom: 15px;
+}
+
+/* ----------- BOTONES ----------- */
+.btn-secondary,
+button,
+.btn-volver {
     background: #ff6f61;
     color: white;
     padding: 12px 25px;
@@ -96,9 +129,28 @@ h1 {
     border: none;
     font-size: 18px;
     cursor: pointer;
-    margin-top: 15px;
 }
 
-.btn-secondary:hover {
+.btn-volver {
+    position: absolute;
+    left: 20px;
+    top: 90px;
+}
+
+button:hover,
+.btn-secondary:hover,
+.btn-volver:hover {
     background: #e85a4f;
 }
+
+/* Input */
+input {
+    padding: 12px;
+    width: 80%;
+    border-radius: 15px;
+    border: 2px solid #ffcc4d;
+    margin: 10px auto;
+    display: block;
+    font-size: 18px;
+}
+``

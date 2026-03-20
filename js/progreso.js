@@ -1,5 +1,5 @@
 // =====================================================
-//  🔵  IMPORTS (LOS CORRECTOS PARA TU VERSIÓN DE FIREBASE)
+//  🔵 IMPORTS
 // =====================================================
 import { auth, db } from "../firebase-config.js";
 import {
@@ -11,20 +11,17 @@ import {
 
 
 // =====================================================
-//  🔵  1. GUARDAR RESULTADOS DE LOS JUEGOS
+//  🔵 1. REGISTRAR RESULTADOS DE LOS JUEGOS
 // =====================================================
-// Se llama desde los juegos: registrarResultado("matematicas", aciertos, errores)
+// Se llama desde los juegos: registrarResultado("ingles3", 1, 0)
 export async function registrarResultado(asignatura, correctas, incorrectas) {
     const user = auth.currentUser;
-    if (!user) {
-        console.warn("⚠ No hay usuario logeado. No se puede guardar progreso.");
-        return;
-    }
+    if (!user) return;
 
     const ref = doc(db, "usuarios", user.uid);
     const snap = await getDoc(ref);
 
-    // Cargar datos anteriores
+    // Si no hay datos previos, crear objeto
     let datos = snap.exists() ? snap.data() : {};
 
     // Totales globales
@@ -32,24 +29,32 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
     const aciertosTotales = (datos.aciertos || 0) + correctas;
     const erroresTotales = (datos.errores || 0) + incorrectas;
 
-    // Progreso por asignatura
+    // Crear estructura por asignatura si no existe
     if (!datos.progreso) datos.progreso = {};
     if (!datos.progreso[asignatura]) {
         datos.progreso[asignatura] = {
             puntos: 0,
             completado: false,
+            intentos: 0,
+            aciertosAsignatura: 0
         };
     }
 
-    // Sumar puntos
+    // Sumar puntos e intentos
     datos.progreso[asignatura].puntos += correctas;
+    datos.progreso[asignatura].intentos++;
+    datos.progreso[asignatura].aciertosAsignatura += correctas;
 
-    // Si acertó más de los que falló
-    if (correctas > incorrectas) {
-        datos.progreso[asignatura].completado = true;
-    }
+    // =====================================================
+    // 🔥 COMPLETADO SI SUPERA EL 70% DE ACIERTOS
+    // =====================================================
+    const porcentajeAsignatura =
+        (datos.progreso[asignatura].aciertosAsignatura /
+         datos.progreso[asignatura].intentos) * 100;
 
-    // Guardar
+    datos.progreso[asignatura].completado = porcentajeAsignatura >= 70;
+
+    // Guardar en Firestore
     await setDoc(ref, {
         partidas: partidasTotales,
         aciertos: aciertosTotales,
@@ -57,37 +62,13 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
         progreso: datos.progreso
     }, { merge: true });
 
-    console.log("✔ Progreso actualizado en Firestore");
+    console.log("✔ Progreso actualizado correctamente.");
 }
 
 
 
 // =====================================================
-//  🔵  2. ASIGNAR RECOMPENSAS AUTOMÁTICAS SEGÚN PORCENTAJE
-// =====================================================
-async function comprobarRecompensas(porcentaje) {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const ref = doc(db, "usuarios", user.uid);
-
-    // Objeto con recompensas simples
-    const recompensas = {};
-
-    if (porcentaje >= 30) recompensas.moneda = true;     // 💰
-    if (porcentaje >= 50) recompensas.estrella = true;   // ⭐
-    if (porcentaje >= 70) recompensas.medalla = true;    // 🥇
-    if (porcentaje >= 90) recompensas.trofeo = true;     // 🏆
-
-    await updateDoc(ref, { recompensas }, { merge: true });
-
-    console.log("🏅 Recompensas actualizadas:", recompensas);
-}
-
-
-
-// =====================================================
-//  🔵  3. CARGAR PROGRESO EN PANTALLA
+//  🔵 2. CARGAR PROGRESO EN PANTALLA
 // =====================================================
 async function cargarProgreso() {
     const user = auth.currentUser;
@@ -100,29 +81,29 @@ async function cargarProgreso() {
 
     const datos = snap.data();
 
-    // Datos generales
+    // Totales globales
     const partidas = datos.partidas || 0;
     const aciertos = datos.aciertos || 0;
     const errores = datos.errores || 0;
 
-    // Cálculo de porcentaje global
+    // Porcentaje global de acierto
     const porcentaje = partidas > 0
         ? Math.round((aciertos / partidas) * 100)
         : 0;
 
-    // Pintar valores
+    // Mostrar datos globales
     document.getElementById("partidas").textContent = partidas;
     document.getElementById("aciertos").textContent = aciertos;
     document.getElementById("errores").textContent = errores;
     document.getElementById("porcentaje").textContent = porcentaje + "%";
 
-    // Dar recompensas si toca
-    comprobarRecompensas(porcentaje);
-
-    // Progreso por asignatura
+    // Contenedor
     const contenedor = document.getElementById("progresoAsignaturas");
     contenedor.innerHTML = "";
 
+    // =====================================================
+    // 🔵 MOSTRAR PROGRESO POR ASIGNATURA
+    // =====================================================
     if (datos.progreso) {
         for (const asignatura in datos.progreso) {
             const info = datos.progreso[asignatura];
@@ -130,10 +111,17 @@ async function cargarProgreso() {
             const div = document.createElement("div");
             div.classList.add("asignatura-box");
 
+            const porcentajeAsignatura = info.intentos > 0
+                ? Math.round((info.aciertosAsignatura / info.intentos) * 100)
+                : 0;
+
             div.innerHTML = `
                 <p><strong>${asignatura.toUpperCase()}</strong></p>
-                <p>Puntos: ${info.puntos || 0}</p>
-                <p>Completado: ${info.completado ? "Sí" : "No"}</p>
+                <p>Puntos: ${info.puntos}</p>
+                <p>Aciertos totales: ${info.aciertosAsignatura}</p>
+                <p>Intentos: ${info.intentos}</p>
+                <p>Porcentaje: ${porcentajeAsignatura}%</p>
+                <p>Completado: ${info.completado ? "✔ Sí" : "✘ No"}</p>
             `;
 
             contenedor.appendChild(div);
@@ -144,7 +132,7 @@ async function cargarProgreso() {
 
 
 // =====================================================
-//  🔵  4. ESPERAR A QUE EL USUARIO SE LOGUEE Y CARGAR
+//  🔵 3. ACTIVAR CARGA AUTOMÁTICA DEL PROGRESO
 // =====================================================
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();

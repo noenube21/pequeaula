@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Juego</title>
-    css/style.css
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -26,18 +26,15 @@
 
     <button id="btnComprobar">Comprobar</button>
 
+    <!-- ⭐ ESTABA MAL ESCRITO -->
     <p id="resultado"></p>
 </div>
 
-<!-- ⭐ VARIABLES GLOBALES PARA REGISTRO -->
+<!-- ⭐ VARIABLES GLOBALES PARA EL JUEGO (NECESARIAS PARA REGISTRO) -->
 <script>
     const paramsJuego = new URLSearchParams(location.search);
     var materia = paramsJuego.get("materia");
     var nivel   = paramsJuego.get("nivel");
-
-    // ⭐ Hacerlas accesibles a juegos-master.js (importantísimo)
-    window.materia = materia;
-    window.nivel   = nivel;
 </script>
 
 <script type="module">

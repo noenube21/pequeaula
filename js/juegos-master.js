@@ -212,15 +212,15 @@ export function comprobar() {
         resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
-    // ⭐ REGISTRAR PROGRESO GLOBAL ⭐
-    import("./progreso.js")
-        .then(mod => mod.registrarResultado(
-            materia + nivel,       // ej: ingles3, castellano2
+    // ⭐ REGISTRAR PROGRESO GLOBAL (RUTA CORRECTA)
+    import("./progreso.js").then(mod => {
+        mod.registrarResultado(
+            materia + nivel,       // ej: ingles3
             r === ok ? 1 : 0,      // aciertos
             r !== ok ? 1 : 0       // errores
-        ))
-        .catch(err => console.error("ERROR IMPORT:", err));
+        );
+    }).catch(err => console.error("ERROR:", err));
 
-    // siguiente pregunta
+    // Siguiente pregunta
     setTimeout(() => iniciarJuego(materia + nivel), 800);
 }

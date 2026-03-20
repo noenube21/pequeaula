@@ -20,22 +20,25 @@
 
     <div id="pregunta" class="pregunta"></div>
 
-    <!-- 🔥 ESTE FALTABA 🔥 -->
     <div id="zona"></div>
 
     <input id="respuesta" type="text" placeholder="Escribe tu respuesta">
 
     <button id="btnComprobar">Comprobar</button>
 
+    <!-- ⭐ ESTABA MAL ESCRITO -->
     <p id="resultado"></p>
 </div>
 
+<!-- ⭐ VARIABLES GLOBALES PARA EL JUEGO (NECESARIAS PARA REGISTRO) -->
+<script>
+    const paramsJuego = new URLSearchParams(location.search);
+    var materia = paramsJuego.get("materia");
+    var nivel   = paramsJuego.get("nivel");
+</script>
+
 <script type="module">
     import { iniciarJuego, comprobar } from "./js/juegos-master.js";
-
-    const params = new URLSearchParams(location.search);
-    const materia = params.get("materia");
-    const nivel = params.get("nivel");
 
     document.getElementById("tituloJuego").innerText =
         materia.toUpperCase() + " - Nivel " + nivel;

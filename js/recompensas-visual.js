@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase-config.js";
+import { auth, db } from "../firebase-config.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 auth.onAuthStateChanged(async (u) => {
@@ -12,10 +12,10 @@ auth.onAuthStateChanged(async (u) => {
     const cont = document.getElementById("contenedorRecompensas");
 
     const lista = {
+        moneda: "💰 Moneda",
         estrella: "⭐ Estrella",
         medalla: "🥇 Medalla",
-        trofeo: "🏆 Trofeo",
-        moneda: "💰 Moneda especial"
+        trofeo: "🏆 Trofeo"
     };
 
     cont.innerHTML = "";
@@ -27,7 +27,6 @@ auth.onAuthStateChanged(async (u) => {
             const div = document.createElement("div");
             div.className = "card";
             div.style.fontSize = "40px";
-            div.style.padding = "15px";
             div.innerText = lista[r];
             cont.appendChild(div);
         }

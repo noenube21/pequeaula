@@ -8,25 +8,34 @@
 </head>
 <body>
 
-    <h2>Iniciar sesión</h2>
+<!-- CONTENEDOR PARA CENTRARLO TODO -->
+<div class="login-container">
 
-    <form id="form-login" class="login-form">
+    <!-- CAJA DEL LOGIN (NO TOCO TU FORMULARIO) -->
+    <div class="login-box">
 
-        <p>Email</p>
-        <input type="email" name="email" placeholder="Escribe tu email" required>
+        <h2>Iniciar sesión</h2>
 
-        <p>Contraseña</p>
-        <input type="password" name="password" placeholder="Escribe tu contraseña" required>
+        <form id="form-login" class="login-form">
 
-        <button type="submit">Entrar</button>
-    </form>
+            <p>Email</p>
+            <input type="email" name="email" placeholder="Escribe tu email" required>
 
-    <p>¿No tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
+            <p>Contraseña</p>
+            <input type="password" name="password" placeholder="Escribe tu contraseña" required>
 
-    <!-- Scripts -->
-    <script type="module" src="firebase-config.js"></script>
-    <script type="module" src="js/auth.js"></script>
+            <button type="submit">Entrar</button>
+
+        </form>
+
+        <p>¿No tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="js/auth.js"></script>
 
 </body>
 </html>
-

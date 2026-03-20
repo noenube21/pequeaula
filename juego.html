@@ -18,25 +18,33 @@
     <div id="pregunta"></div>
     <div id="zona"></div>
 
-    <input id="respuesta" type="text">
-    <button onclick="comprobar()">Comprobar</button>
+    <input id="respuesta" type="text" placeholder="Escribe tu respuesta">
+    <button id="btnComprobar">Comprobar</button>
     <p id="resultado"></p>
 </div>
 
+<!-- Firebase (si lo usas realmente) -->
 <script type="module" src="js/firebase-config.js"></script>
+
+<!-- JUEGOS -->
 <script type="module" src="js/juegos-master.js"></script>
 
-<script>
-const params = new URLSearchParams(location.search);
-const materia = params.get("materia");
-const nivel = params.get("nivel");
+<!-- INICIADOR -->
+<script type="module">
+    import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
-document.getElementById("tituloJuego").innerText =
-    materia.toUpperCase() + " - Nivel " + nivel;
+    const params = new URLSearchParams(location.search);
+    const materia = params.get("materia");
+    const nivel = params.get("nivel");
 
-window.onload = () => {
-    iniciarJuego(materia + nivel);
-};
+    document.getElementById("tituloJuego").innerText =
+        materia.toUpperCase() + " - Nivel " + nivel;
+
+    window.onload = () => {
+        iniciarJuego(materia + nivel);
+    };
+
+    document.getElementById("btnComprobar").onclick = comprobar;
 </script>
 
 </body>

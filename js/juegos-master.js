@@ -120,10 +120,11 @@ export function iniciarJuego(key) {
 // COMPROBAR RESPUESTA
 // =======================================
 
-window.comprobar = function() {
+export function comprobar() {
     const r = document.getElementById("respuesta").value.trim().toLowerCase();
     const ok = preguntaActual.r.toLowerCase();
 
     document.getElementById("resultado").innerText =
         (r === ok) ? "✔ Correcto" : "✘ Incorrecto";
-};
+}
+``

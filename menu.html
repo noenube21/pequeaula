@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Menú</title>
-css/style.css
-js/firebase-config.js</script>
+    <meta charset="UTF-8">
+    <title>Menú</title>
+    css/style.css
+    js/firebase-config.js</script>
 </head>
 
 <body>
@@ -51,16 +51,15 @@ js/firebase-config.js</script>
 
 </div>
 
-<!-- 🔴 BOTÓN CERRAR SESIÓN ABAJO -->
-<div class="center" style="margin-top: 40px;">
+<!-- 🔴 BOTÓN CERRAR SESIÓN ABAJO (EL ÚNICO CAMBIO) -->
+<div class="center" style="margin-top: 30px;">
     <button class="btn" style="background:#d9534f;" onclick="cerrarSesion()">Cerrar sesión</button>
 </div>
 
-<!-- SCRIPT PARA CERRAR SESIÓN -->
+<!-- 🔴 SCRIPT PARA CERRAR SESIÓN -->
 <script type="module">
 import { auth } from "./js/firebase-config.js";
-import { signOut } 
-from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 window.cerrarSesion = function () {
     signOut(auth).then(() => {

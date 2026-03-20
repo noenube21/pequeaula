@@ -64,7 +64,6 @@ const Juegos = {
         ]
     },
 
-    // 🔥 NUEVO JUEGO AÑADIDO (INGLÉS NIVEL 3)
     ingles3: {
         preguntas: [
             { p:"Sun =", r:"sol" },
@@ -87,7 +86,6 @@ const Juegos = {
         ]
     },
 
-    // 🔥 NUEVO JUEGO AÑADIDO (CIENCIAS NIVEL 3)
     ciencias3: {
         preguntas: [
             { p:"¿Qué órgano bombea la sangre?", r:"corazon" },
@@ -135,13 +133,26 @@ export function iniciarJuego(key) {
 }
 
 // =======================================
-// COMPROBAR RESPUESTA
+// COMPROBAR RESPUESTA — SOLO CAMBIADO LO NECESARIO
 // =======================================
 
 export function comprobar() {
+
     const r = document.getElementById("respuesta").value.trim().toLowerCase();
     const ok = preguntaActual.r.toLowerCase();
+    const resultado = document.getElementById("resultado");
 
-    document.getElementById("resultado").innerText =
-        (r === ok) ? "✔ Correcto" : "✘ Incorrecto";
+    resultado.innerText = (r === ok) ? "✔ Correcto" : "✘ Incorrecto";
+
+    // ⭐ REGISTRO EN PROGRESO (si existe progreso.js)
+    import("./progreso.js").then(mod => {
+        mod.registrarResultado(
+            materia,               // viene de juego.html
+            r === ok ? 1 : 0,      // acierto
+            r !== ok ? 1 : 0       // error
+        );
+    }).catch(()=>{});
+
+    // ⭐ HACER SIGUIENTE PREGUNTA AUTOMÁTICA
+    setTimeout(() => iniciarJuego(materia + nivel), 800);
 }

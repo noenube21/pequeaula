@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Menú</title>
-<link rel="stylesheet" href="css/style.css">
-<script type="module" src="js/firebase-config.js"></script>
+css/style.css
+js/firebase-config.js</script>
 </head>
 
 <body>
@@ -19,37 +19,55 @@
 
 <div class="card-container">
 
-    <div class="card" onclick="location.href='niveles.html?materia=matematicas'">
-        <img src="assets/img/matematicas.png">
+    niveles.html?materia=matematicas
+        assets/img/matematicas.png
         <h3>Mates</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=castellano'">
-        <img src="assets/img/castellano.png">
+    niveles.html?materia=castellano
+        assets/img/castellano.png
         <h3>Castellano</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=ingles'">
-        <img src="assets/img/ingles.png">
+    niveles.html?materia=ingles
+        assets/img/ingles.png
         <h3>Inglés</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=ciencias'">
-        <img src="assets/img/conocimiento.png">
+    niveles.html?materia=ciencias
+        assets/img/conocimiento.png
         <h3>Ciencias</h3>
     </div>
 
-    <div class="card" onclick="location.href='progreso.html'">
-        <img src="assets/img/progreso.png">
+    progreso.html
+        assets/img/progreso.png
         <h3>Progreso</h3>
     </div>
 
-    <div class="card" onclick="location.href='recompensas.html'">
-        <img src="assets/img/recompensas.png">
+    recompensas.html
+        assets/img/recompensas.png
         <h3>Recompensa</h3>
     </div>
 
 </div>
+
+<!-- 🔴 BOTÓN CERRAR SESIÓN ABAJO -->
+<div class="center" style="margin-top: 40px;">
+    <button class="btn" style="background:#d9534f;" onclick="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<!-- SCRIPT PARA CERRAR SESIÓN -->
+<script type="module">
+import { auth } from "./js/firebase-config.js";
+import { signOut } 
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+window.cerrarSesion = function () {
+    signOut(auth).then(() => {
+        location.href = "login.html";
+    });
+};
+</script>
 
 </body>
 </html>

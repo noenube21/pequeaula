@@ -1,38 +1,235 @@
-/* ⭐ ESTILO DEFINITIVO DE TÍTULOS, VISIBLES Y CENTRADOS ⭐ */
+/* FONDO */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url("../assets/img/fondo-escolar.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+}
+
+/* BOTÓN VOLVER PARA TODAS LAS PÁGINAS */
+.btn-volver {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    background: #ff6f61;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+.btn-volver:hover {
+    background: #e85a4f;
+}
+
+/* INICIO */
+.inicio-container {
+    text-align: center;
+    margin-top: 150px;
+}
+.inicio-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+.logo-img {
+    width: 220px;
+    margin: 20px auto;
+}
+.btn {
+    display: inline-block;
+    background: #ff6f61;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/* HEADER */
+.topbar {
+    text-align: center;
+    padding: 20px 0;
+}
+.logo {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+/* MENÚ */
+.menu-subtitle {
+    text-align: center;
+    font-size: 26px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.card {
+    background: white;
+    width: 180px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 3px solid #ffcc4d;
+    text-align: center;
+    cursor: pointer;
+}
+.card img {
+    width: 110px !important;
+    height: 110px !important;
+    object-fit: contain;
+}
+
+/* JUEGO */
+.game-box {
+    background: white;
+    width: 330px;
+    padding: 25px;
+    border-radius: 20px;
+    border: 3px solid #ffcc4d;
+    text-align: center;
+    margin: 30px auto;
+}
+.pregunta {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* ------------------------------------------------ */
+/* 🔥 CENTRADO PERFECTO DEL LOGIN */
+/* ------------------------------------------------ */
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px 20px;
+    width: 300px;
+    border-radius: 20px;
+    text-align: center;
+    border: 3px solid #ffcc4d;
+}
+
+.login-box input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 2px solid #ffcc4d;
+    font-size: 16px;
+}
+
+.login-box button {
+    background: #ff6f61;
+    color: white;
+    padding: 12px;
+    border: none;
+    width: 100%;
+    border-radius: 15px;
+    font-size: 18px;
+    cursor: pointer;
+}
+.login-box button:hover {
+    background: #e85a4f;
+}
+
+.avatar-selector {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.avatar {
+    width: 90px;
+    cursor: pointer;
+    border-radius: 20px;
+    border: 3px solid transparent;
+}
+
+.avatar:hover {
+    transform: scale(1.09);
+    border-color: #ffcc4d;
+}
+
+/* === CENTRADO PARA LA PÁGINA DE PROGRESO === */
+.progreso-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progreso-box {
+    background: rgba(255,255,255,0.9);
+    padding: 30px;
+    width: 350px;
+    border-radius: 20px;
+    border: 3px solid #ffcc4d;
+    text-align: left;
+}
+
+.progreso-box h2 {
+    text-align: center;
+}
+
+.progreso-box p {
+    margin: 6px 0;
+    font-size: 18px;
+}
+
+/* ------------------------------------------------ */
+/* ⭐ TÍTULOS VISIBLES, GRANDES Y CON COLORES ⭐ */
+/* ------------------------------------------------ */
 
 h1, h2, h3,
 .menu-subtitle,
 .titulo-juego,
 .inicio-title,
-.logo {
+.logo,
+.center {
     font-family: 'Poppins', Arial, sans-serif !important;
     font-weight: 900 !important;
     text-align: center !important;
     letter-spacing: 1px !important;
     text-transform: uppercase !important;
     margin: 10px auto !important;
-
-    /* ⭐ COLOR VISIBILIDAD ALTO ⭐ */
     color: #1a1a1a !important;
-
-    /* ⭐ SOMBRA BLANCA QUE DESTACA SOBRE TU FONDO ⭐ */
-    text-shadow: 2px 2px 5px rgba(255,255,255,0.85) !important;
-
+    text-shadow: 
+        2px 2px 5px rgba(255,255,255,0.85),
+        -2px -2px 5px rgba(255,255,255,0.4) !important;
     display: block !important;
 }
 
-/* Títulos principales grandes */
+/* Tamaños */
 h1, .inicio-title, h2.center {
     font-size: 3rem !important;
 }
 
-/* Títulos de sección */
 h2, .menu-subtitle, .titulo-juego {
-    font-size: 2.2rem !important;
+    font-size: 2.3rem !important;
 }
 
-/* Subtítulos pequeños */
 h3 {
     font-size: 1.6rem !important;
     color: #222 !important;
 }
+
+/* COLORES POR ASIGNATURA */
+.matematicas-titulo { color: #0057ff !important; }
+.castellano-titulo  { color: #ff0033 !important; }
+.ingles-titulo      { color: #009933 !important; }
+.ciencias-titulo    { color: #ff7b00 !important; }

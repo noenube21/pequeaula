@@ -12,12 +12,12 @@
     <span class="logo">PEQUE AULA 🌟</span>
 </header>
 
+<button class="btn-volver" onclick="history.back()">⬅ Volver</button>
+
 <h2 id="tituloJuego" class="titulo-juego"></h2>
 
 <div class="game-box">
     <div id="pregunta" class="pregunta"></div>
-    <div id="zona"></div>
-
     <input id="respuesta" type="text" placeholder="Escribe tu respuesta">
     <button id="btnComprobar">Comprobar</button>
     <p id="resultado"></p>
@@ -33,9 +33,7 @@
     document.getElementById("tituloJuego").innerText =
         materia.toUpperCase() + " - Nivel " + nivel;
 
-    window.onload = () => {
-        iniciarJuego(materia + nivel);
-    };
+    window.onload = () => iniciarJuego(materia + nivel);
 
     document.getElementById("btnComprobar").onclick = comprobar;
 </script>

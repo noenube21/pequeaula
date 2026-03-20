@@ -240,3 +240,38 @@ body {
     margin: 6px 0;
     font-size: 18px;
 }
+/* ======== TITULOS MEJORADOS PARA TODAS LAS PÁGINAS ======== */
+
+h1, h2, h3, .menu-subtitle, .titulo-juego {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 800;                 /* Más grueso */
+    color: #3b3b3b;                   /* Gris oscuro elegante y visible */
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;        /* Más fuerte visualmente */
+    margin-top: 10px;
+}
+
+/* Título principal más grande */
+h1, .inicio-title {
+    font-size: 3rem !important;
+    color: #333 !important;
+}
+
+/* Subtítulos destacados */
+h2, .menu-subtitle, .titulo-juego {
+    font-size: 2rem !important;
+    margin-bottom: 15px;
+    color: #222 !important;
+}
+
+/* Subtítulos pequeños */
+h3 {
+    font-size: 1.4rem;
+    color: #444;
+}
+
+/* Sombras suaves para mejorar visibilidad sobre el fondo */
+h1, h2, h3, .menu-subtitle, .titulo-juego {
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.7);
+}

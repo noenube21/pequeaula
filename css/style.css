@@ -213,3 +213,30 @@ body {
     font-weight: bold;
     text-decoration: none;
 }
+
+/* === CENTRADO PARA LA PÁGINA DE PROGRESO === */
+.progreso-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progreso-box {
+    background: rgba(255,255,255,0.9);
+    padding: 30px;
+    width: 350px;
+    border-radius: 20px;
+    border: 3px solid #ffcc4d;
+    text-align: left;
+}
+
+/* Para textos dentro del progreso */
+.progreso-box h2 {
+    text-align: center;
+}
+
+.progreso-box p {
+    margin: 6px 0;
+    font-size: 18px;
+}

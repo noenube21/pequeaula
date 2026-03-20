@@ -1,5 +1,5 @@
 // =====================================================
-//  IMPORTS
+// IMPORTS
 // =====================================================
 import { auth, db } from "../firebase-config.js";
 import {
@@ -10,7 +10,7 @@ import {
 
 
 // =====================================================
-//  1. REGISTRAR RESULTADOS DE UN JUEGO
+// 1. REGISTRAR RESULTADOS DE UN JUEGO (nivel1, nivel2, nivel3)
 // =====================================================
 export async function registrarResultado(asignatura, correctas, incorrectas) {
     const user = auth.currentUser;
@@ -21,15 +21,12 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
 
     let datos = snap.exists() ? snap.data() : {};
 
-    // Crear estructura global si no existe
+    // Crear estructura si no existe
     if (!datos.progreso) datos.progreso = {};
-
-    // Crear estructura de asignatura si no existe
     if (!datos.progreso[asignatura]) {
         datos.progreso[asignatura] = {
             aciertos: 0,
-            errores: 0,
-            completado: false
+            errores: 0
         };
     }
 
@@ -37,29 +34,15 @@ export async function registrarResultado(asignatura, correctas, incorrectas) {
     datos.progreso[asignatura].aciertos += correctas;
     datos.progreso[asignatura].errores += incorrectas;
 
-    // Calcular porcentaje
-    const total = datos.progreso[asignatura].aciertos +
-                  datos.progreso[asignatura].errores;
+    await setDoc(ref, { progreso: datos.progreso }, { merge: true });
 
-    const porcentaje = total > 0
-        ? Math.round((datos.progreso[asignatura].aciertos / total) * 100)
-        : 0;
-
-    // COMPLETADO = ≥70%
-    datos.progreso[asignatura].completado = porcentaje >= 70;
-
-    // Guardar en Firestore
-    await setDoc(ref, {
-        progreso: datos.progreso
-    }, { merge: true });
-
-    console.log("✔ Progreso actualizado:", datos.progreso[asignatura]);
+    console.log("✔ Registrado:", asignatura, correctas, incorrectas);
 }
 
 
 
 // =====================================================
-//  2. CARGAR PROGRESO EN PÁGINA (ORDENADO)
+// 2. CARGAR PROGRESO AGRUPADO POR ASIGNATURA
 // =====================================================
 async function cargarProgreso() {
     const user = auth.currentUser;
@@ -72,70 +55,75 @@ async function cargarProgreso() {
 
     const datos = snap.data();
 
-    // Totales globales
+    // ---- VALORES GENERALES ----
     const partidas = datos.partidas || 0;
     const aciertos = datos.aciertos || 0;
     const errores = datos.errores || 0;
 
-    const porcentaje = partidas > 0
-        ? Math.round((aciertos / partidas) * 100)
-        : 0;
+    const porcentaje = partidas > 0 ?
+        Math.round((aciertos / partidas) * 100) : 0;
 
     document.getElementById("partidas").textContent = partidas;
     document.getElementById("aciertos").textContent = aciertos;
     document.getElementById("errores").textContent = errores;
     document.getElementById("porcentaje").textContent = porcentaje + "%";
 
-    // Contenedor
+
+    // ---- AGRUPAR POR ASIGNATURA REAL ----
+    const asignaturas = {
+        matematicas: ["matematicas1", "matematicas2", "matematicas3"],
+        castellano: ["castellano1", "castellano2", "castellano3"],
+        ingles: ["ingles1", "ingles2", "ingles3"],
+        ciencias: ["ciencias1", "ciencias2", "ciencias3"]
+    };
+
+    const orden = ["matematicas", "castellano", "ingles", "ciencias"];
+
     const contenedor = document.getElementById("progresoAsignaturas");
     contenedor.innerHTML = "";
 
-    // 🎯 ORDEN DE ASIGNATURAS CORRECTO
-    const orden = ["matematicas", "castellano", "ingles", "ciencias"];
+    // ---- RECORRER EN ORDEN ----
+    for (const materia of orden) {
+        const niveles = asignaturas[materia];
 
-    // Mostrar progreso en orden
-    if (datos.progreso) {
-        for (const materia of orden) {
+        let aciertosSum = 0;
+        let erroresSum = 0;
 
-            // Buscar niveles: matematicas1, matematicas2, matematicas3...
-            let totalAciertos = 0;
-            let totalErrores = 0;
-
-            for (const clave in datos.progreso) {
-                if (clave.startsWith(materia)) {
-                    totalAciertos += datos.progreso[clave].aciertos || 0;
-                    totalErrores += datos.progreso[clave].errores || 0;
-                }
+        niveles.forEach(nivel => {
+            if (datos.progreso && datos.progreso[nivel]) {
+                aciertosSum += datos.progreso[nivel].aciertos || 0;
+                erroresSum  += datos.progreso[nivel].errores  || 0;
             }
+        });
 
-            // Si no hay datos, no mostrar
-            if (totalAciertos === 0 && totalErrores === 0) continue;
+        // Si la asignatura tiene 0 datos → no mostrar
+        if (aciertosSum === 0 && erroresSum === 0) continue;
 
-            const total = totalAciertos + totalErrores;
-            const porcentajeAsig =
-                total > 0 ? Math.round((totalAciertos / total) * 100) : 0;
+        const total = aciertosSum + erroresSum;
+        const porcentajeMateria =
+            total > 0 ? Math.round(aciertosSum / total * 100) : 0;
 
-            const div = document.createElement("div");
-            div.classList.add("asignatura-box");
+        const div = document.createElement("div");
+        div.classList.add("asignatura-box");
 
-            div.innerHTML = `
-                <p><strong>${materia.toUpperCase()}</strong></p>
-                <p>Aciertos: ${totalAciertos}</p>
-                <p>Errores: ${totalErrores}</p>
-                <p>Porcentaje: ${porcentajeAsig}%</p>
-                <p>Completado: ${porcentajeAsig >= 70 ? "✔ Sí" : "✘ No"}</p>
-            `;
+        div.innerHTML = `
+            <p><strong>${materia.toUpperCase()}</strong></p>
+            <p>Aciertos: ${aciertosSum}</p>
+            <p>Errores: ${erroresSum}</p>
+            <p>Porcentaje: ${porcentajeMateria}%</p>
+            <p>Completado: ${porcentajeMateria >= 70 ? "✔ Sí" : "✘ No"}</p>
+        `;
 
-            contenedor.appendChild(div);
-        }
+        contenedor.appendChild(div);
     }
 }
 
 
 
 // =====================================================
-//  3. ACTIVAR CARGA AUTOMÁTICA DEL PROGRESO
+// 3. ACTIVAR
 // =====================================================
 auth.onAuthStateChanged((u) => {
     if (u) cargarProgreso();
 });
+``

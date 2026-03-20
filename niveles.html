@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Niveles</title>
-<link rel="stylesheet" href="css/style.css">
+css/style.css
 </head>
+
 <body>
 
 <button class="btn-volver" onclick="history.back()">⬅ Volver</button>
@@ -42,10 +43,9 @@ document.getElementById("titulo").innerText =
     "Elige un nivel de " + materia.toUpperCase();
 
 function jugar(nivel){
-    location.href = `juego.html?materia=${materia}&nivel=${nivel}`;
+    location.href = `juego.html?materia=${materia}&nivel=${nivel}`; 
 }
 </script>
 
 </body>
 </html>
-``

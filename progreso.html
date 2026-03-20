@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Progreso del Alumno</title>
-    css/style.css
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
 <header class="topbar">
-    <span class="logo">App Educativa</span>
+    <span class="logo">PROGRESO DEL ALUMNO, INFORMACION PARA FAMILIAS</span>
     <img id="avatarMenu" class="avatar-small">
 </header>
 
 <h2 class="center">Progreso del alumno</h2>
 
-<!-- 🔥 CONTENEDOR NUEVO PARA CENTRAR -->
 <div class="progreso-container">
-
-    <!-- 🔥 CAJA BLANCA (TU CONTENIDO DENTRO) -->
     <div class="progreso-box">
 
         <p><strong>Partidas jugadas:</strong> <span id="partidas">0</span></p>
@@ -29,13 +26,13 @@
         <h3>Progreso por asignatura</h3>
         <div id="progresoAsignaturas"></div>
 
-        menu.htmlVolver al menú</button>
+        <button class="btn-secondary" onclick="location.href='menu.html'">Volver al menú</button>
 
     </div>
 </div>
 
-<!-- Script del progreso -->
-js/progreso.js</script>
+<!-- Debe ser un script normal o module, PERO NO TEXTO -->
+<script type="module" src="js/progreso.js"></script>
 
 </body>
 </html>

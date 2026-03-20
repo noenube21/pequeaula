@@ -215,17 +215,18 @@ export function iniciarJuego(key) {
     }
 }
 
-// =======================================
-// COMPROBAR RESPUESTA (NO TOCADO NADA MÁS)
-// =======================================
-
 export function comprobar() {
     const r = document.getElementById("respuesta").value.trim().toLowerCase();
     const ok = preguntaActual.r.toLowerCase();
 
-    document.getElementById("resultado").innerText =
-        (r === ok) ? "✔ Correcto" : "✘ Incorrecto";
+    const resultado = document.getElementById("resultado");
 
-    // siguiente pregunta
-    setTimeout(() => iniciarJuego(materia + nivel), 800);
+    if (r === ok) {
+        resultado.innerText = "✔ Correcto";
+    } else {
+        resultado.innerText = `✘ Incorrecto. La respuesta correcta es: ${preguntaActual.r}`;
+    }
+
+    // siguiente pregunta automática
+    setTimeout(() => iniciarJuego(materia + nivel), 1000);
 }

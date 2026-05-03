@@ -2,31 +2,48 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
-    css/style.css
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
 <div class="login-container">
+
     <div class="login-box">
 
         <h2>Iniciar sesión</h2>
 
-        <label>Nombre</label>
-        <input id="nombre" type="text" placeholder="Escribe tu nombre">
+        <form id="form-login" class="login-form">
 
-        <div class="avatar-selector">
-            assets/img/avatar-chico.png
-            assets/img/avatar-chica.png
-        </div>
+            <p>Email</p>
+            <input type="email" name="email" required>
 
-        <button onclick="entrar()">Entrar</button>
+            <p>Contraseña</p>
+            <input type="password" name="password" required>
+
+            <button type="submit">Entrar</button>
+
+        </form>
+
+        <!-- ✅ añadido -->
+        <p>
+            <a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a>
+        </p>
+
+        <p>¿No tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
 
     </div>
 </div>
 
-js/login-avatars.js</script>
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="js/auth.js"></script>
+
+<script type="module">
+    import { resetPassword } from "./js/auth.js";
+    window.resetPassword = resetPassword;
+</script>
 
 </body>
 </html>

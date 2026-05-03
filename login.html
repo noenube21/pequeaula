@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
-    <link rel="stylesheet" href="css/style.css">
+    css/style.css
 </head>
+
 <body>
 
 <!-- CONTENEDOR PARA CENTRARLO TODO -->
 <div class="login-container">
 
-    <!-- CAJA DEL LOGIN (NO TOCO TU FORMULARIO) -->
+    <!-- CAJA DEL LOGIN -->
     <div class="login-box">
 
         <h2>Iniciar sesión</h2>
@@ -28,14 +29,25 @@
 
         </form>
 
+        <!-- ✅ NUEVO: RECUPERAR CONTRASEÑA -->
+        <p style="margin-top:10px;">
+            <a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a>
+        </p>
+
         <p>¿No tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
 
     </div>
 </div>
 
 <!-- Scripts -->
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="js/auth.js"></script>
+firebase-config.js</script>
+js/auth.js</script>
+
+<!-- ✅ SCRIPT PARA RESET PASSWORD -->
+<script type="module">
+    import { resetPassword } from "./js/auth.js";
+    window.resetPassword = resetPassword;
+</script>
 
 </body>
 </html>

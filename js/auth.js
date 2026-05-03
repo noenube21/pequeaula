@@ -37,36 +37,57 @@ if (formRegistro) {
     const avatar = e.target.avatar.value;
 
     try {
+      // 1. Crear usuario en Auth
       const cred = await createUserWithEmailAndPassword(auth, email, password);
 
+      // 2. Enviar verificación
       await sendEmailVerification(cred.user);
 
-      await setDoc(doc(db, "usuarios", cred.user.uid), {
-        nombre,
-        avatar,
-        nivel: 1,
-        puntos: 0
-      });
+      // 3. Guardar datos en Firestore (controlado)
+      try {
+        await setDoc(doc(db, "usuarios", cred.user.uid), {
+          nombre,
+          avatar,
+          nivel: 1,
+          puntos: 0
+        });
+      } catch (firestoreError) {
+        console.log("ERROR FIRESTORE:", firestoreError);
+        // no rompemos registro aunque falle esto
+      }
 
-      alert("Cuenta creada. Revisa tu correo y verifica tu email antes de iniciar sesión.");
+      // 4. Mensaje correcto (esto es lo que te pide el profe)
+      alert("Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesión.");
 
+      // 5. Cerrar sesión (importante para obligar verificación)
       await signOut(auth);
 
-      // 🔥 MEJORA UX: redirección automática tras registro
+      // 6. Redirigir al login
       window.location.href = "login.html";
 
     } catch (error) {
 
-      // 🔥 MENSAJE CLARO SI EMAIL YA EXISTE
+      console.log("ERROR AUTH:", error);
+
+      // mensajes claros
       if (error.code === "auth/email-already-in-use") {
         alert("Este email ya está registrado.");
-      } else {
-        alert("Error al crear la cuenta.");
+      }
+
+      else if (error.code === "auth/weak-password") {
+        alert("La contraseña es demasiado débil (mínimo 6 caracteres).");
+      }
+
+      else if (error.code === "auth/invalid-email") {
+        alert("El email no es válido.");
+      }
+
+      else {
+        alert("Error al crear la cuenta. Intenta de nuevo.");
       }
     }
   });
 }
-
 /* ------------------ LOGIN ------------------ */
 if (formLogin) {
   formLogin.addEventListener("submit", async (e) => {

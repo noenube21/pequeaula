@@ -13,38 +13,30 @@
 
 <header class="topbar">
     <span class="logo">PEQUE AULA 🌟</span>
+    <!-- ✅ AÑADIDO AVATAR -->
+    <img id="avatarMenu" class="avatar-small">
 </header>
 
 <h2 class="menu-subtitle">¿Qué quieres practicar hoy?</h2>
 
 <div class="card-container">
 
-    <div class="card" onclick="location.href='niveles.html?materia=matematicas'">
-        <img src="assets/img/matematicas.png">
-        <h3>Mates</h3>
+    <div class="card" onclick="location.href='niveles.html?  <div class="card" onclick="location.href='niveles.html?materia=castastellano</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=castellano'">
-        <img src="assets/img/castellano.png">
-        <h3>Castellano</h3>
-    </div>
-
-    <div class="card" onclick="location.href='niveles.html?materia=ingles'">
+    <div class="carderia=ingles
         <img src="assets/img/ingles.png">
         <h3>Inglés</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=ciencias'">
-        <img src="assets/img/conocimiento.png">
-        <h3>Ciencias</h3>
+    <div class="card" onclick="location.href='niveles.html?materia<h3>Ciencias</h3>
     </div>
 
-    <div class="card" onclick="location.href='progreso.html'">
-        <img src="assets/img/progreso.png">
+    <div class="card" onclick="s/img/progreso.png
         <h3>Progreso</h3>
     </div>
 
-    <div class="card" onclick="location.href='recompensas.html'">
+    <div class="card
         <img src="assets/img/recompensas.png">
         <h3>Recompensa</h3>
     </div>
@@ -56,6 +48,7 @@
     <button class="btn" style="background:#d9534f;" onclick="cerrarSesion()">Cerrar sesión</button>
 </div>
 
+<!-- SCRIPT CERRAR SESIÓN -->
 <script type="module">
 import { auth } from "./js/firebase-config.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -65,6 +58,26 @@ window.cerrarSesion = function () {
         location.href = "login.html";
     });
 };
+</script>
+
+<script type="module">
+import { auth, db } from "./js/firebase-config.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+auth.onAuthStateChanged(async (user) => {
+    if (!user) return;
+
+    const ref = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) return;
+
+    const datos = snap.data();
+    const avatar = datos.avatar || "chico";
+
+    document.getElementById("avatarMenu").src =
+        "assets/img/" + avatar + ".png";
+});
 </script>
 
 </body>

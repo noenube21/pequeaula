@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
-    css/style.css
+
+    <!-- ✅ BIEN ESCRITO -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<!-- CONTENEDOR PARA CENTRARLO TODO -->
 <div class="login-container">
 
-    <!-- CAJA DEL LOGIN -->
     <div class="login-box">
 
         <h2>Iniciar sesión</h2>
@@ -20,16 +20,16 @@
         <form id="form-login" class="login-form">
 
             <p>Email</p>
-            <input type="email" name="email" placeholder="Escribe tu email" required>
+            <input type="email" name="email" required>
 
             <p>Contraseña</p>
-            <input type="password" name="password" placeholder="Escribe tu contraseña" required>
+            <input type="password" name="password" required>
 
             <button type="submit">Entrar</button>
 
         </form>
 
-        <!-- ✅ NUEVO: RECUPERAR CONTRASEÑA -->
+        <!-- ✅ RECUPERAR CONTRASEÑA -->
         <p style="margin-top:10px;">
             <a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a>
         </p>
@@ -39,11 +39,10 @@
     </div>
 </div>
 
-<!-- Scripts -->
-firebase-config.js</script>
-js/auth.js</script>
+<!-- ✅ SCRIPTS BIEN ESCRITOS -->
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/auth.js"></script>
 
-<!-- ✅ SCRIPT PARA RESET PASSWORD -->
 <script type="module">
     import { resetPassword } from "./js/auth.js";
     window.resetPassword = resetPassword;

@@ -60,7 +60,8 @@ if (formRegistro) {
       // 🔥 MENSAJE CLARO SI EMAIL YA EXISTE
       if (error.code === "auth/email-already-in-use") {
         alert("Este email ya está registrado.");
-    
+      } else {
+        alert("Error al crear la cuenta.");
       }
     }
   });

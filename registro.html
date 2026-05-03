@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear cuenta</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,33 +15,32 @@
 
         <h2>Crear cuenta</h2>
 
-        <form id="form-registro">
+        <form id="form-registro" class="login-form">
 
             <p>Nombre del alumno</p>
-            <input type="text" name="nombre" required>
+            <input type="text" name="nombre" placeholder="Escribe tu nombre" required>
 
             <p>Email</p>
-            <input type="email" name="email" required>
+            <input type="email" name="email" placeholder="Escribe tu email" required>
 
             <p>Contraseña</p>
-            <input type="password" name="password" required>
+            <input type="password" name="password" placeholder="Escribe tu contraseña" required>
 
             <p>Elige tu avatar</p>
-
             <select name="avatar">
                 <option value="chico">Chico</option>
                 <option value="chica">Chica</option>
-                <option value="neutro">Neutro</option>
+                <option value="neutro">Neutro</option> <!-- ✅ añadido -->
             </select>
 
             <button type="submit">Crear cuenta</button>
-
         </form>
 
     </div>
 
 </div>
 
+<script type="module" src="firebase-config.js"></script>
 <script type="module" src="js/auth.js"></script>
 
 </body>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
 
-    <!-- ✅ BIEN ESCRITO -->
+    <!-- ✅ RUTA CORRECTA -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -17,6 +17,7 @@
 
         <h2>Iniciar sesión</h2>
 
+        <!-- ✅ IMPORTANTE -->
         <form id="form-login" class="login-form">
 
             <p>Email</p>
@@ -30,19 +31,22 @@
         </form>
 
         <!-- ✅ RECUPERAR CONTRASEÑA -->
-        <p style="margin-top:10px;">
+        <p>
             <a href="#" onclick="resetPassword()">¿Olvidaste tu contraseña?</a>
         </p>
 
-        <p>¿No tienes cuenta? <a href="registro.html">Crear cuenta</a></p>
+        <p>
+            ¿No tienes cuenta? <a href="registro.html">Crear cuenta</a>
+        </p>
 
     </div>
 </div>
 
-<!-- ✅ SCRIPTS BIEN ESCRITOS -->
+<!-- ✅ IMPORTS CORRECTOS (AQUÍ ESTABA EL FALLO) -->
 <script type="module" src="js/firebase-config.js"></script>
 <script type="module" src="js/auth.js"></script>
 
+<!-- ✅ NECESARIO PARA resetPassword -->
 <script type="module">
     import { resetPassword } from "./js/auth.js";
     window.resetPassword = resetPassword;

@@ -17,29 +17,53 @@ import {
 const formRegistro = document.getElementById("form-registro");
 const formLogin = document.getElementById("form-login");
 
+/* ------------------ UI HELPERS (NUEVO) ------------------ */
+function showMessage(text, type = "error") {
+  const box = document.getElementById("login-message");
+  if (!box) return;
+
+  box.innerText = text;
+  box.style.color = type === "error" ? "red" : "green";
+}
+
 /* ------------------ REGISTRO ------------------ */
 if (formRegistro) {
   formRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const email = e.target.email.value;
     const password = e.target.password.value;
     const nombre = e.target.nombre.value;
     const avatar = e.target.avatar.value;
 
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-    await sendEmailVerification(cred.user);
+      await sendEmailVerification(cred.user);
 
-    await setDoc(doc(db, "usuarios", cred.user.uid), {
-      nombre,
-      avatar,
-      nivel: 1,
-      puntos: 0
-    });
+      await setDoc(doc(db, "usuarios", cred.user.uid), {
+        nombre,
+        avatar,
+        nivel: 1,
+        puntos: 0
+      });
 
-    alert("Cuenta creada. Revisa tu correo y verifica tu email antes de iniciar sesión.");
+      alert("Cuenta creada. Revisa tu correo y verifica tu email antes de iniciar sesión.");
 
-    await signOut(auth);
+      await signOut(auth);
+
+      // 🔥 MEJORA UX: redirección automática tras registro
+      window.location.href = "login.html";
+
+    } catch (error) {
+
+      // 🔥 MENSAJE CLARO SI EMAIL YA EXISTE
+      if (error.code === "auth/email-already-in-use") {
+        alert("Este email ya está registrado.");
+      } else {
+        alert("Error al crear la cuenta.");
+      }
+    }
   });
 }
 
@@ -55,20 +79,25 @@ if (formLogin) {
       const cred = await signInWithEmailAndPassword(auth, email, password);
 
       if (!cred.user.emailVerified) {
-        alert("Debes verificar tu correo antes de entrar.");
+        showMessage("Debes verificar tu correo antes de entrar.");
         await signOut(auth);
         return;
       }
 
+      // 🔥 MEJORA UX: feedback antes de redirigir
+      showMessage("Accediendo...", "success");
+
       window.location.href = "menu.html";
 
     } catch (error) {
-      alert("Email o contraseña incorrectos");
+
+      // 🔥 MEJORA: mensaje visible en pantalla (no solo alert)
+      showMessage("Email o contraseña incorrectos");
     }
   });
 }
 
-/* ------------------ RECUPERAR CONTRASEÑA (AISLADO ✅) ------------------ */
+/* ------------------ RECUPERAR CONTRASEÑA ------------------ */
 window.resetPassword = async function () {
 
   const email = prompt("Introduce tu email:");
@@ -77,9 +106,12 @@ window.resetPassword = async function () {
 
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Correo enviado ✅");
-  } catch {
-    alert("Error al enviar correo ❌");
+
+    alert("Correo enviado ✅. Revisa tu bandeja de entrada.");
+
+  } catch (error) {
+
+    alert("No se pudo enviar el correo ❌");
   }
 };
 

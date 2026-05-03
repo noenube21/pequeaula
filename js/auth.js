@@ -1,11 +1,11 @@
-import { auth, db } from "./firebase-config.js";
+import { auth, db } from "../firebase-config.js";
 import { 
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
   sendEmailVerification,
   signOut,
-  sendPasswordResetEmail   // ✅ AÑADIDO
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 import { 
@@ -17,49 +17,34 @@ import {
 const formRegistro = document.getElementById("form-registro");
 const formLogin = document.getElementById("form-login");
 
-
-// ================== REGISTRO ==================
+/* ------------------ REGISTRO ------------------ */
 if (formRegistro) {
-
   formRegistro.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const email = e.target.email.value;
     const password = e.target.password.value;
     const nombre = e.target.nombre.value;
     const avatar = e.target.avatar.value;
 
-    try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(cred.user);
 
-      // Verificación email
-      await sendEmailVerification(cred.user);
+    await setDoc(doc(db, "usuarios", cred.user.uid), {
+      nombre,
+      avatar,
+      nivel: 1,
+      puntos: 0
+    });
 
-      // Guardar usuario en Firestore
-      await setDoc(doc(db, "usuarios", cred.user.uid), {
-        nombre,
-        avatar,
-        nivel: 1,
-        puntos: 0
-      });
+    alert("Cuenta creada. Revisa tu correo y verifica tu email antes de iniciar sesión.");
 
-      alert("Cuenta creada. Revisa tu correo y verifica tu email antes de iniciar sesión.");
-
-      await signOut(auth);
-
-    } catch (error) {
-      console.error(error);
-      alert("Error al crear cuenta");
-    }
+    await signOut(auth);
   });
-
 }
 
-
-// ================== LOGIN ==================
+/* ------------------ LOGIN ------------------ */
 if (formLogin) {
-
   formLogin.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -67,10 +52,8 @@ if (formLogin) {
     const password = e.target.password.value;
 
     try {
-
       const cred = await signInWithEmailAndPassword(auth, email, password);
 
-      // Verificar email
       if (!cred.user.emailVerified) {
         alert("Debes verificar tu correo antes de entrar.");
         await signOut(auth);
@@ -80,16 +63,13 @@ if (formLogin) {
       window.location.href = "menu.html";
 
     } catch (error) {
-      console.error(error);
       alert("Email o contraseña incorrectos");
     }
   });
-
 }
 
-
-// ================== RECUPERAR CONTRASEÑA ==================
-export async function resetPassword() {
+/* ------------------ RECUPERAR CONTRASEÑA (AISLADO ✅) ------------------ */
+window.resetPassword = async function () {
 
   const email = prompt("Introduce tu email:");
 
@@ -97,15 +77,13 @@ export async function resetPassword() {
 
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Correo de recuperación enviado ✅");
-  } catch (error) {
-    console.error(error);
-    alert("Error al enviar el correo ❌");
+    alert("Correo enviado ✅");
+  } catch {
+    alert("Error al enviar correo ❌");
   }
-}
+};
 
-
-// ================== AUTO LOGIN ==================
+/* ------------------ AUTO LOGIN CONTROLADO ------------------ */
 onAuthStateChanged(auth, async (user) => {
 
   const enLogin = document.getElementById("form-login");

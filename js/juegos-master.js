@@ -245,7 +245,7 @@ export function comprobar(){
 
     animarResultado(resultado, correcto); // ✅ animación
 
-    import("./progreso.js").then(mod=>{
+import("./js/progreso.js").then(mod=>{
         mod.registrarResultado(
             materia+nivel,
             correcto?1:0,

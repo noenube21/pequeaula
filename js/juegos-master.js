@@ -134,11 +134,46 @@ ingos1:{
 
     // ✅ DRAG SIMULADO (PIEZAS)
     ciencias3:{
-        preguntas:[
-            {p:"Forma: CORAZON", r:"corazon", tipo:"piezas", piezas:["co","ra","zon"]},
-            {p:"Forma: OJO", r:"ojo", tipo:"piezas", piezas:["o","jo"]}
-        ]
-    }
+        ciencias3:{
+    preguntas:[
+        {
+            p:"¿Órgano que late?",
+            r:"corazon",
+            tipo:"test",
+            opciones:["corazón","ojo","mano"]
+        },
+        {
+            p:"¿Órgano para ver?",
+            r:"ojo",
+            tipo:"test",
+            opciones:["ojo","pierna","brazo"]
+        },
+        {
+            p:"¿Qué respiramos?",
+            r:"oxigeno",
+            tipo:"test",
+            opciones:["oxígeno","agua","humo"]
+        },
+        {
+            p:"¿Astro que da luz?",
+            r:"sol",
+            tipo:"test",
+            opciones:["sol","luna","tierra"]
+        },
+        {
+            p:"¿Planeta donde vivimos?",
+            r:"tierra",
+            tipo:"test",
+            opciones:["tierra","marte","saturno"]
+        },
+        {
+            p:"¿Animal del mar?",
+            r:"pez",
+            tipo:"test",
+            opciones:["pez","perro","gato"]
+        }
+    ]
+}
 
 };
 

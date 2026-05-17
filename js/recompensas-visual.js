@@ -1,46 +1,59 @@
 // =======================================
-// CARGAR PROGRESO LOCAL (simple)
-let datos = JSON.parse(localStorage.getItem("progreso")) || {
-    aciertos: 0
-};
+// ✅ CARGAR PROGRESO (ACERTOS)
+let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0 };
+
 
 // =======================================
-// LISTA DE RECOMPENSAS (visual)
+// 🎁 LISTA DE RECOMPENSAS
 const recompensas = [
 
-    { nombre: "Avatar colorido", puntos: 3, icono: "🧑‍🎨" },
-    { nombre: "Pulsera mágica", puntos: 6, icono: "🎗️" },
-    { nombre: "Pelota", puntos: 10, icono: "⚽" },
-    { nombre: "Muñeco", puntos: 15, icono: "🧸" },
-    { nombre: "Trofeo oro", puntos: 20, icono: "🏆" },
-    { nombre: "Súper premio", puntos: 25, icono: "🎁" }
+    { nombre: "🧑‍🎨 Avatar colorido", puntos: 3 },
+    { nombre: "🎗️ Pulsera mágica", puntos: 6 },
+    { nombre: "⚽ Pelota", puntos: 10 },
+    { nombre: "🧸 Muñeco", puntos: 15 },
+    { nombre: "🏆 Trofeo oro", puntos: 20 },
+    { nombre: "🎁 Súper premio", puntos: 25 }
 
 ];
 
+
 // =======================================
-// RENDERIZAR
+// ✅ CONTENEDOR
 const contenedor = document.getElementById("contenedorRecompensas");
 
+
+// =======================================
+// ✅ RECOMPENSAS DESBLOQUEADAS
+let desbloqueadas = [];
+
+
+// =======================================
+// 🎯 CREAR TARJETAS
 recompensas.forEach(r => {
 
     const card = document.createElement("div");
     card.className = "card";
 
-    // ✅ DESBLOQUEADO
     if (datos.aciertos >= r.puntos) {
 
+        // ✅ DESBLOQUEADA
         card.innerHTML = `
-            <h3>${r.icono} ${r.nombre}</h3>
+            <h3>${r.nombre}</h3>
             <p style="color:green;">✅ Desbloqueado</p>
         `;
 
         card.style.background = "#d4f8d4";
 
-    }
-    
-    // 🔒 BLOQUEADO
-    else {
+        desbloqueadas.push(r.nombre);
 
+        // pequeña animación
+        card.style.transition = "0.3s";
+        card.onmouseover = () => card.style.transform = "scale(1.05)";
+        card.onmouseleave = () => card.style.transform = "scale(1)";
+
+    } else {
+
+        // 🔒 BLOQUEADA
         card.innerHTML = `
             <h3>❓ ???</h3>
             <p>🔒 Necesitas ${r.puntos} aciertos</p>
@@ -49,15 +62,16 @@ recompensas.forEach(r => {
         card.style.opacity = "0.5";
     }
 
-    // ⭐ ANIMACIÓN AL PASAR RATÓN
-    card.onmouseover = () => {
-        card.style.transform = "scale(1.1)";
-        card.style.transition = "0.2s";
-    };
-
-    card.onmouseleave = () => {
-        card.style.transform = "scale(1)";
-    };
-
     contenedor.appendChild(card);
+
 });
+
+
+// =======================================
+// ✅ GUARDAR PARA MINIJUEGO
+localStorage.setItem("recompensas", JSON.stringify(desbloqueadas));
+
+
+// =======================================
+// ✅ DEBUG (para comprobar)
+console.log("Recompensas guardadas:", desbloqueadas);

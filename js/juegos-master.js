@@ -4,7 +4,7 @@ const nivel = window.nivel;
 
 let preguntasRestantes = [];
 
-// LIMPIAR TEXTO
+// ✅ LIMPIAR TEXTO
 function limpiar(t){
     return t.toLowerCase()
         .normalize("NFD")
@@ -12,15 +12,8 @@ function limpiar(t){
         .trim();
 }
 
-// GENERAR OPCIONES
-function opciones(correcta, lista){
-    const filtradas = lista.filter(x=>x !== correcta);
-    const mezcladas = filtradas.sort(()=>0.5 - Math.random()).slice(0,2);
-    return [correcta, ...mezcladas].sort(()=>0.5 - Math.random());
-}
-
 // =======================================
-// BASES GRANDES
+// BASES DE DATOS (MUCHAS PREGUNTAS)
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -35,27 +28,31 @@ const inglesBase = [
 ];
 
 const cienciasBase = [
-["¿Planeta rojo?","marte"],
-["¿Gas que respiramos?","oxigeno"],
-["¿Animal acuático?","pez"],
-["¿Necesario para vivir?","agua"],
-["¿Forma de la Tierra?","redonda"],
-["¿Órgano para ver?","ojo"],
-["¿Órgano que late?","corazon"],
-["¿Quién hace fotosíntesis?","planta"],
-["¿Luz del día?","sol"],
-["¿Animal mamífero?","perro"],
-["¿Dónde viven los peces?","agua"],
-["¿La luna da luz propia?","no"]
+["¿Gas que respiramos?","oxigeno",["oxígeno","agua","fuego"]],
+["¿Planeta rojo?","marte",["marte","tierra","jupiter"]],
+["¿Animal acuático?","pez",["pez","perro","gato"]],
+["¿Necesario para vivir?","agua",["agua","metal","plástico"]],
+["¿Forma de la Tierra?","redonda",["redonda","plana","cuadrada"]],
+["¿Órgano para ver?","ojo",["ojo","pierna","brazo"]],
+["¿Órgano que late?","corazon",["corazón","mano","pie"]],
+["¿Qué respiramos?","oxigeno",["oxígeno","agua","humo"]],
+["¿Astro que da luz?","sol",["sol","luna","tierra"]],
+["¿Dónde viven los peces?","agua",["agua","tierra","aire"]]
 ];
 
+// =======================================
+// GENERADOR DE OPCIONES
+function generarOpciones(correcta, lista){
+    const incorrectas = lista.filter(x => x !== correcta);
+    const random = incorrectas.sort(()=>0.5-Math.random()).slice(0,2);
+    return [correcta, ...random].sort(()=>0.5-Math.random());
+}
 
 // =======================================
 // JUEGOS
-
 const Juegos = {
 
-    // ========= MATEMÁTICAS =========
+    // ================= MATEMÁTICAS =================
     matematicas1:{
         generar:()=>{
             let a=Math.floor(Math.random()*10);
@@ -63,6 +60,7 @@ const Juegos = {
             return {p:`${a}+${b}`,r:(a+b).toString()};
         }
     },
+
     matematicas2:{
         generar:()=>{
             let a=Math.floor(Math.random()*20);
@@ -70,6 +68,7 @@ const Juegos = {
             return {p:`${a}-${b}`,r:(a-b).toString()};
         }
     },
+
     matematicas3:{
         generar:()=>{
             let a=Math.floor(Math.random()*10);
@@ -78,13 +77,13 @@ const Juegos = {
         }
     },
 
-    // ========= INGLÉS =========
+    // ================= INGLÉS =================
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"test",
-            opciones: opciones(x[1], inglesBase.map(y=>y[1]))
+            opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
         }))
     },
 
@@ -92,28 +91,28 @@ const Juegos = {
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
-            tipo: Math.random() > 0.5 ? "test" : "input",
-            opciones: opciones(x[1], inglesBase.map(y=>y[1]))
+            tipo: Math.random()>0.5 ? "test" : "input",
+            opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
         }))
     },
 
-    // 🔥 INGLÉS INVERSO
+    // 🔥 INGLÉS AL REVÉS
     ingles3:{
         preguntas: inglesBase.map(x=>({
             p:`${x[1]} =`,
             r:x[0],
             tipo:"test",
-            opciones: opciones(x[0], inglesBase.map(y=>y[0]))
+            opciones: generarOpciones(x[0], inglesBase.map(y=>y[0]))
         }))
     },
 
-    // ========= CIENCIAS =========
+    // ================= CIENCIAS =================
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
             p:x[0],
             r:x[1],
             tipo:"test",
-            opciones: opciones(x[1], cienciasBase.map(y=>y[1]))
+            opciones:x[2]
         }))
     },
 
@@ -121,8 +120,8 @@ const Juegos = {
         preguntas: cienciasBase.map(x=>({
             p:x[0],
             r:x[1],
-            tipo:"vf",
-            opciones:["sí","no"]
+            tipo:"test",
+            opciones:x[2]
         }))
     },
 
@@ -134,14 +133,14 @@ const Juegos = {
         }))
     },
 
-    // ========= CASTELLANO =========
+    // ================= CASTELLANO =================
     castellano1:{
         preguntas:["casa","mesa","mango","plato","huevo","lago","coche","cama"]
         .map(p=>({
             p:`${p[0]}__${p.slice(2)}`,
             r:p,
             tipo:"test",
-            opciones: opciones(p,["cosa","pato","mesa","lata"])
+            opciones: generarOpciones(p,["casa","mesa","mango","lata","poco"])
         }))
     },
 
@@ -156,14 +155,14 @@ const Juegos = {
 
     castellano3:{
         preguntas:[
-            {p:"¿Verbo?",r:"correr"},
-            {p:"¿Sustantivo?",r:"mesa"},
-            {p:"¿Verbo?",r:"leer"},
-            {p:"¿Sustantivo?",r:"gato"}
+            {p:"¿Verbo?",r:"correr",op:["correr","mesa","perro"]},
+            {p:"¿Sustantivo?",r:"mesa",op:["mesa","leer","correr"]},
+            {p:"¿Verbo?",r:"leer",op:["leer","silla","puerta"]}
         ].map(x=>({
-            ...x,
+            p:x.p,
+            r:x.r,
             tipo:"test",
-            opciones: opciones(x.r,["mesa","perro","correr","leer"])
+            opciones:x.op
         }))
     }
 };
@@ -171,7 +170,6 @@ const Juegos = {
 
 // =======================================
 // MOTOR
-
 let juegoActual=null;
 let preguntaActual=null;
 
@@ -191,7 +189,6 @@ export function iniciarJuego(key){
 
     document.getElementById("btnComprobar").onclick = comprobar;
 
-    // MATEMÁTICAS
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -199,7 +196,6 @@ export function iniciarJuego(key){
         return;
     }
 
-    // ANTIREPETICIÓN REAL
     if(!preguntasRestantes.length){
         preguntasRestantes = [...juegoActual.preguntas];
     }
@@ -213,19 +209,24 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
-    // INPUT
+
+    // ✅ INPUT
     if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
 
-    // TEST / VF (botones)
+    // ✅ TEST
     else{
         preguntaActual.opciones.forEach(op=>{
             const btn=document.createElement("button");
             btn.innerText=op;
             btn.className="btn";
+
             btn.style.display="block";
             btn.style.margin="10px auto";
+            btn.style.padding="12px";
+            btn.style.fontSize="16px";
+            btn.style.borderRadius="10px";
 
             btn.onclick=()=>{
                 input.value=op;
@@ -240,11 +241,11 @@ export function iniciarJuego(key){
 
 // =======================================
 // COMPROBAR
-
 export function comprobar(){
 
     const r=limpiar(document.getElementById("respuesta").value);
     const ok=limpiar(preguntaActual.r);
+
     const resultado=document.getElementById("resultado");
 
     const correcto = r===ok;
@@ -261,3 +262,4 @@ export function comprobar(){
 
     setTimeout(()=>iniciarJuego(materia+nivel),800);
 }
+``

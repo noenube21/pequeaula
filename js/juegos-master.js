@@ -4,7 +4,7 @@ const nivel = window.nivel;
 
 let preguntasRestantes = [];
 
-// LIMPIAR TEXTO
+// ✅ LIMPIAR TEXTO
 function limpiar(t){
     return t.toLowerCase()
         .normalize("NFD")
@@ -12,7 +12,8 @@ function limpiar(t){
         .trim();
 }
 
-// ANIMACIÓN
+// =======================================
+// ANIMACIÓN SIMPLE
 function animarResultado(el, ok){
     el.style.transition = "0.3s";
     el.style.transform = "scale(1.2)";
@@ -23,34 +24,44 @@ function animarResultado(el, ok){
     }, 300);
 }
 
-// BASE INGLÉS
+// =======================================
+// BASES GRANDES
+
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
-["tree","árbol"],["chair","silla"],["food","comida"],["fish","pez"]
+["tree","árbol"],["chair","silla"],["food","comida"],["fish","pez"],
+["flower","flor"],["house","casa"],["door","puerta"],
+["window","ventana"],["cold","frio"],["hot","caliente"],
+["happy","feliz"],["sad","triste"],["big","grande"],["small","pequeño"],
+["fast","rápido"],["slow","lento"],["light","luz"],
+["dark","oscuro"],["sky","cielo"],["earth","tierra"]
 ];
 
-// GENERAR OPCIONES
+// generar opciones
 function generarOpciones(correcta, lista){
-    const otras = lista.filter(x => x !== correcta);
+    const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
     return [correcta,...rand].sort(()=>0.5-Math.random());
 }
 
 // =======================================
 // JUEGOS
-const Juegos = {
 
-    matematicas1:{ generar:()=>calc("+",10)},
-    matematicas2:{ generar:()=>calc("-",20)},
-    matematicas3:{ generar:()=>calc("*",10)},
+const Juegos={
 
+    // ================= MATEMÁTICAS =================
+    matematicas1:{ generar:()=>calc("+",10) },
+    matematicas2:{ generar:()=>calc("-",20) },
+    matematicas3:{ generar:()=>calc("*",10) },
+
+    // ================= INGLÉS =================
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"test",
-            opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
+            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
         }))
     },
 
@@ -67,44 +78,76 @@ const Juegos = {
             p:`${x[1]} =`,
             r:x[0],
             tipo:"test",
-            opciones: generarOpciones(x[0], inglesBase.map(y=>y[0]))
+            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
         }))
     },
 
+    // ================= CASTELLANO =================
     castellano1:{
         preguntas:[
-            "casa","mesa","mango","plato"
+            "casa","mesa","mango","plato","huevo","lago",
+            "coche","cama","pato","gato","pera","mano"
         ].map(p=>({
             p:`${p[0]}__${p.slice(2)}`,
             r:p,
             tipo:"test",
-            opciones: generarOpciones(p,["casa","mesa","mango"])
+            opciones: generarOpciones(p,["casa","mesa","mango","pato","taza","mano"])
         }))
     },
 
     castellano2:{
         preguntas:[
             {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]}
+            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
+            {p:"M _ N O", r:"mano", tipo:"letras", opciones:["a","e","i"]},
+            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
         ]
     },
 
     castellano3:{
         preguntas:[
-            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]}
+            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
+            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]},
+            {p:"¿Verbo?",r:"leer",tipo:"test",opciones:["leer","puerta","silla"]},
+            {p:"¿Sustantivo?",r:"gato",tipo:"test",opciones:["gato","correr","leer"]}
+        ]
+    },
+
+    // ================= CIENCIAS =================
+    ciencias1:{
+        preguntas:[
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","júpiter"]},
+            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]},
+            {p:"¿Necesario para vivir?",r:"agua",tipo:"test",opciones:["agua","metal","plástico"]}
+        ]
+    },
+
+    ciencias2:{
+        preguntas:[
+            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
+            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
+            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]},
+            {p:"¿Animal mamífero?",r:"perro",tipo:"test",opciones:["perro","pez","águila"]}
         ]
     },
 
     ciencias3:{
         preguntas:[
             {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
-            {p:"¿Astro que da luz?",r:"sol",tipo:"test",opciones:["sol","luna","tierra"]}
+            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
+            {p:"¿Astro que da luz?",r:"sol",tipo:"test",opciones:["sol","luna","tierra"]},
+            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
         ]
     }
+
 };
 
 
 // =======================================
+// MOTOR
+
 let juegoActual=null;
 let preguntaActual=null;
 
@@ -112,64 +155,66 @@ export function iniciarJuego(key){
 
     juegoActual = Juegos[key];
 
-    const pregunta = document.getElementById("pregunta");
-    const zona = document.getElementById("zona");
-    const input = document.getElementById("respuesta");
-    const resultado = document.getElementById("resultado");
+    const pregunta=document.getElementById("pregunta");
+    const zona=document.getElementById("zona");
+    const input=document.getElementById("respuesta");
+    const resultado=document.getElementById("resultado");
 
     pregunta.innerHTML="";
     zona.innerHTML="";
     resultado.innerHTML="";
     input.value="";
 
-    document.getElementById("btnComprobar").onclick = comprobar;
+    document.getElementById("btnComprobar").onclick=comprobar;
 
-    // MATEMÁTICAS
+    // matematicas
     if(juegoActual.generar){
-        preguntaActual = juegoActual.generar();
+        preguntaActual=juegoActual.generar();
         input.style.display="block";
-        pregunta.innerText = preguntaActual.p;
+        pregunta.innerText=preguntaActual.p;
         return;
     }
 
-    // NO REPETIR
+    // no repetir
     if(!preguntasRestantes.length){
-        preguntasRestantes = [...juegoActual.preguntas];
+        preguntasRestantes=[...juegoActual.preguntas];
     }
 
-    preguntaActual = preguntasRestantes.splice(
+    preguntaActual=preguntasRestantes.splice(
         Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
 
-    pregunta.innerText = preguntaActual.p;
+    pregunta.innerText=preguntaActual.p;
 
     zona.innerHTML="";
     input.style.display="none";
 
-    // LETRAS
+    // letras
     if(preguntaActual.tipo==="letras"){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
+            b.className="btn";
 
             b.onclick=()=>{
-                input.value = preguntaActual.p.replace("_",op).replace(/ /g,"").toLowerCase();
+                input.value=preguntaActual.p.replace("_",op).replace(/ /g,"").toLowerCase();
             };
 
             zona.appendChild(b);
         });
     }
 
-    // INPUT
+    // escribir
     else if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
 
-    // TEST
+    // test
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
+            b.className="btn";
 
             b.onclick=()=>{
                 input.value=op;
@@ -182,42 +227,41 @@ export function iniciarJuego(key){
 
 
 // =======================================
-// COMPROBAR (ESTA ES LA CLAVE)
+// COMPROBAR
+
 export function comprobar(){
 
-    const r = limpiar(document.getElementById("respuesta").value);
-    const ok = limpiar(preguntaActual.r);
+    const r=limpiar(document.getElementById("respuesta").value);
+    const ok=limpiar(preguntaActual.r);
+    const resultado=document.getElementById("resultado");
 
-    const resultado = document.getElementById("resultado");
-
-    const correcto = r === ok;
+    const correcto = r===ok;
 
     if(correcto){
-        resultado.innerText = "✔ Correcto";
+        resultado.innerText="✔ Correcto";
     }else{
-        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
-    animarResultado(resultado, correcto);
+    animarResultado(resultado, correcto); // ✅ animación
 
-    // ✅ ESTO ES LO IMPORTANTE → SIN ERRORES
-    if (window.registrarResultado) {
-        window.registrarResultado(
-            materia + nivel,
-            correcto ? 1 : 0,
-            correcto ? 0 : 1
+    import("./progreso.js").then(mod=>{
+        mod.registrarResultado(
+            materia+nivel,
+            correcto?1:0,
+            correcto?0:1
         );
-    }
+    });
 
-    setTimeout(() => iniciarJuego(materia + nivel), 1000);
+    setTimeout(()=>iniciarJuego(materia+nivel),1000);
 }
 
 
 // =======================================
+// MATE
 function calc(op,max){
     let a=Math.floor(Math.random()*max);
     let b=Math.floor(Math.random()*max);
-
     if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
     if(op==="-") return {p:`${a}-${b}`,r:(a-b).toString()};
     return {p:`${a}×${b}`,r:(a*b).toString()};

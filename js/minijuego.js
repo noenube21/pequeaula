@@ -1,31 +1,39 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-
 // =======================================
-// ✅ RECOMPENSAS REALES
+// ✅ CARGAR RECOMPENSAS REALES
 let recompensas = JSON.parse(localStorage.getItem("recompensas")) || [];
 
-// ✅ MOSTRARLAS A LA DERECHA
+// ✅ MOSTRAR RECOMPENSAS BIEN
 const zona = document.getElementById("zonaRecompensas");
-
 zona.innerHTML = "";
 
-recompensas.forEach(r => {
-    let div = document.createElement("div");
-    div.innerText = r;
-    div.style.background = "#ffe082";
-    div.style.padding = "6px";
-    div.style.margin = "6px";
-    div.style.borderRadius = "8px";
-    div.style.fontWeight = "bold";
+// SI NO TIENE
+if (recompensas.length === 0) {
+    zona.innerHTML = "<p>❌ No tienes recompensas aún</p>";
+} else {
+    recompensas.forEach(r => {
 
-    zona.appendChild(div);
-});
+        let card = document.createElement("div");
+
+        card.innerText = "🎁 " + r;
+
+        card.style.background = "#ffe082";
+        card.style.padding = "10px";
+        card.style.margin = "10px";
+        card.style.borderRadius = "10px";
+        card.style.fontWeight = "bold";
+        card.style.textAlign = "center";
+        card.style.boxShadow = "0 0 5px rgba(0,0,0,0.2)";
+
+        zona.appendChild(card);
+    });
+}
 
 
 // =======================================
-// 🎨 AVATAR
+// 🎨 AVATAR SEGÚN RECOMPENSAS
 function colorJugador(){
     if (recompensas.includes("🏆 Trofeo oro")) return "gold";
     if (recompensas.includes("🧑‍🎨 Avatar colorido")) return "purple";
@@ -80,10 +88,10 @@ function iniciar(){
 
 
 // =======================================
-// CREAR OBJETOS (MEJOR BALANCEADO)
+// CREAR OBJETOS
 function crearObjeto(){
 
-    let esMalo = Math.random() < 0.45; // 🔥 MÁS MALOS
+    let esMalo = Math.random() < 0.45;
 
     objetos.push({
         x: Math.random() * 360,
@@ -100,7 +108,7 @@ function crearObjeto(){
 // ACTUALIZAR
 function actualizar(){
 
-    objetos.forEach(o => o.y += 1.5); // 🔥 MÁS LENTO
+    objetos.forEach(o => o.y += 1.5);
 
     objetos = objetos.filter(o => {
 
@@ -114,7 +122,7 @@ function actualizar(){
 
             if (o.tipo === "bueno"){
 
-                // ✅ PELOTA = DOBLE PUNTOS
+                // ⚽ doble puntos
                 if (recompensas.includes("⚽ Pelota")){
                     puntos += 2;
                 } else {
@@ -122,6 +130,7 @@ function actualizar(){
                 }
 
             } else {
+
                 vidas--;
 
                 if (vidas <= 0){
@@ -144,31 +153,28 @@ function dibujar(){
 
     ctx.clearRect(0,0,400,500);
 
-    // ✅ FONDO
+    // FONDO
     ctx.fillStyle = "#e1f5fe";
     ctx.fillRect(0,0,400,500);
 
-    // ✅ PUNTOS GRANDES CENTRADOS ARRIBA
+    // ⭐ PUNTOS CENTRADOS
     ctx.fillStyle = "black";
     ctx.font = "26px Arial";
-    ctx.fillText("⭐ " + puntos, 140, 30);
+    ctx.fillText("⭐ " + puntos, 150, 30);
 
-    // ✅ VIDAS ARRIBA
-    ctx.font = "24px Arial";
+    // ❤️ VIDAS
     ctx.fillText("❤️ " + vidas, 300, 30);
 
-
-    // ✅ JUGADOR
+    // JUGADOR
     ctx.fillStyle = colorJugador();
     ctx.fillRect(jugador.x, jugador.y, jugador.w, jugador.h);
 
-    // OJOS
+    // CARA
     ctx.fillStyle = "white";
     ctx.fillRect(jugador.x+8, jugador.y+10,5,5);
     ctx.fillRect(jugador.x+25, jugador.y+10,5,5);
 
-
-    // ✅ OBJETOS
+    // OBJETOS
     ctx.font = "24px Arial";
     objetos.forEach(o => {
         ctx.fillText(o.emoji, o.x, o.y);
@@ -177,6 +183,7 @@ function dibujar(){
 
 
 // =======================================
+// LOOP
 function loop(){
 
     if (jugando){
@@ -193,6 +200,6 @@ function loop(){
 loop();
 
 
-// ✅ BOTÓN JUGAR
+// =======================================
+// BOTÓN JUGAR
 window.iniciar = iniciar;
-``

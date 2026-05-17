@@ -7,21 +7,42 @@
 <link rel="stylesheet" href="css/style.css">
 
 <style>
+.layout {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* juego */
 canvas {
     border: 3px solid black;
     border-radius: 15px;
     background: linear-gradient(#b3e5fc, #ffffff);
-    display: block;
-    margin: auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
-#zonaRecompensas span {
-    margin: 5px;
-    padding: 6px 10px;
-    background: gold;
-    border-radius: 10px;
-    display: inline-block;
+/* recompensas */
+.recompensas-box {
+    width: 200px;
+}
+
+.recompensas-box h3 {
+    text-align: center;
+}
+
+.recompensas-box div {
+    background: #ffe082;
+    margin: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.top-info {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
     font-weight: bold;
 }
 </style>
@@ -34,16 +55,25 @@ canvas {
 
 <h2 class="center">🎮 MINIJUEGO CON RECOMPENSAS</h2>
 
-<div class="center">
+<div class="top-info">
     <button class="btn" onclick="iniciar()">▶ JUGAR</button>
-
-    <h3>Recompensas:</h3>
-    <div id="zonaRecompensas"></div>
 </div>
 
-<canvas id="game" width="400" height="500"></canvas>
+<div class="layout">
+
+    <!-- ✅ JUEGO -->
+    <canvas id="game" width="400" height="500"></canvas>
+
+    <!-- ✅ RECOMPENSAS A LA DERECHA -->
+    <div class="recompensas-box">
+        <h3>🎁 Recompensas</h3>
+        <div id="zonaRecompensas"></div>
+    </div>
+
+</div>
 
 <script src="js/minijuego.js"></script>
 
 </body>
 </html>
+``

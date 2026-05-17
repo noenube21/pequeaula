@@ -11,15 +11,18 @@ canvas {
     border: 3px solid black;
     border-radius: 15px;
     background: linear-gradient(#b3e5fc, #ffffff);
+    display: block;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
-#puntos {
-    font-size: 28px;
+#zonaRecompensas span {
+    margin: 5px;
+    padding: 6px 10px;
+    background: gold;
+    border-radius: 10px;
+    display: inline-block;
     font-weight: bold;
-}
-
-#vidas {
-    font-size: 24px;
 }
 </style>
 
@@ -32,20 +35,13 @@ canvas {
 <h2 class="center">🎮 MINIJUEGO CON RECOMPENSAS</h2>
 
 <div class="center">
-
     <button class="btn" onclick="iniciar()">▶ JUGAR</button>
-
-    <p>⭐ Puntos: <span id="puntos">0</span></p>
-    <p id="vidas">❤️❤️❤️</p>
 
     <h3>Recompensas:</h3>
     <div id="zonaRecompensas"></div>
-
 </div>
 
-<div style="text-align:center;">
-    <canvas id="game" width="400" height="500"></canvas>
-</div>
+<canvas id="game" width="400" height="500"></canvas>
 
 <script src="js/minijuego.js"></script>
 

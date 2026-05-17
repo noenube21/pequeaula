@@ -1,28 +1,16 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-
-// ✅ CARGAR RECOMPENSAS (aciertos)
-let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0 };
-
-
-// ✅ CAMBIAR PERSONAJE SEGÚN RECOMPENSAS
-let colorJugador = "blue";
-
-if (datos.aciertos > 5) colorJugador = "green";
-if (datos.aciertos > 10) colorJugador = "purple";
-if (datos.aciertos > 20) colorJugador = "gold";
-
-
-// =======================================
-let personaje = {
+// personaje
+let jugador = {
     x: 180,
     y: 430,
     w: 40,
     h: 40,
-    velocidad: 5
+    vel: 5
 };
 
+// objetos que caen
 let objetos = [];
 let puntos = 0;
 
@@ -30,39 +18,47 @@ let puntos = 0;
 // =======================================
 // CONTROLES
 document.addEventListener("keydown", e => {
-    if (e.key === "ArrowLeft") personaje.x -= personaje.velocidad;
-    if (e.key === "ArrowRight") personaje.x += personaje.velocidad;
+
+    if (e.key === "ArrowLeft") {
+        jugador.x -= jugador.vel;
+    }
+
+    if (e.key === "ArrowRight") {
+        jugador.x += jugador.vel;
+    }
+
 });
 
 
-// ✅ BONUS: si tienes recompensa → más velocidad
-if (datos.aciertos > 15) personaje.velocidad = 7;
-
-
 // =======================================
-// CREAR OBJETOS (LIBROS / REGALOS)
+// CREAR OBJETOS
 function crearObjeto() {
+
     objetos.push({
         x: Math.random() * 360,
         y: 0,
         w: 30,
         h: 30
     });
+
 }
 
-
 // =======================================
+// ACTUALIZAR
 function actualizar() {
 
-    objetos.forEach(o => o.y += 3);
+    objetos.forEach(o => {
+        o.y += 3;
+    });
 
+    // colisiones
     objetos = objetos.filter(o => {
 
         let colision =
-            o.x < personaje.x + personaje.w &&
-            o.x + o.w > personaje.x &&
-            o.y < personaje.y + personaje.h &&
-            o.y + o.h > personaje.y;
+            o.x < jugador.x + jugador.w &&
+            o.x + o.w > jugador.x &&
+            o.y < jugador.y + jugador.h &&
+            o.y + o.h > jugador.y;
 
         if (colision) {
             puntos++;
@@ -76,21 +72,26 @@ function actualizar() {
 
 
 // =======================================
+// DIBUJAR
 function dibujar() {
 
-    ctx.clearRect(0,0,400,500);
+    ctx.clearRect(0, 0, 400, 500);
 
-    // personaje (color según recompensa)
-    ctx.fillStyle = colorJugador;
-    ctx.fillRect(personaje.x, personaje.y, personaje.w, personaje.h);
+    // jugador
+    ctx.fillStyle = "blue";
+    ctx.fillRect(jugador.x, jugador.y, jugador.w, jugador.h);
 
     // objetos
-    ctx.fillStyle = "#4CAF50";
-    objetos.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+    ctx.fillStyle = "green";
+    objetos.forEach(o => {
+        ctx.fillRect(o.x, o.y, o.w, o.h);
+    });
+
 }
 
 
 // =======================================
+// LOOP
 function loop() {
 
     if (Math.random() < 0.03) {

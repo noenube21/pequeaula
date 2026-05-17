@@ -10,7 +10,6 @@
 
 <header class="topbar">
     <span class="logo">PEQUE AULA</span>
-    <img id="avatarMenu" class="avatar-small">
 </header>
 
 <h2 class="center">PROGRESO DEL ALUMNO</h2>
@@ -18,24 +17,15 @@
 <div class="progreso-container">
     <div class="progreso-box">
 
-        <p><strong>Partidas jugadas:</strong> <span id="partidas">0</span></p>
+        <p><strong>Partidas:</strong> <span id="partidas">0</span></p>
         <p><strong>Aciertos:</strong> <span id="aciertos">0</span></p>
         <p><strong>Errores:</strong> <span id="errores">0</span></p>
-        <p><strong>Porcentaje de acierto:</strong> <span id="porcentaje">0%</span></p>
+        <p><strong>Porcentaje:</strong> <span id="porcentaje">0%</span></p>
 
-        <div style="text-align:center; margin-top:20px;">
-            <button class="btn" onclick="resetearProgreso()">Resetear progreso</button>
-        </div>
+        <br>
 
-        <div style="text-align:center; margin-top:10px;">
-            <button class="btn-secondary" onclick="location.href='menu.html'">Volver al menú</button>
-        </div>
-
-    </div>
-</div>
-
-<!-- IMPORT REAL -->
-<script type="module" src="js/progreso.js"></script>
+        <button onclick="resetearProgreso()">Resetear</button>
+        <button onclick="location.href='menu.htmljs/progreso.js"></script>
 
 <script type="module">
     import { resetearProgreso } from "./js/progreso.js";

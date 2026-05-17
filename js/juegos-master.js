@@ -12,41 +12,25 @@ function limpiar(t){
         .trim();
 }
 
-// =======================================
-// BASES DE DATOS (MUCHAS PREGUNTAS)
 
+// =======================================
+// BASES DE DATOS
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
 ["tree","árbol"],["chair","silla"],["food","comida"],["fish","pez"],
 ["flower","flor"],["house","casa"],["door","puerta"],
-["window","ventana"],["cold","frio"],["hot","caliente"],
-["happy","feliz"],["big","grande"],["small","pequeño"],
-["fast","rápido"],["slow","lento"],["light","luz"],
-["dark","oscuro"],["sky","cielo"],["earth","tierra"],
-["fire","fuego"],["air","aire"]
-];
-
-const cienciasBase = [
-["¿Gas que respiramos?","oxigeno",["oxígeno","agua","fuego"]],
-["¿Planeta rojo?","marte",["marte","tierra","jupiter"]],
-["¿Animal acuático?","pez",["pez","perro","gato"]],
-["¿Necesario para vivir?","agua",["agua","metal","plástico"]],
-["¿Forma de la Tierra?","redonda",["redonda","plana","cuadrada"]],
-["¿Órgano para ver?","ojo",["ojo","pierna","brazo"]],
-["¿Órgano que late?","corazon",["corazón","mano","pie"]],
-["¿Qué respiramos?","oxigeno",["oxígeno","agua","humo"]],
-["¿Astro que da luz?","sol",["sol","luna","tierra"]],
-["¿Dónde viven los peces?","agua",["agua","tierra","aire"]]
+["window","ventana"],["cold","frio"],["hot","caliente"]
 ];
 
 // =======================================
 // GENERADOR DE OPCIONES
 function generarOpciones(correcta, lista){
     const incorrectas = lista.filter(x => x !== correcta);
-    const random = incorrectas.sort(()=>0.5-Math.random()).slice(0,2);
-    return [correcta, ...random].sort(()=>0.5-Math.random());
+    const random = incorrectas.sort(() => 0.5 - Math.random()).slice(0,2);
+    return [correcta, ...random].sort(() => 0.5 - Math.random());
 }
+
 
 // =======================================
 // JUEGOS
@@ -78,7 +62,7 @@ const Juegos = {
     },
 
     // ================= INGLÉS =================
-    ingles1:{
+ingos1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
@@ -91,7 +75,7 @@ const Juegos = {
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
-            tipo: Math.random()>0.5 ? "test" : "input",
+            tipo:"input",
             opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
         }))
     },
@@ -106,65 +90,56 @@ const Juegos = {
         }))
     },
 
-    // ================= CIENCIAS =================
-    ciencias1:{
-        preguntas: cienciasBase.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"test",
-            opciones:x[2]
-        }))
-    },
-
-    ciencias2:{
-        preguntas: cienciasBase.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"test",
-            opciones:x[2]
-        }))
-    },
-
-    ciencias3:{
-        preguntas: cienciasBase.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
     // ================= CASTELLANO =================
     castellano1:{
-        preguntas:["casa","mesa","mango","plato","huevo","lago","coche","cama"]
+        preguntas:["casa","mesa","mango","plato","huevo"]
         .map(p=>({
             p:`${p[0]}__${p.slice(2)}`,
             r:p,
             tipo:"test",
-            opciones: generarOpciones(p,["casa","mesa","mango","lata","poco"])
+            opciones: generarOpciones(p,["casa","mesa","mango","lata"])
         }))
     },
 
+    // ✅ LETRAS NUEVO
     castellano2:{
-        preguntas:["cama","mano","sopa","lago","bola","foco"]
-        .map(p=>({
-            p:`${p.slice(0,2)}__${p.slice(3)}`,
-            r:p,
-            tipo:"input"
-        }))
+        preguntas:[
+            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
+            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
+            {p:"M _ N O", r:"mano", tipo:"letras", opciones:["a","e","i"]}
+        ]
     },
 
     castellano3:{
         preguntas:[
-            {p:"¿Verbo?",r:"correr",op:["correr","mesa","perro"]},
-            {p:"¿Sustantivo?",r:"mesa",op:["mesa","leer","correr"]},
-            {p:"¿Verbo?",r:"leer",op:["leer","silla","puerta"]}
-        ].map(x=>({
-            p:x.p,
-            r:x.r,
-            tipo:"test",
-            opciones:x.op
-        }))
+            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
+            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]}
+        ]
+    },
+
+    // ================= CIENCIAS =================
+    ciencias1:{
+        preguntas:[
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","júpiter"]}
+        ]
+    },
+
+    ciencias2:{
+        preguntas:[
+            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
+            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]}
+        ]
+    },
+
+    // ✅ DRAG SIMULADO (PIEZAS)
+    ciencias3:{
+        preguntas:[
+            {p:"Forma: CORAZON", r:"corazon", tipo:"piezas", piezas:["co","ra","zon"]},
+            {p:"Forma: OJO", r:"ojo", tipo:"piezas", piezas:["o","jo"]}
+        ]
     }
+
 };
 
 
@@ -209,10 +184,36 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
+    // ✅ LETRAS
+    if(preguntaActual.tipo==="letras"){
+        preguntaActual.opciones.forEach(op=>{
+            const btn=document.createElement("button");
+            btn.innerText=op;
+            btn.className="btn";
 
-    // ✅ INPUT
-    if(preguntaActual.tipo==="input"){
-        input.style.display="block";
+            btn.onclick=()=>{
+                input.value = preguntaActual.p.replace("_",op).replace(/ /g,"").toLowerCase();
+            };
+
+            zona.appendChild(btn);
+        });
+    }
+
+    // ✅ PIEZAS
+    else if(preguntaActual.tipo==="piezas"){
+        let construccion="";
+        preguntaActual.piezas.forEach(p=>{
+            const btn=document.createElement("button");
+            btn.innerText=p;
+            btn.className="btn";
+
+            btn.onclick=()=>{
+                construccion += p;
+                input.value = construccion;
+            };
+
+            zona.appendChild(btn);
+        });
     }
 
     // ✅ TEST
@@ -222,15 +223,8 @@ export function iniciarJuego(key){
             btn.innerText=op;
             btn.className="btn";
 
-            btn.style.display="block";
-            btn.style.margin="10px auto";
-            btn.style.padding="12px";
-            btn.style.fontSize="16px";
-            btn.style.borderRadius="10px";
-
             btn.onclick=()=>{
                 input.value=op;
-                comprobar();
             };
 
             zona.appendChild(btn);
@@ -250,7 +244,11 @@ export function comprobar(){
 
     const correcto = r===ok;
 
-    resultado.innerText = correcto ? "✔ Correcto" : "✘ Incorrecto";
+    if(correcto){
+        resultado.innerText="✔ Correcto";
+    }else{
+        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+    }
 
     import("./progreso.js").then(mod=>{
         mod.registrarResultado(
@@ -260,6 +258,5 @@ export function comprobar(){
         );
     });
 
-    setTimeout(()=>iniciarJuego(materia+nivel),800);
+    setTimeout(()=>iniciarJuego(materia+nivel),1000);
 }
-``

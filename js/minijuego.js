@@ -3,8 +3,25 @@ const ctx = canvas.getContext("2d");
 
 
 // =======================================
-// ✅ CARGAR RECOMPENSAS REALES
+// ✅ RECOMPENSAS REALES
 let recompensas = JSON.parse(localStorage.getItem("recompensas")) || [];
+
+// ✅ MOSTRARLAS A LA DERECHA
+const zona = document.getElementById("zonaRecompensas");
+
+zona.innerHTML = "";
+
+recompensas.forEach(r => {
+    let div = document.createElement("div");
+    div.innerText = r;
+    div.style.background = "#ffe082";
+    div.style.padding = "6px";
+    div.style.margin = "6px";
+    div.style.borderRadius = "8px";
+    div.style.fontWeight = "bold";
+
+    zona.appendChild(div);
+});
 
 
 // =======================================
@@ -18,7 +35,7 @@ function colorJugador(){
 
 
 // =======================================
-// ⚡ VELOCIDAD (más lento base)
+// ⚡ VELOCIDAD
 function velocidad(){
     if (recompensas.includes("🎗️ Pulsera mágica")) return 5;
     return 3;
@@ -53,7 +70,7 @@ document.addEventListener("keydown", e => {
 
 
 // =======================================
-// INICIAR JUEGO
+// INICIAR
 function iniciar(){
     puntos = 0;
     vidas = 3;
@@ -63,10 +80,10 @@ function iniciar(){
 
 
 // =======================================
-// CREAR OBJETOS (BUENOS Y MALOS)
+// CREAR OBJETOS (MEJOR BALANCEADO)
 function crearObjeto(){
 
-    let esMalo = Math.random() < 0.35;
+    let esMalo = Math.random() < 0.45; // 🔥 MÁS MALOS
 
     objetos.push({
         x: Math.random() * 360,
@@ -83,7 +100,7 @@ function crearObjeto(){
 // ACTUALIZAR
 function actualizar(){
 
-    objetos.forEach(o => o.y += 1.8); // ✅ MÁS LENTO
+    objetos.forEach(o => o.y += 1.5); // 🔥 MÁS LENTO
 
     objetos = objetos.filter(o => {
 
@@ -97,15 +114,14 @@ function actualizar(){
 
             if (o.tipo === "bueno"){
 
-                // ✅ DOBLE PUNTOS CON PELOTA
-                if (recompensas.includes("⚽ Pelota")) {
+                // ✅ PELOTA = DOBLE PUNTOS
+                if (recompensas.includes("⚽ Pelota")){
                     puntos += 2;
                 } else {
                     puntos++;
                 }
 
             } else {
-
                 vidas--;
 
                 if (vidas <= 0){
@@ -132,11 +148,13 @@ function dibujar(){
     ctx.fillStyle = "#e1f5fe";
     ctx.fillRect(0,0,400,500);
 
-    // ✅ PUNTOS Y VIDAS ARRIBA
+    // ✅ PUNTOS GRANDES CENTRADOS ARRIBA
     ctx.fillStyle = "black";
-    ctx.font = "22px Arial";
+    ctx.font = "26px Arial";
+    ctx.fillText("⭐ " + puntos, 140, 30);
 
-    ctx.fillText("⭐ " + puntos, 10, 30);
+    // ✅ VIDAS ARRIBA
+    ctx.font = "24px Arial";
     ctx.fillText("❤️ " + vidas, 300, 30);
 
 
@@ -144,14 +162,14 @@ function dibujar(){
     ctx.fillStyle = colorJugador();
     ctx.fillRect(jugador.x, jugador.y, jugador.w, jugador.h);
 
-    // CARA
+    // OJOS
     ctx.fillStyle = "white";
     ctx.fillRect(jugador.x+8, jugador.y+10,5,5);
     ctx.fillRect(jugador.x+25, jugador.y+10,5,5);
 
 
     // ✅ OBJETOS
-    ctx.font = "22px Arial";
+    ctx.font = "24px Arial";
     objetos.forEach(o => {
         ctx.fillText(o.emoji, o.x, o.y);
     });
@@ -159,12 +177,11 @@ function dibujar(){
 
 
 // =======================================
-// LOOP
 function loop(){
 
     if (jugando){
 
-        if (Math.random() < 0.06) crearObjeto();
+        if (Math.random() < 0.07) crearObjeto();
 
         actualizar();
         dibujar();
@@ -176,6 +193,6 @@ function loop(){
 loop();
 
 
-// ✅ HACER GLOBAL EL BOTÓN JUGAR
+// ✅ BOTÓN JUGAR
 window.iniciar = iniciar;
 ``

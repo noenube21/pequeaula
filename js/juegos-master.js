@@ -245,15 +245,16 @@ export function comprobar(){
 
     animarResultado(resultado, correcto); // ✅ animación
 
-window.registrarResultado(
-    materia + nivel,
-    correcto ? 1 : 0,
-    correcto ? 0 : 1
-        );
-    });
+
+    window.registrarResultado(
+        materia + nivel,
+        correcto ? 1 : 0,
+        correcto ? 0 : 1
+    );
 
     setTimeout(()=>iniciarJuego(materia+nivel),1000);
 }
+
 
 
 // =======================================

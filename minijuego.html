@@ -3,7 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>Minijuego</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+#zonaRecompensas span {
+    margin: 5px;
+    padding: 6px 10px;
+    background: #ffd54f;
+    border-radius: 10px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+canvas {
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+</style>
+
 </head>
 
 <body>
@@ -15,17 +33,16 @@
 <div class="center">
 
     <button class="btn" onclick="iniciar()">▶ JUGAR</button>
-    <button class="btn" onclick="añadirRecompensa()">➕ Añadir recompensa</button>
 
-    <p>Puntos: <span id="puntos">0</span></p>
+    <p style="font-size:18px;">⭐ Puntos: <span id="puntos">0</span></p>
 
-    <p>Recompensas:</p>
+    <h3>Recompensas desbloqueadas:</h3>
     <div id="zonaRecompensas"></div>
 
 </div>
 
 <div style="text-align:center;">
-    <canvas id="game" width="400" height="500" style="border:2px solid black;"></canvas>
+    <canvas id="game" width="400" height="500"></canvas>
 </div>
 
 <script src="js/minijuego.js"></script>

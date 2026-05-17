@@ -2,15 +2,49 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 // =======================================
-// DATOS
-let recompensas = JSON.parse(localStorage.getItem("recompensas")) || [];
+// ✅ PROGRESO REAL (ACERTOS)
+let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0 };
 
+// =======================================
+// ✅ GENERAR RECOMPENSAS SEGÚN ACIERTOS
+let recompensas = [];
+
+if (datos.aciertos >= 3) recompensas.push("avatar verde");
+if (datos.aciertos >= 6) recompensas.push("velocidad");
+if (datos.aciertos >= 10) recompensas.push("avatar morado");
+if (datos.aciertos >= 15) recompensas.push("avatar dorado");
+
+// mostrar en pantalla
+const zona = document.getElementById("zonaRecompensas");
+recompensas.forEach(r => {
+    let span = document.createElement("span");
+    span.innerText = "🎁 " + r;
+    zona.appendChild(span);
+});
+
+
+// =======================================
+// ✅ AVATAR SEGÚN RECOMPENSAS
+function obtenerColor(){
+    if (recompensas.includes("avatar dorado")) return "gold";
+    if (recompensas.includes("avatar morado")) return "purple";
+    if (recompensas.includes("avatar verde")) return "green";
+    return "blue";
+}
+
+function obtenerVel(){
+    if (recompensas.includes("velocidad")) return 8;
+    return 5;
+}
+
+
+// =======================================
 let jugador = {
     x: 180,
     y: 430,
     w: 40,
     h: 40,
-    vel: 5
+    vel: obtenerVel()
 };
 
 let objetos = [];
@@ -20,7 +54,6 @@ let jugando = false;
 
 
 // =======================================
-// BOTÓN JUGAR
 function iniciar(){
     puntos = 0;
     objetos = [];
@@ -30,64 +63,11 @@ function iniciar(){
 
 
 // =======================================
-// AÑADIR RECOMPENSA (PRUEBA)
-function añadirRecompensa(){
-
-    const lista = ["avatar1","avatar2","velocidad","super"];
-
-    let nueva = lista[Math.floor(Math.random()*lista.length)];
-
-    if (!recompensas.includes(nueva)) {
-        recompensas.push(nueva);
-        localStorage.setItem("recompensas", JSON.stringify(recompensas));
-    }
-
-    mostrarRecompensas();
-}
-
-
-// =======================================
-// MOSTRAR RECOMPENSAS
-function mostrarRecompensas(){
-
-    let zona = document.getElementById("zonaRecompensas");
-    zona.innerHTML = "";
-
-    recompensas.forEach(r=>{
-        let span = document.createElement("span");
-        span.innerText = "🎁 " + r + " ";
-        zona.appendChild(span);
-    });
-}
-
-mostrarRecompensas();
-
-
-// =======================================
-// CAMBIAR AVATAR
-function obtenerColor(){
-
-    if (recompensas.includes("super")) return "gold";
-    if (recompensas.includes("avatar2")) return "purple";
-    if (recompensas.includes("avatar1")) return "green";
-
-    return "blue";
-}
-
-function obtenerVelocidad(){
-
-    if (recompensas.includes("velocidad")) return 8;
-    return 5;
-}
-
-
-// =======================================
-// CONTROLES
 document.addEventListener("keydown", e => {
 
     if (!jugando) return;
 
-    jugador.vel = obtenerVelocidad();
+    jugador.vel = obtenerVel();
 
     if (e.key === "ArrowLeft") jugador.x -= jugador.vel;
     if (e.key === "ArrowRight") jugador.x += jugador.vel;
@@ -96,7 +76,6 @@ document.addEventListener("keydown", e => {
 
 // =======================================
 function crearObjeto(){
-
     objetos.push({
         x: Math.random()*360,
         y: 0,
@@ -107,7 +86,7 @@ function crearObjeto(){
 
 // =======================================
 function crearEfecto(x,y){
-    efectos.push({ x,y, size:5, life:15 });
+    efectos.push({ x,y,size:5,life:15 });
 }
 
 
@@ -135,13 +114,11 @@ function actualizar(){
         return o.y < 500;
     });
 
-    // ✅ SUMAR PUNTOS
     if (recogidos > 0){
         puntos += recogidos;
         document.getElementById("puntos").innerText = puntos;
     }
 
-    // efectos
     efectos.forEach(e=>{
         e.size++;
         e.life--;
@@ -156,11 +133,11 @@ function dibujar(){
 
     ctx.clearRect(0,0,400,500);
 
-    // jugador
+    // avatar
     ctx.fillStyle = obtenerColor();
     ctx.fillRect(jugador.x, jugador.y, jugador.w, jugador.h);
 
-    // ojos
+    // cara divertida
     ctx.fillStyle="white";
     ctx.fillRect(jugador.x+8, jugador.y+10,5,5);
     ctx.fillRect(jugador.x+25, jugador.y+10,5,5);
@@ -196,4 +173,3 @@ function loop(){
 }
 
 loop();
-``

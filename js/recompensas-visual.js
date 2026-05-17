@@ -1,62 +1,63 @@
-import { auth, db } from "../firebase-config.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+// =======================================
+// CARGAR PROGRESO LOCAL (simple)
+let datos = JSON.parse(localStorage.getItem("progreso")) || {
+    aciertos: 0
+};
 
-auth.onAuthStateChanged(async (u) => {
-    if (!u) return;
+// =======================================
+// LISTA DE RECOMPENSAS (visual)
+const recompensas = [
 
-    const ref = doc(db, "usuarios", u.uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return;
+    { nombre: "Avatar colorido", puntos: 3, icono: "🧑‍🎨" },
+    { nombre: "Pulsera mágica", puntos: 6, icono: "🎗️" },
+    { nombre: "Pelota", puntos: 10, icono: "⚽" },
+    { nombre: "Muñeco", puntos: 15, icono: "🧸" },
+    { nombre: "Trofeo oro", puntos: 20, icono: "🏆" },
+    { nombre: "Súper premio", puntos: 25, icono: "🎁" }
 
-    const datos = snap.data();
-    const cont = document.getElementById("contenedorRecompensas");
+];
 
-    const lista = {
-        moneda: {
-            icono: "💰",
-            nombre: "Moneda especial",
-            motivo: "Obtenida al superar el 30% de aciertos."
-        },
-        estrella: {
-            icono: "⭐",
-            nombre: "Estrella",
-            motivo: "Obtenida al superar el 50% de aciertos."
-        },
-        medalla: {
-            icono: "🥇",
-            nombre: "Medalla",
-            motivo: "Obtenida al superar el 70% de aciertos."
-        },
-        trofeo: {
-            icono: "🏆",
-            nombre: "Trofeo",
-            motivo: "Obtenida al superar el 90% de aciertos."
-        }
+// =======================================
+// RENDERIZAR
+const contenedor = document.getElementById("contenedorRecompensas");
+
+recompensas.forEach(r => {
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    // ✅ DESBLOQUEADO
+    if (datos.aciertos >= r.puntos) {
+
+        card.innerHTML = `
+            <h3>${r.icono} ${r.nombre}</h3>
+            <p style="color:green;">✅ Desbloqueado</p>
+        `;
+
+        card.style.background = "#d4f8d4";
+
+    }
+    
+    // 🔒 BLOQUEADO
+    else {
+
+        card.innerHTML = `
+            <h3>❓ ???</h3>
+            <p>🔒 Necesitas ${r.puntos} aciertos</p>
+        `;
+
+        card.style.opacity = "0.5";
+    }
+
+    // ⭐ ANIMACIÓN AL PASAR RATÓN
+    card.onmouseover = () => {
+        card.style.transform = "scale(1.1)";
+        card.style.transition = "0.2s";
     };
 
-    cont.innerHTML = "";
+    card.onmouseleave = () => {
+        card.style.transform = "scale(1)";
+    };
 
-    if (!datos.recompensas) return;
-
-    for (const clave in datos.recompensas) {
-        if (datos.recompensas[clave]) {
-
-            const r = lista[clave];
-
-            // ✔ Crear tarjeta bonita
-            const card = document.createElement("div");
-            card.className = "card";
-            card.style.fontSize = "20px";
-            card.style.padding = "20px";
-            card.style.textAlign = "center";
-
-            card.innerHTML = `
-                <div style="font-size:50px;">${r.icono}</div>
-                <p><strong>${r.nombre}</strong></p>
-                <p style="font-size:14px; color:#444;">${r.motivo}</p>
-            `;
-
-            cont.appendChild(card);
-        }
-    }
+    contenedor.appendChild(card);
 });

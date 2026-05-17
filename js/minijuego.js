@@ -1,17 +1,38 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-// personaje
+// ✅ PROGRESO (recompensas)
+let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0 };
+
+// =======================================
+// 🎨 AVATAR SEGÚN RECOMPENSAS
+
+let colorJugador = "blue";
+let velocidad = 5;
+
+if (datos.aciertos >= 5) colorJugador = "green";
+if (datos.aciertos >= 10) colorJugador = "purple";
+if (datos.aciertos >= 20) colorJugador = "gold";
+
+if (datos.aciertos >= 15) velocidad = 7; // bonus
+
+// =======================================
+// PERSONAJE
 let jugador = {
     x: 180,
     y: 430,
     w: 40,
     h: 40,
-    vel: 5
+    vel: velocidad
 };
 
-// objetos que caen
+// OBJETOS
 let objetos = [];
+
+// EFECTOS (para animación)
+let efectos = [];
+
+// PUNTOS
 let puntos = 0;
 
 
@@ -38,20 +59,40 @@ function crearObjeto() {
         x: Math.random() * 360,
         y: 0,
         w: 30,
-        h: 30
+        h: 30,
+        emoji: "📚"
     });
 
 }
 
+
 // =======================================
-// ACTUALIZAR
+// EFECTO PARTÍCULAS
+function crearEfecto(x,y){
+    efectos.push({
+        x,
+        y,
+        size: 10,
+        life: 20
+    });
+}
+
+
+// =======================================
 function actualizar() {
 
     objetos.forEach(o => {
         o.y += 3;
     });
 
-    // colisiones
+    efectos.forEach(e => {
+        e.size += 1;
+        e.life--;
+    });
+
+    // limpiar efectos
+    efectos = efectos.filter(e => e.life > 0);
+
     objetos = objetos.filter(o => {
 
         let colision =
@@ -62,7 +103,12 @@ function actualizar() {
 
         if (colision) {
             puntos++;
+
+            // ruido visual
+            crearEfecto(o.x, o.y);
+
             document.getElementById("puntos").innerText = puntos;
+
             return false;
         }
 
@@ -72,31 +118,40 @@ function actualizar() {
 
 
 // =======================================
-// DIBUJAR
 function dibujar() {
 
     ctx.clearRect(0, 0, 400, 500);
 
-    // jugador
-    ctx.fillStyle = "blue";
+    // ✅ Jugador (avatar)
+    ctx.fillStyle = colorJugador;
     ctx.fillRect(jugador.x, jugador.y, jugador.w, jugador.h);
 
-    // objetos
-    ctx.fillStyle = "green";
+    // ✅ Ojos (más divertido)
+    ctx.fillStyle = "white";
+    ctx.fillRect(jugador.x+8, jugador.y+10, 5,5);
+    ctx.fillRect(jugador.x+25, jugador.y+10, 5,5);
+
+    // ✅ Objetos (emoji)
+    ctx.font = "24px Arial";
     objetos.forEach(o => {
-        ctx.fillRect(o.x, o.y, o.w, o.h);
+        ctx.fillText(o.emoji, o.x, o.y);
+    });
+
+    // ✅ EFECTOS
+    efectos.forEach(e => {
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size, 0, Math.PI*2);
+        ctx.strokeStyle = "yellow";
+        ctx.stroke();
     });
 
 }
 
 
 // =======================================
-// LOOP
 function loop() {
 
-    if (Math.random() < 0.03) {
-        crearObjeto();
-    }
+    if (Math.random() < 0.04) crearObjeto();
 
     actualizar();
     dibujar();

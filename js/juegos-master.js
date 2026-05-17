@@ -244,15 +244,14 @@ export function comprobar(){
     }
 
     animarResultado(resultado, correcto); // ✅ animación
+    // ✅ GUARDAR PARA RECOMPENSAS (LOCAL)
+let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0 };
 
-    import("./progreso.js").then(mod=>{
-        mod.registrarResultado(
-            materia+nivel,
-            correcto?1:0,
-            correcto?0:1
-        );
-    });
+if (correcto) {
+    datos.aciertos += 1;
+}
 
+localStorage.setItem("progreso", JSON.stringify(datos));
     setTimeout(()=>iniciarJuego(materia+nivel),1000);
 }
 

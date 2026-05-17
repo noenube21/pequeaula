@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Menú</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="module" src="js/firebase-config.js"></script>
+</head>
 
-    <!-- ✅ ESTO ERA EL FALLO -->
-    <link rel="stylesheet" href="css/style.cssc="js/firebase-config>
+<body>
 
 <button class="btn-volver" onclick="history.back()">⬅ Volver</button>
 
@@ -17,25 +19,35 @@
 
 <div class="card-container">
 
-    <div class="card" onclick="location.href='niveles.html?materia=matematicas'ng">
+    <div class="card" onclick="location.href='niveles.html?materia=matematicas'">
+        <img src="assets/img/matematicas.png">
         <h3>Mates</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=castellano'<h3>Castellano</h3>
+    <div class="card" onclick="location.href='niveles.html?materia=castellano'">
+        <img src="assets/img/castellano.png">
+        <h3>Castellano</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=   <h3>Inglés</h3>
+    <div class="card" onclick="location.href='niveles.html?materia=ingles'">
+        <img src="assets/img/ingles.png">
+        <h3>Inglés</h3>
     </div>
 
-    <div class="card" onclick="location.href='niveles.html?materia=ciencias'  <h3>Ciencias</h3>
+    <div class="card" onclick="location.href='niveles.html?materia=ciencias'">
+        <img src="assets/img/conocimiento.png">
+        <h3>Ciencias</h3>
     </div>
 
-    <div class="card" onclick="location.href='recompensas.html' <h3>Recompensas</h3>
+        <div class="card" onclick="location.href='recompensas.html'">
+        <img src="assets/img/recompensas.png">
+        <h3>Recompensa</h3>
     </div>
 
-    <!-- ✅ MINIJUEGO BIEN AÑADIDO -->
-    <div class="card" onclick="location.href='minijuego    <h3>Minijuego</h3>
-    </div>
+        <div class="card" onclick="location.href='recompensas.html'">
+    <img src="assets/img/progreso.png">
+    <h3> Minijuego con Recompensas </h3>
+</div>
 
 </div>
 

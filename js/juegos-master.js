@@ -1,50 +1,31 @@
 // =======================================
-// ACCESO A VARIABLES DEL JUEGO
-// =======================================
 const materia = window.materia;
 const nivel = window.nivel;
 
-
 // =======================================
-// UTILIDADES
-// =======================================
+// LIMPIAR TEXTO
 function limpiar(texto) {
-    return texto
-        .toLowerCase()
+    return texto.toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .trim();
 }
 
+// =======================================
+// DISTANCIA (casi)
 function distancia(a, b) {
-    const matrix = [];
-
-    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-    for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-
-            if (b[i - 1] === a[j - 1]) {
-                matrix[i][j] = matrix[i - 1][j - 1];
-            } else {
-                matrix[i][j] = Math.min(
-                    matrix[i - 1][j - 1] + 1,
-                    matrix[i][j - 1] + 1,
-                    matrix[i - 1][j] + 1
-                );
-            }
-        }
+    if (!a || !b) return 99;
+    let d = Math.abs(a.length - b.length);
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        if (a[i] !== b[i]) d++;
     }
-
-    return matrix[b.length][a.length];
+    return d;
 }
 
-
 // =======================================
-// JUEGOS DEFINIDOS (NO TOCO LOS TUYOS)
-// =======================================
+// JUEGOS
 const Juegos = {
+
     matematicas1: {
         generar: () => {
             const a = Math.floor(Math.random()*10);
@@ -69,26 +50,40 @@ const Juegos = {
         }
     },
 
-    // 🔥 SOLO AÑADIMOS UNA PREGUNTA DE TIPO TEST (NO ROMPE NADA)
-    ciencias1: {
+    castellano2: {
         preguntas: [
-            {
-                p:"¿Necesario para vivir?",
-                r:"agua",
-                tipo:"test",
-                opciones:["agua","plástico","metal"]
-            },
-            { p:"¿Planeta rojo?", r:"marte" },
-            { p:"¿Gas que respiramos?", r:"oxigeno" }
+            { p:"Completa: ca__a", r:"cama", tipo:"test",
+              opciones:["cama","cana","casa"] },
+
+            { p:"Completa: ma__o", r:"mano", tipo:"test",
+              opciones:["mano","malo","masa"] }
+        ]
+    },
+
+    ingles2: {
+        preguntas: [
+            { p:"Dog =", r:"perro", tipo:"test",
+              opciones:["perro","gato","pez"] },
+
+            { p:"Apple =", r:"manzana", tipo:"test",
+              opciones:["manzana","pera","plátano"] }
+        ]
+    },
+
+    ciencias2: {
+        preguntas: [
+            { p:"¿Necesario para vivir?", r:"agua", tipo:"test",
+              opciones:["agua","plástico","metal"] },
+
+            { p:"¿El sol es?", r:"estrella", tipo:"test",
+              opciones:["estrella","planeta","satélite"] }
         ]
     }
 };
 
 
 // =======================================
-// MOTOR DEL JUEGO
-// =======================================
-
+// MOTOR
 let juegoActual = null;
 let preguntaActual = null;
 
@@ -124,7 +119,6 @@ export function iniciarJuego(key) {
 
         pregunta.innerText = preguntaActual.p;
 
-        // ✅ TEST (botones bien separados)
         if (preguntaActual.tipo === "test") {
 
             input.style.display = "none";
@@ -133,12 +127,13 @@ export function iniciarJuego(key) {
             preguntaActual.opciones.forEach(op => {
 
                 const btn = document.createElement("button");
+
                 btn.innerText = op;
                 btn.className = "btn";
 
-                // 🎯 MEJOR SEPARACIÓN VISUAL
                 btn.style.display = "block";
                 btn.style.margin = "10px auto";
+                btn.style.padding = "10px";
                 btn.style.width = "200px";
 
                 btn.onclick = () => {
@@ -159,9 +154,7 @@ export function iniciarJuego(key) {
 
 
 // =======================================
-// COMPROBAR RESPUESTA
-// =======================================
-
+// COMPROBAR
 export function comprobar() {
 
     const valor = document.getElementById("respuesta").value.trim();
@@ -169,22 +162,16 @@ export function comprobar() {
 
     let correcto = false;
 
-    // 🔢 MATEMÁTICAS → SOLO EXACTO
+    // 🔢 MATEMÁTICAS
     if (juegoActual.generar) {
 
-        const r = valor;
-        const ok = preguntaActual.r;
+        correcto = (valor === preguntaActual.r);
 
-        correcto = (r === ok);
-
-        if (correcto) {
-            resultado.innerText = "✔ Correcto";
-        } else {
-            resultado.innerText = `✘ Incorrecto (${ok})`;
-        }
+        resultado.innerText = correcto
+            ? "✔ Correcto"
+            : `✘ Incorrecto (${preguntaActual.r})`;
     }
 
-    // 📚 TEXTO
     else {
 
         const r = limpiar(valor);
@@ -198,15 +185,13 @@ export function comprobar() {
 
             const casi = distancia(r, ok) <= 2;
 
-            if (casi) {
-                resultado.innerText = "⚠️ ¡Casi! revisa la ortografía";
-            } else {
-                resultado.innerText = "✘ Incorrecto";
-            }
+            resultado.innerText = casi
+                ? "⚠️ ¡Casi!"
+                : "✘ Incorrecto";
         }
     }
 
-    // ✅ GUARDAR PROGRESO
+    // guardar progreso
     import("./progreso.js").then(mod => {
         mod.registrarResultado(
             materia + nivel,
@@ -217,4 +202,3 @@ export function comprobar() {
 
     setTimeout(() => iniciarJuego(materia + nivel), 1000);
 }
-``

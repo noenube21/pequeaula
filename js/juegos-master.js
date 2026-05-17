@@ -2,6 +2,9 @@
 const materia = window.materia;
 const nivel = window.nivel;
 
+let ultimaPregunta = null;
+
+// limpiar texto
 function limpiar(t){
     return t.toLowerCase()
         .normalize("NFD")
@@ -9,47 +12,8 @@ function limpiar(t){
         .trim();
 }
 
-let ultimaPregunta = null;
-
-
 // =======================================
-// GENERADOR DE OPCIONES
-function opciones(correcta, lista){
-    const mezcladas = lista.sort(() => 0.5 - Math.random()).slice(0,2);
-    return [correcta, ...mezcladas].sort(() => 0.5 - Math.random());
-}
-
-
-// =======================================
-// DATOS BASE GRANDES (para no repetir)
-const baseIngles = [
-["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
-["tree","árbol"],["chair","silla"],["food","comida"],["fish","pez"],
-["flower","flor"],["house","casa"],["door","puerta"],
-["window","ventana"],["cold","frio"],["hot","caliente"],["happy","feliz"],
-["sad","triste"],["big","grande"],["small","pequeño"],
-["fast","rápido"],["slow","lento"],["light","luz"],
-["dark","oscuro"],["sky","cielo"],["earth","tierra"],
-["fire","fuego"],["air","aire"]
-];
-
-const baseCiencias = [
-["¿Planeta rojo?","marte"],
-["¿Gas que respiramos?","oxigeno"],
-["¿Animal acuático?","pez"],
-["¿Necesario para vivir?","agua"],
-["¿Forma de la Tierra?","redonda"],
-["¿Órgano para ver?","ojo"],
-["¿Órgano que late?","corazon"],
-["¿Quién hace fotosíntesis?","planta"],
-["¿Luz del día?","sol"],
-["¿Animal mamífero?","perro"]
-];
-
-
-// =======================================
-// JUEGOS
+// JUEGOS COMPLETOS
 const Juegos = {
 
     // ================= MATEMÁTICAS =================
@@ -77,97 +41,91 @@ const Juegos = {
         }
     },
 
-    // ================= INGLÉS =================
-    ingles1:{
-        preguntas: baseIngles.map(x=>({
-            p:x[0]+" =",
-            r:x[1],
-            tipo:"test",
-            opciones: opciones(x[1], baseIngles.map(y=>y[1]))
-        }))
-    },
-
-    ingles2:{
-        preguntas: baseIngles.map(x=>({
-            p:x[0]+" =",
-            r:x[1],
-            tipo:"test",
-            opciones: opciones(x[1], baseIngles.map(y=>y[1]))
-        }))
-    },
-
-    ingles3:{
-        preguntas: baseIngles.map(x=>({
-            p:x[0]+" =",
-            r:x[1],
-            tipo:"test",
-            opciones: opciones(x[1], baseIngles.map(y=>y[1]))
-        }))
-    },
-
-    // ================= CIENCIAS =================
-    ciencias1:{
-        preguntas: baseCiencias.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"test",
-            opciones: opciones(x[1], baseCiencias.map(y=>y[1]))
-        }))
-    },
-
-    ciencias2:{
-        preguntas: baseCiencias.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"test",
-            opciones: opciones(x[1], baseCiencias.map(y=>y[1]))
-        }))
-    },
-
-    ciencias3:{
-        preguntas: baseCiencias.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"test",
-            opciones: opciones(x[1], baseCiencias.map(y=>y[1]))
-        }))
-    },
-
     // ================= CASTELLANO =================
     castellano1:{
         preguntas:[
-            "casa","perro","mango","mesa","plato","huevo","moto"
-        ].map(pal=>({
-            p:`${pal[0]}__${pal.slice(2)}`,
-            r:pal,
-            tipo:"test",
-            opciones: opciones(pal, ["cosa","pato","mesa","coco","pila"])
-        }))
+            {p:"C__sa",r:"casa",tipo:"test",opciones:["casa","cosa","coco"]},
+            {p:"Pe__o",r:"perro",tipo:"test",opciones:["perro","pero","pera"]},
+            {p:"Ma__o",r:"mango",tipo:"test",opciones:["mango","mano","mayo"]},
+            {p:"Me__a",r:"mesa",tipo:"test",opciones:["mesa","masa","misa"]}
+        ]
     },
 
     castellano2:{
         preguntas:[
-            "cama","mano","sopa","lago","bola","foco"
-        ].map(pal=>({
-            p:`${pal.slice(0,2)}__${pal.slice(3)}`,
-            r:pal,
-            tipo:"test",
-            opciones: opciones(pal, ["pato","lata","gato","cosa"])
-        }))
+            {p:"ca__a",r:"cama",tipo:"test",opciones:["cama","casa","cava"]},
+            {p:"ma__o",r:"mano",tipo:"test",opciones:["mano","malo","mago"]},
+            {p:"la__o",r:"lago",tipo:"test",opciones:["lago","lado","loco"]},
+            {p:"so__a",r:"sopa",tipo:"test",opciones:["sopa","suma","soda"]}
+        ]
     },
 
     castellano3:{
         preguntas:[
-            {p:"¿Verbo? correr o mesa", r:"correr"},
-            {p:"¿Sustantivo? gato o saltar", r:"gato"},
-            {p:"¿Verbo? leer o silla", r:"leer"},
-            {p:"¿Sustantivo? nube o bailar", r:"nube"}
-        ].map(x=>({
-            p:x.p,
-            r:x.r,
-            tipo:"test",
-            opciones: opciones(x.r, ["mesa","comer","perro","silla"])
-        }))
+            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
+            {p:"¿Sustantivo?",r:"gato",tipo:"test",opciones:["gato","correr","leer"]},
+            {p:"¿Verbo?",r:"comer",tipo:"test",opciones:["comer","puerta","silla"]},
+            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","correr","comer"]}
+        ]
+    },
+
+    // ================= INGLÉS =================
+    ingles1:{
+        preguntas:[
+            {p:"Dog =",r:"perro",tipo:"test",opciones:["perro","gato","pez"]},
+            {p:"Cat =",r:"gato",tipo:"test",opciones:["gato","perro","pez"]},
+            {p:"Sun =",r:"sol",tipo:"test",opciones:["sol","luna","cielo"]},
+            {p:"Book =",r:"libro",tipo:"test",opciones:["libro","mesa","puerta"]}
+        ]
+    },
+
+    ingles2:{
+        preguntas:[
+            {p:"Apple =",r:"manzana",tipo:"test",opciones:["manzana","pera","plátano"]},
+            {p:"Milk =",r:"leche",tipo:"test",opciones:["leche","agua","zumo"]},
+            {p:"Chair =",r:"silla",tipo:"test",opciones:["silla","mesa","puerta"]},
+            {p:"Tree =",r:"árbol",tipo:"test",opciones:["árbol","flor","hierba"]}
+        ]
+    },
+
+    // 🔥 NIVEL INVERTIDO
+    ingles3:{
+        preguntas:[
+            {p:"perro =",r:"dog",tipo:"test",opciones:["dog","cat","fish"]},
+            {p:"gato =",r:"cat",tipo:"test",opciones:["cat","dog","bird"]},
+            {p:"agua =",r:"water",tipo:"test",opciones:["water","milk","juice"]},
+            {p:"libro =",r:"book",tipo:"test",opciones:["book","table","chair"]}
+        ]
+    },
+
+    // ================= CIENCIAS =================
+    ciencias1:{
+        preguntas:[
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","venus"]},
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]},
+            {p:"¿Necesario para vivir?",r:"agua",tipo:"test",opciones:["agua","plástico","metal"]}
+        ]
+    },
+
+    ciencias2:{
+        preguntas:[
+            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
+            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
+            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]},
+            {p:"¿Animal mamífero?",r:"perro",tipo:"test",opciones:["perro","pez","águila"]}
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","brazo","pierna"]},
+            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","mano","pie"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Animal del mar?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]},
+            {p:"¿Qué hacen las plantas?",r:"fotosintesis",tipo:"test",opciones:["fotosíntesis","correr","hablar"]},
+            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
+        ]
     }
 };
 
@@ -259,3 +217,4 @@ export function comprobar(){
 
     setTimeout(()=>iniciarJuego(materia+nivel),800);
 }
+``

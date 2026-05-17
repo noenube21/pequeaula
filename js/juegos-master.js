@@ -245,11 +245,10 @@ export function comprobar(){
 
     animarResultado(resultado, correcto); // ✅ animación
 
-import("./js/progreso.js").then(mod=>{
-        mod.registrarResultado(
-            materia+nivel,
-            correcto?1:0,
-            correcto?0:1
+window.registrarResultado(
+    materia + nivel,
+    correcto ? 1 : 0,
+    correcto ? 0 : 1
         );
     });
 

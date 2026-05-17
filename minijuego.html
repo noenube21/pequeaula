@@ -7,18 +7,19 @@
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-#zonaRecompensas span {
-    margin: 5px;
-    padding: 6px 10px;
-    background: #ffd54f;
-    border-radius: 10px;
-    display: inline-block;
+canvas {
+    border: 3px solid black;
+    border-radius: 15px;
+    background: linear-gradient(#b3e5fc, #ffffff);
+}
+
+#puntos {
+    font-size: 28px;
     font-weight: bold;
 }
 
-canvas {
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+#vidas {
+    font-size: 24px;
 }
 </style>
 
@@ -34,9 +35,10 @@ canvas {
 
     <button class="btn" onclick="iniciar()">▶ JUGAR</button>
 
-    <p style="font-size:18px;">⭐ Puntos: <span id="puntos">0</span></p>
+    <p>⭐ Puntos: <span id="puntos">0</span></p>
+    <p id="vidas">❤️❤️❤️</p>
 
-    <h3>Recompensas desbloqueadas:</h3>
+    <h3>Recompensas:</h3>
     <div id="zonaRecompensas"></div>
 
 </div>

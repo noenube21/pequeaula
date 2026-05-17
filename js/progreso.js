@@ -1,8 +1,4 @@
-// =====================================================
-// IMPORTS
-// =====================================================
 import { auth, db } from "../firebase-config.js";
-
 import {
     doc,
     getDoc,
@@ -11,32 +7,28 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 
-// =====================================================
-// 1. REGISTRAR RESULTADO (GLOBAL + POR NIVEL)
-// =====================================================
-export async function registrarResultado(asignaturaNivel, acierto, error) {
+// ✅ HACER GLOBAL
+window.registrarResultado = async function (asignaturaNivel, acierto, error) {
 
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user) {
+        console.log("NO HAY USUARIO");
+        return;
+    }
 
     const ref = doc(db, "usuarios", user.uid);
     const snap = await getDoc(ref);
 
     let datos = snap.exists() ? snap.data() : {};
 
-    // ✅ GLOBAL
     const partidas = (datos.partidas || 0) + 1;
     const aciertos = (datos.aciertos || 0) + acierto;
     const errores = (datos.errores || 0) + error;
 
-    // ✅ PROGRESO POR NIVEL
     let progreso = datos.progreso || {};
 
     if (!progreso[asignaturaNivel]) {
-        progreso[asignaturaNivel] = {
-            aciertos: 0,
-            errores: 0
-        };
+        progreso[asignaturaNivel] = { aciertos: 0, errores: 0 };
     }
 
     progreso[asignaturaNivel].aciertos += acierto;
@@ -48,13 +40,12 @@ export async function registrarResultado(asignaturaNivel, acierto, error) {
         errores,
         progreso
     }, { merge: true });
-}
+
+    console.log("✅ GUARDADO:", asignaturaNivel);
+};
 
 
-// =====================================================
-// 2. RESETEAR PROGRESO COMPLETO
-// =====================================================
-export async function resetearProgreso() {
+window.resetearProgreso = async function () {
 
     const user = auth.currentUser;
     if (!user) return;
@@ -68,14 +59,12 @@ export async function resetearProgreso() {
         progreso: {}
     });
 
-    alert("✅ Progreso reiniciado correctamente");
+    alert("Progreso reiniciado");
     location.reload();
-}
+};
 
 
-// =====================================================
-// 3. CARGAR PROGRESO GLOBAL (PANTALLA)
-// =====================================================
+// ✅ CARGAR PROGRESO
 async function cargarProgreso() {
 
     const user = auth.currentUser;
@@ -86,14 +75,14 @@ async function cargarProgreso() {
 
     if (!snap.exists()) return;
 
-    const datos = snap.data();
+    const d = snap.data();
 
-    const partidas = datos.partidas || 0;
-    const aciertos = datos.aciertos || 0;
-    const errores = datos.errores || 0;
+    const partidas = d.partidas || 0;
+    const aciertos = d.aciertos || 0;
+    const errores = d.errores || 0;
 
     const total = aciertos + errores;
-    const porcentaje = total ? Math.round((aciertos / total) * 100) : 0;
+    const porcentaje = total ? Math.round(aciertos / total * 100) : 0;
 
     document.getElementById("partidas").textContent = partidas;
     document.getElementById("aciertos").textContent = aciertos;
@@ -101,10 +90,6 @@ async function cargarProgreso() {
     document.getElementById("porcentaje").textContent = porcentaje + "%";
 }
 
-
-// =====================================================
-// 4. AUTO CARGA
-// =====================================================
-auth.onAuthStateChanged((user) => {
-    if (user) cargarProgreso();
+auth.onAuthStateChanged(u => {
+    if (u) cargarProgreso();
 });

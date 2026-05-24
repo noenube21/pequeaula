@@ -2,10 +2,10 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 // =======================================
-// ✅ CARGAR RECOMPENSAS REALES
+// 
 let recompensas = JSON.parse(localStorage.getItem("recompensas")) || [];
 
-// ✅ MOSTRAR RECOMPENSAS BIEN
+// 
 const zona = document.getElementById("zonaRecompensas");
 zona.innerHTML = "";
 

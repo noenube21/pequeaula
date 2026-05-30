@@ -63,7 +63,7 @@ async function guardarEnFirebase(){
             aciertos:datos.aciertos
         },{merge:true});
     }catch(e){
-        console.log("Firebase guardar error");
+        console.log("Firebase error");
     }
 }
 
@@ -107,7 +107,7 @@ function generarOpciones(correcta, lista){
 // =======================================
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["car","coche"],["water","agua"]
+["milk","leche"],["car","coche"],["water","agua"]
 ];
 
 // =======================================
@@ -117,57 +117,27 @@ const Juegos = {
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    castellano1:{
-        preguntas:[
-            "casa","mesa","mango","plato"
-        ].map(p=>({
-            p:`${p[0]}__${p.slice(2)}`,
-            r:p,
-            opciones:["casa","mesa","mango","pato"]
+    ingles1:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"test",
+            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
         }))
     },
 
     castellano2:{
         preguntas:[
-            {p:"M _ S A", r:"mesa", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", opciones:["a","o","e"]}
-        ]
-    },
-
-    castellano3:{
-        preguntas:[
-            {p:"¿Verbo?",r:"correr", opciones:["correr","mesa","perro"]},
-            {p:"¿Sustantivo?",r:"mesa", opciones:["mesa","leer","correr"]}
+            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
+            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]}
         ]
     },
 
     ciencias1:{
         preguntas:[
-            {p:"¿Gas que respiramos?",r:"oxigeno", opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte", opciones:["marte","tierra","jupiter"]}
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]}
         ]
-    },
-
-    ciencias2:{
-        preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda", opciones:["redonda","plana","cuadrada"]},
-            {p:"¿Dónde viven los peces?",r:"agua", opciones:["agua","aire","tierra"]}
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            {p:"¿Órgano que late?",r:"corazon", opciones:["corazón","ojo","mano"]},
-            {p:"¿Planeta donde vivimos?",r:"tierra", opciones:["tierra","marte","saturno"]}
-        ]
-    },
-
-    ingles1:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
-        }))
     }
 };
 
@@ -181,18 +151,19 @@ export function iniciarJuego(key){
     const zona=document.getElementById("zona");
     const input=document.getElementById("respuesta");
 
+    pregunta.innerHTML="";
     zona.innerHTML="";
     input.value="";
 
     if(!juegoActual){
-        pregunta.innerText="ERROR NIVEL";
+        pregunta.innerText="Nivel no encontrado";
         return;
     }
 
     if(juegoActual.generar){
-        preguntaActual=juegoActual.generar();
+        preguntaActual = juegoActual.generar();
         input.style.display="block";
-        pregunta.innerText=preguntaActual.p;
+        pregunta.innerText = preguntaActual.p;
         return;
     }
 
@@ -203,47 +174,65 @@ export function iniciarJuego(key){
 // =======================================
 function siguientePregunta(){
 
-    const p=document.getElementById("pregunta");
-    const z=document.getElementById("zona");
+    const pregunta=document.getElementById("pregunta");
+    const zona=document.getElementById("zona");
     const input=document.getElementById("respuesta");
 
-    z.innerHTML="";
+    zona.innerHTML="";
     input.value="";
 
     if(preguntasRestantes.length===0){
-        p.innerText="FIN";
+        pregunta.innerText="FIN 🎉";
         return;
     }
 
     preguntaActual=preguntasRestantes.pop();
-
-    if(!preguntaActual || !preguntaActual.p){
-        p.innerText="Error pregunta";
-        return;
-    }
-
-    p.innerText=preguntaActual.p;
-
-    if(!preguntaActual.opciones){
-        input.style.display="block";
-        return;
-    }
+    pregunta.innerText=preguntaActual.p;
 
     input.style.display="none";
 
-    preguntaActual.opciones.forEach(op=>{
-        const b=document.createElement("button");
-        b.innerText=op;
-        b.className="btn opcion";
+    if(preguntaActual.tipo==="letras"){
+        preguntaActual.opciones.forEach(op=>{
+            const b=document.createElement("button");
+            b.innerText=op;
+            b.className="btn opcion";
 
-        b.onclick=()=>{
-            input.value=op;
-            document.querySelectorAll(".opcion").forEach(o=>o.classList.remove("seleccionada"));
-            b.classList.add("seleccionada");
-        };
+            b.onclick=()=>{
+                let palabra = preguntaActual.p
+                    .replace("_", op)
+                    .replace(/ /g,"")
+                    .toLowerCase();
 
-        z.appendChild(b);
+                input.value = palabra;
+                seleccionar(b);
+            };
+
+            zona.appendChild(b);
+        });
+    }
+
+    else{
+        preguntaActual.opciones.forEach(op=>{
+            const b=document.createElement("button");
+            b.innerText=op;
+            b.className="btn opcion";
+
+            b.onclick=()=>{
+                input.value=op;
+                seleccionar(b);
+            };
+
+            zona.appendChild(b);
+        });
+    }
+}
+
+// =======================================
+function seleccionar(btn){
+    document.querySelectorAll(".opcion").forEach(o=>{
+        o.classList.remove("seleccionada");
     });
+    btn.classList.add("seleccionada");
 }
 
 // =======================================
@@ -251,16 +240,16 @@ export function comprobar(){
 
     const r=limpiar(document.getElementById("respuesta").value);
     const ok=limpiar(preguntaActual.r);
-    const res=document.getElementById("resultado");
+    const resultado=document.getElementById("resultado");
 
     const correcto = levenshtein(r,ok)<=1;
 
     if(correcto){
+        resultado.innerText="✔ Correcto";
         puntos++;
         datos.aciertos++;
-        res.innerText="✔ Correcto";
     } else {
-        res.innerText="✘ Incorrecto";
+        resultado.innerText="✘ Incorrecto";
     }
 
     actualizarPuntos();
@@ -271,3 +260,4 @@ export function comprobar(){
 
     setTimeout(()=>siguientePregunta(),1000);
 }
+``

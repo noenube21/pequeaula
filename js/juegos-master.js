@@ -3,6 +3,7 @@ let preguntasRestantes = [];
 let puntos = 0;
 let preguntaActual = null;
 let juegoActual = null;
+let claveActual = ""; // ✅ AÑADIDO
 
 // =======================================
 function limpiar(t){
@@ -60,12 +61,10 @@ function generarOpciones(correcta, lista){
 // JUEGOS
 const Juegos = {
 
-    // MATEMÁTICAS
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    // INGLÉS
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
@@ -92,7 +91,6 @@ const Juegos = {
         }))
     },
 
-    // CASTELLANO
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -119,7 +117,6 @@ const Juegos = {
         ]
     },
 
-    // CIENCIAS
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
@@ -130,15 +127,10 @@ const Juegos = {
 };
 
 // =======================================
-// INICIAR
 export function iniciarJuego(key){
 
+    claveActual = key; // ✅ GUARDAMOS CLAVE
     juegoActual = Juegos[key];
-
-    if(!juegoActual){
-        document.getElementById("pregunta").innerText = "Error cargando nivel";
-        return;
-    }
 
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
@@ -152,7 +144,6 @@ export function iniciarJuego(key){
 
     input.focus();
 
-    // matemáticas
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -168,12 +159,11 @@ export function iniciarJuego(key){
         Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
 
-    pregunta.innerText = preguntaActual.p;
+    pregunta.innerText=preguntaActual.p;
 
     zona.innerHTML="";
     input.style.display="none";
 
-    // LETRAS (ARREGLADO)
     if(preguntaActual.tipo==="letras"){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -187,20 +177,15 @@ export function iniciarJuego(key){
                     .toLowerCase();
 
                 input.value = palabra;
-
                 seleccionar(b);
             };
 
             zona.appendChild(b);
         });
     }
-
-    // INPUT
     else if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
-
-    // TEST
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -218,7 +203,6 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-// SELECCION VISUAL
 function seleccionar(btn){
     document.querySelectorAll(".opcion").forEach(o=>{
         o.classList.remove("seleccionada");
@@ -245,11 +229,9 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    // ✅ PASAR A SIGUIENTE (ARREGLADO)
+    // ✅ ✅ ✅ ESTE ES EL ARREGLO CLAVE
     setTimeout(()=>{
-        iniciarJuego(window.location.search.includes("matematicas") ? 
-            window.location.search : 
-            window.location.search);
-
+        iniciarJuego(claveActual);
     },1000);
 }
+``

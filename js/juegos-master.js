@@ -51,6 +51,7 @@ function levenshtein(a, b){
                     matrix[i-1][j] + 1
                 );
             }
+
         }
     }
 
@@ -82,7 +83,7 @@ function guardarProgreso(){
     localStorage.setItem("progreso", JSON.stringify(datos));
 }
 
-// ✅ ✅ ✅ SOLO ESTO SE AÑADE (NO ROMPE NADA)
+// ✅ FIREBASE (NO ROMPE NADA)
 async function guardarEnFirebase(){
     try {
         if(!auth) return;
@@ -94,7 +95,7 @@ async function guardarEnFirebase(){
             aciertos: datos.aciertos
         }, { merge: true });
 
-    } catch(e){
+    } catch (error) {
         console.log("Firebase ignorado");
     }
 }
@@ -208,6 +209,11 @@ export function iniciarJuego(key){
     input.focus();
     actualizarPuntos();
 
+    if(!juegoActual){
+        pregunta.innerText="Error cargando juego";
+        return;
+    }
+
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -217,6 +223,12 @@ export function iniciarJuego(key){
 
     if(!preguntasRestantes.length){
         preguntasRestantes = [...juegoActual.preguntas];
+    }
+
+    // ✅ SEGURIDAD (NO MÁS PANTALLA VACÍA)
+    if(!preguntasRestantes.length){
+        pregunta.innerText = "Error cargando preguntas";
+        return;
     }
 
     preguntaActual = preguntasRestantes.splice(
@@ -298,8 +310,7 @@ export function comprobar(){
 
     guardarProgreso();
     comprobarRecompensas(datos.aciertos);
-
-    guardarEnFirebase(); // ✅ SOLO ESTO AÑADIDO
+    guardarEnFirebase();
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

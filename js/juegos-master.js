@@ -24,6 +24,25 @@ function animarResultado(el, ok){
 }
 
 // =======================================
+function actualizarPuntos(){
+    const score = document.getElementById("score");
+    if(score){
+        score.innerText = "Puntos: " + puntos;
+    }
+}
+
+// =======================================
+// GENERADOR MATEMÁTICAS
+function calc(op,max){
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+
+    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
+    return {p:`${a} × ${b}`,r:(a*b).toString()};
+}
+
+// =======================================
 // BASE INGLES
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -41,12 +60,12 @@ function generarOpciones(correcta, lista){
 // JUEGOS
 const Juegos = {
 
-    // ================= MATEMÁTICAS =================
+    // MATEMÁTICAS
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    // ================= INGLÉS =================
+    // INGLÉS
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
@@ -73,7 +92,7 @@ const Juegos = {
         }))
     },
 
-    // ================= CASTELLANO =================
+    // CASTELLANO
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -100,21 +119,26 @@ const Juegos = {
         ]
     },
 
-    // ================= CIENCIAS =================
+    // CIENCIAS
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]}
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
+            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
     }
-
 };
 
 // =======================================
-// MOTOR
+// INICIAR
 export function iniciarJuego(key){
 
     juegoActual = Juegos[key];
+
+    if(!juegoActual){
+        document.getElementById("pregunta").innerText = "Error cargando nivel";
+        return;
+    }
 
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
@@ -130,28 +154,26 @@ export function iniciarJuego(key){
 
     // matemáticas
     if(juegoActual.generar){
-        preguntaActual=juegoActual.generar();
+        preguntaActual = juegoActual.generar();
         input.style.display="block";
-        pregunta.innerText=preguntaActual.p;
+        pregunta.innerText = preguntaActual.p;
         return;
     }
 
     if(!preguntasRestantes.length){
-        preguntasRestantes=[...juegoActual.preguntas];
+        preguntasRestantes = [...juegoActual.preguntas];
     }
 
     preguntaActual = preguntasRestantes.splice(
         Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
 
-    pregunta.innerText=preguntaActual.p;
+    pregunta.innerText = preguntaActual.p;
 
     zona.innerHTML="";
     input.style.display="none";
 
-    // ================= TIPOS =================
-
-    // letras (CORREGIDO)
+    // LETRAS (ARREGLADO)
     if(preguntaActual.tipo==="letras"){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -159,7 +181,6 @@ export function iniciarJuego(key){
             b.className="btn opcion";
 
             b.onclick=()=>{
-
                 let palabra = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"")
@@ -174,12 +195,12 @@ export function iniciarJuego(key){
         });
     }
 
-    // input
+    // INPUT
     else if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
 
-    // test (CORREGIDO selección)
+    // TEST
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -197,7 +218,7 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-// SELECCIÓN (ARREGLADA)
+// SELECCION VISUAL
 function seleccionar(btn){
     document.querySelectorAll(".opcion").forEach(o=>{
         o.classList.remove("seleccionada");
@@ -212,7 +233,7 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    const correcto = r===ok;
+    const correcto = r === ok;
 
     if(correcto){
         resultado.innerText="✔ Correcto";
@@ -224,22 +245,11 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    setTimeout(()=>iniciarJuego(materia+nivel),1000);
-}
+    // ✅ PASAR A SIGUIENTE (ARREGLADO)
+    setTimeout(()=>{
+        iniciarJuego(window.location.search.includes("matematicas") ? 
+            window.location.search : 
+            window.location.search);
 
-// =======================================
-export function actualizarPuntos(){
-    const score = document.getElementById("score");
-    if(score){
-        score.innerText = "Puntos: " + puntos;
-    }
-}
-
-// =======================================
-function calc(op,max){
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
-    if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a}-${b}`,r:(a-b).toString()};
-    return {p:`${a}×${b}`,r:(a*b).toString()};
+    },1000);
 }

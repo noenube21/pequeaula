@@ -1,6 +1,3 @@
-import { db } from "./firebase-config.js";
-import { auth } from "./firebase-config.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { comprobarRecompensas } from "./recompensas.js";
 
 // =======================================
@@ -10,12 +7,13 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ PROGRESO GLOBAL
+// ✅ PROGRESO GLOBAL (AÑADIDO BIEN)
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
 
+// ✅ IMPORTANTE → después de declarar puntos
 puntos = datos.puntos;
 
 // =======================================
@@ -51,6 +49,7 @@ function levenshtein(a, b){
                     matrix[i-1][j] + 1
                 );
             }
+
         }
     }
 
@@ -76,26 +75,10 @@ function actualizarPuntos(){
     }
 }
 
-// =======================================
+// ✅ NUEVO
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
-}
-
-// ✅ FIREBASE SEGURA (NO ROMPE)
-async function guardarEnFirebase(){
-    try {
-        const user = auth && auth.currentUser;
-        if(!user) return;
-
-        await setDoc(doc(db, "usuarios", user.uid), {
-            puntos: puntos,
-            aciertos: datos.aciertos
-        }, { merge: true });
-
-    } catch (error) {
-        console.log("Firebase ignorado");
-    }
 }
 
 // =======================================
@@ -136,6 +119,23 @@ const Juegos = {
         }))
     },
 
+    ingles2:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"input"
+        }))
+    },
+
+    ingles3:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[1]} =`,
+            r:x[0],
+            tipo:"test",
+            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
+        }))
+    },
+
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -147,10 +147,26 @@ const Juegos = {
         }))
     },
 
+    castellano2:{
+        preguntas:[
+            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
+            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
+            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
+        ]
+    },
+
+    castellano3:{
+        preguntas:[
+            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
+            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]}
+        ]
+    },
+
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]}
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
+            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
     }
 };
@@ -172,12 +188,8 @@ export function iniciarJuego(key){
     input.value="";
 
     input.focus();
-    actualizarPuntos();
 
-    if(!juegoActual){
-        pregunta.innerText="Error cargando juego";
-        return;
-    }
+    actualizarPuntos(); // ✅ importante
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
@@ -217,7 +229,13 @@ export function iniciarJuego(key){
 
             zona.appendChild(b);
         });
-    } else {
+    }
+
+    else if(preguntaActual.tipo==="input"){
+        input.style.display="block";
+    }
+
+    else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
@@ -253,7 +271,7 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-        datos.aciertos++;
+        datos.aciertos++; // ✅ clave
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
@@ -261,9 +279,8 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    guardarProgreso();
-    comprobarRecompensas(datos.aciertos);
-    guardarEnFirebase();
+    guardarProgreso(); // ✅ guardar
+    comprobarRecompensas(datos.aciertos); // ✅ recompensas
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

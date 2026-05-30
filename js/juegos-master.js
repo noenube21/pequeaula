@@ -306,7 +306,11 @@ export function comprobar(){
     actualizarPuntos();
 
     guardarProgreso(); // ✅ guardar
-    comprobarRecompensas(datos.aciertos); // ✅ recompensas
+try {
+    comprobarRecompensas(datos.aciertos);
+} catch(e) {
+    console.log("Recompensas ignoradas");
+}
     guardarEnFirebase(); // ✅ NUEVO
 
     setTimeout(()=>{

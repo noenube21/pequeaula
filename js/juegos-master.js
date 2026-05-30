@@ -1,14 +1,14 @@
 // =======================================
 import { comprobarRecompensas } from "./recompensas.js";
 
-// ✅ PROGRESO GLOBAL (ACUMULATIVO)
+// ✅ PROGRESO GLOBAL
 let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos: 0 };
 
 let preguntasRestantes = [];
-let puntos = datos.puntos; // ✅ ahora acumula
+let puntos = datos.puntos;
 let preguntaActual = null;
 let juegoActual = null;
-let claveActual = ""; // ✅ necesario para cambiar preguntas
+let claveActual = "";
 
 // =======================================
 function limpiar(t){
@@ -16,6 +16,38 @@ function limpiar(t){
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g,"")
         .trim();
+}
+
+// =======================================
+// ✅ LEVENSHTEIN (AÑADIDO)
+function levenshtein(a, b){
+
+    const matrix = [];
+
+    for (let i = 0; i <= b.length; i++){
+        matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= a.length; j++){
+        matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++){
+        for (let j = 1; j <= a.length; j++){
+
+            if (b.charAt(i-1) === a.charAt(j-1)){
+                matrix[i][j] = matrix[i-1][j-1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i-1][j-1] + 1,
+                    matrix[i][j-1] + 1,
+                    matrix[i-1][j] + 1
+                );
+            }
+        }
+    }
+
+    return matrix[b.length][a.length];
 }
 
 // =======================================
@@ -44,7 +76,7 @@ function guardarProgreso(){
 }
 
 // =======================================
-// GENERADOR MATEMÁTICAS
+// MATEMÁTICAS
 function calc(op,max){
     let a=Math.floor(Math.random()*max);
     let b=Math.floor(Math.random()*max);
@@ -55,13 +87,12 @@ function calc(op,max){
 }
 
 // =======================================
-// BASE INGLES
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
 
-// generar opciones
+// =======================================
 function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
@@ -69,15 +100,12 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// JUEGOS
 const Juegos = {
 
-    // MATEMÁTICAS
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    // INGLÉS
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
@@ -104,7 +132,6 @@ const Juegos = {
         }))
     },
 
-    // CASTELLANO
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -131,7 +158,6 @@ const Juegos = {
         ]
     },
 
-    // ✅ CIENCIAS COMPLETO
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
@@ -176,7 +202,6 @@ export function iniciarJuego(key){
 
     input.focus();
 
-    // matemáticas
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -204,14 +229,12 @@ export function iniciarJuego(key){
             b.className="btn opcion";
 
             b.onclick=()=>{
-
                 let palabra = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"")
                     .toLowerCase();
 
                 input.value = palabra;
-
                 seleccionar(b);
             };
 
@@ -254,12 +277,14 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    const correcto = r === ok;
+    // ✅ USA LEVENSHTEIN
+    const distancia = levenshtein(r, ok);
+    const correcto = distancia <= 1;
 
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-        datos.aciertos++; // ✅ acumulativo
+        datos.aciertos++;
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
@@ -267,14 +292,11 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    // ✅ GUARDAR
     guardarProgreso();
-
-    // ✅ RECOMPENSAS
     comprobarRecompensas(datos.aciertos);
 
-    // ✅ CAMBIO DE PREGUNTA (CORRECTO)
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },1000);
 }
+``

@@ -13,7 +13,7 @@
 <!-- BOTÓN VOLVER -->
 <button class="btn-volver" onclick="history.back()">⬅ Volver</button>
 
-<!-- TÍTULO -->
+<!-- TÍTULO DEL JUEGO -->
 <h2 id="tituloJuego"></h2>
 
 <!-- PUNTOS -->
@@ -28,7 +28,7 @@
     <!-- OPCIONES -->
     <div id="zona"></div>
 
-    <!-- INPUT (solo si hace falta) -->
+    <!-- INPUT (para escribir) -->
     <input id="respuesta" type="text">
 
     <!-- BOTÓN -->
@@ -48,33 +48,34 @@ window.onload = () => {
 
     try {
 
-        // ✅ leer parámetros
+        // ✅ coger parámetros de la URL
         const params = new URLSearchParams(window.location.search);
 
         const materia = params.get("materia") || "castellano";
         const nivel = params.get("nivel") || "1";
 
+        // ✅ clave del juego
         const key = materia + nivel;
 
-        console.log("KEY:", key);
+        console.log("Nivel cargado:", key);
 
-        // ✅ título
+        // ✅ TÍTULO BONITO
         document.getElementById("tituloJuego").innerText =
             materia.toUpperCase() + " - Nivel " + nivel;
 
-        // ✅ NO bloquea nunca
+        // ✅ CARGAR DATOS (no bloquea)
         cargarDesdeFirebase();
 
-        // ✅ iniciar juego
+        // ✅ INICIAR NIVEL
         iniciarJuego(key);
 
-        // ✅ botón comprobar
+        // ✅ BOTÓN COMPROBAR
         document.getElementById("btnComprobar").onclick = comprobar;
 
-    } catch (e) {
+    } catch (error) {
 
-        console.error("ERROR:", e);
-        document.getElementById("pregunta").innerText = "Error cargando juego";
+        console.error("Error cargando juego:", error);
+        document.getElementById("pregunta").innerText = "Error cargando el juego";
 
     }
 

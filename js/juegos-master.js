@@ -49,9 +49,7 @@ function levenshtein(a, b){
 // =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
-    if(score){
-        score.innerText = "Puntos: " + puntos;
-    }
+    if(score) score.innerText = "Puntos: " + puntos;
 }
 
 // =======================================
@@ -61,29 +59,27 @@ function guardarProgreso(){
 }
 
 // =======================================
-// ✅ GUARDAR FIREBASE
+// ✅ FIREBASE GUARDAR
 async function guardarEnFirebase(){
-
-    const user = auth.currentUser;
-    if(!user) return;
-
     try{
+        const user = auth.currentUser;
+        if(!user) return;
+
         await setDoc(doc(db, "usuarios", user.uid), {
             puntos: puntos,
             aciertos: datos.aciertos
         }, { merge: true });
 
-    }catch(e){
-        console.error(e);
+    } catch(e){
+        console.log("Error guardando Firebase", e);
     }
 }
 
 // =======================================
-// ✅ CARGAR FIREBASE (NO BLOQUEA)
+// ✅ FIREBASE CARGAR (NO ROMPE NADA)
 export async function cargarDesdeFirebase(){
 
     try{
-
         const user = auth.currentUser;
         if(!user) return;
 
@@ -92,15 +88,14 @@ export async function cargarDesdeFirebase(){
 
         if(snap.exists()){
             const data = snap.data();
-
             datos.aciertos = data.aciertos || 0;
             puntos = data.puntos || 0;
 
             actualizarPuntos();
         }
 
-    }catch(e){
-        console.log("Firebase no listo, seguimos");
+    } catch(e){
+        console.log("Firebase ignorado → juego continúa");
     }
 }
 
@@ -123,21 +118,20 @@ const Juegos = {
 
     ciencias1:{
         preguntas:[
-            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
-            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
+            {p:"¿Gas que respiramos?",r:"oxigeno",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Planeta rojo?",r:"marte",opciones:["marte","tierra","jupiter"]}
         ]
     },
 
     ciencias2:{
         preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]}
+            {p:"¿Forma de la Tierra?",r:"redonda",opciones:["redonda","plana","cuadrada"]}
         ]
     },
 
     ciencias3:{
         preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]}
+            {p:"¿Órgano que late?",r:"corazon",opciones:["corazón","ojo","mano"]}
         ]
     }
 };
@@ -155,10 +149,15 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.value="";
 
+    if(!juegoActual){
+        pregunta.innerText="Error cargando";
+        return;
+    }
+
     if(juegoActual.generar){
-        preguntaActual=juegoActual.generar();
+        preguntaActual = juegoActual.generar();
         input.style.display="block";
-        pregunta.innerText=preguntaActual.p;
+        pregunta.innerText = preguntaActual.p;
         return;
     }
 
@@ -181,9 +180,8 @@ function siguientePregunta(){
         return;
     }
 
-    preguntaActual=preguntasRestantes.pop();
-    pregunta.innerText=preguntaActual.p;
-
+    preguntaActual = preguntasRestantes.pop();
+    pregunta.innerText = preguntaActual.p;
     input.style.display="none";
 
     preguntaActual.opciones.forEach(op=>{
@@ -227,7 +225,5 @@ export function comprobar(){
     comprobarRecompensas(datos.aciertos);
     guardarEnFirebase();
 
-    setTimeout(()=>{
-        siguientePregunta(); // ✅ IMPORTANTE (NO reinicia juego)
-    },1000);
+    setTimeout(()=>siguientePregunta(),1000);
 }

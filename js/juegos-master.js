@@ -1,3 +1,6 @@
+import { db } from "./firebase-config.js";
+import { auth } from "./firebase-config.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { comprobarRecompensas } from "./recompensas.js";
 
 // =======================================
@@ -80,7 +83,25 @@ function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
 }
+// ✅ GUARDAR EN FIREBASE
+async function guardarEnFirebase(){
 
+    const user = auth.currentUser;
+
+    // si no hay usuario, no hace nada (no rompe)
+    if(!user) return;
+
+    try{
+
+        await setDoc(doc(db, "usuarios", user.uid), {
+            puntos: puntos,
+            aciertos: datos.aciertos
+        }, { merge: true });
+
+    }catch(error){
+        console.log("Firebase error:", error);
+    }
+}
 // =======================================
 function calc(op,max){
     let a=Math.floor(Math.random()*max);
@@ -281,6 +302,7 @@ export function comprobar(){
 
     guardarProgreso(); // ✅ guardar
     comprobarRecompensas(datos.aciertos); // ✅ recompensas
+    guardarEnFirebase(); // ✅ NUEVO
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

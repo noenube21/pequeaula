@@ -1,75 +1,95 @@
+// =======================================
+let preguntasRestantes = [];
 let puntos = 0;
 let preguntaActual = null;
-let preguntasRestantes = [];
+let juegoActual = null;
 
-// ===============================
+// =======================================
 function limpiar(t){
-    return t.toLowerCase().trim();
+    return t.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .trim();
 }
 
-// ===============================
-function actualizarPuntos(){
-    const score = document.getElementById("score");
-    if(score){
-        score.innerText = "Puntos: " + puntos;
-    }
+// =======================================
+function animarResultado(el, ok){
+    el.style.transition = "0.3s";
+    el.style.transform = "scale(1.2)";
+    el.style.color = ok ? "green" : "red";
+
+    setTimeout(() => {
+        el.style.transform = "scale(1)";
+    }, 300);
 }
 
-// ===============================
-// GENERAR OPERACIONES
-function calc(op,max){
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
+// =======================================
+// BASE INGLES
+const inglesBase = [
+["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
+["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
+];
 
-    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
-    return {p:`${a} x ${b}`,r:(a*b).toString()};
+// generar opciones
+function generarOpciones(correcta, lista){
+    const otras = lista.filter(x=>x!==correcta);
+    const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
+    return [correcta,...rand].sort(()=>0.5-Math.random());
 }
 
-// ===============================
-// BASE DATOS COMPLETA
+// =======================================
+// JUEGOS
 const Juegos = {
 
-    // ✅ MATEMÁTICAS DINÁMICAS
+    // ================= MATEMÁTICAS =================
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    // ✅ INGLÉS
+    // ================= INGLÉS =================
     ingles1:{
-        preguntas:[
-            {p:"dog =",r:"perro",tipo:"test",opciones:["perro","gato","mesa"]},
-            {p:"cat =",r:"gato",tipo:"test",opciones:["gato","perro","casa"]}
-        ]
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"test",
+            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
+        }))
     },
 
     ingles2:{
-        preguntas:[
-            {p:"dog =",r:"perro",tipo:"input"},
-            {p:"cat =",r:"gato",tipo:"input"}
-        ]
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"input"
+        }))
     },
 
     ingles3:{
-        preguntas:[
-            {p:"perro =",r:"dog",tipo:"test",opciones:["dog","cat","sun"]},
-            {p:"gato =",r:"cat",tipo:"test",opciones:["dog","cat","moon"]}
-        ]
+        preguntas: inglesBase.map(x=>({
+            p:`${x[1]} =`,
+            r:x[0],
+            tipo:"test",
+            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
+        }))
     },
 
-    // ✅ CASTELLANO
+    // ================= CASTELLANO =================
     castellano1:{
         preguntas:[
-            {p:"c__a",r:"casa",tipo:"test",opciones:["casa","cama","copa"]},
-            {p:"m__a",r:"mesa",tipo:"test",opciones:["mesa","masa","misa"]},
-            {p:"p__o",r:"pato",tipo:"test",opciones:["pato","peto","pito"]}
-        ]
+            "casa","mesa","mango","plato","huevo","lago"
+        ].map(p=>({
+            p:`${p[0]}__${p.slice(2)}`,
+            r:p,
+            tipo:"test",
+            opciones: generarOpciones(p,["casa","mesa","mango","pato","taza","mano"])
+        }))
     },
 
     castellano2:{
         preguntas:[
             {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]}
+            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
+            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
         ]
     },
 
@@ -80,99 +100,86 @@ const Juegos = {
         ]
     },
 
-    // ✅ CIENCIAS
+    // ================= CIENCIAS =================
     ciencias1:{
         preguntas:[
-            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]}
-        ]
-    },
-
-    ciencias2:{
-        preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]}
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]}
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]}
         ]
     }
+
 };
 
-// ===============================
-// INICIAR JUEGO
+// =======================================
+// MOTOR
 export function iniciarJuego(key){
 
-    console.log("KEY:", key);
-
-    const juego = Juegos[key];
-
-    if(!juego){
-        console.error("NO EXISTE JUEGO:", key);
-        document.getElementById("pregunta").innerText="Error cargando nivel";
-        return;
-    }
-
-    // ✅ MATEMÁTICAS
-    if(juego.generar){
-        preguntaActual = juego.generar();
-        pintarPregunta();
-        return;
-    }
-
-    preguntasRestantes = [...juego.preguntas];
-    siguientePregunta();
-}
-
-// ===============================
-function siguientePregunta(){
-
-    if(preguntasRestantes.length === 0){
-        document.getElementById("pregunta").innerText="Fin 🎉";
-        return;
-    }
-
-    preguntaActual = preguntasRestantes.pop();
-    pintarPregunta();
-}
-
-// ===============================
-function pintarPregunta(){
+    juegoActual = Juegos[key];
 
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
     const input=document.getElementById("respuesta");
+    const resultado=document.getElementById("resultado");
 
+    pregunta.innerHTML="";
     zona.innerHTML="";
+    resultado.innerHTML="";
     input.value="";
 
-    pregunta.innerText = preguntaActual.p;
+    input.focus();
 
-    input.style.display="none";
-
-    // INPUT
-    if(preguntaActual.tipo==="input"){
+    // matemáticas
+    if(juegoActual.generar){
+        preguntaActual=juegoActual.generar();
         input.style.display="block";
+        pregunta.innerText=preguntaActual.p;
+        return;
     }
 
-    // LETRAS
-    else if(preguntaActual.tipo==="letras"){
+    if(!preguntasRestantes.length){
+        preguntasRestantes=[...juegoActual.preguntas];
+    }
+
+    preguntaActual = preguntasRestantes.splice(
+        Math.floor(Math.random()*preguntasRestantes.length),1
+    )[0];
+
+    pregunta.innerText=preguntaActual.p;
+
+    zona.innerHTML="";
+    input.style.display="none";
+
+    // ================= TIPOS =================
+
+    // letras (CORREGIDO)
+    if(preguntaActual.tipo==="letras"){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
             b.className="btn opcion";
 
             b.onclick=()=>{
-                input.value=op;
-                marcar(b);
+
+                let palabra = preguntaActual.p
+                    .replace("_", op)
+                    .replace(/ /g,"")
+                    .toLowerCase();
+
+                input.value = palabra;
+
+                seleccionar(b);
             };
 
             zona.appendChild(b);
         });
     }
 
-    // TEST
+    // input
+    else if(preguntaActual.tipo==="input"){
+        input.style.display="block";
+    }
+
+    // test (CORREGIDO selección)
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -180,8 +187,8 @@ function pintarPregunta(){
             b.className="btn opcion";
 
             b.onclick=()=>{
-                input.value=op;
-                marcar(b);
+                input.value = op;
+                seleccionar(b);
             };
 
             zona.appendChild(b);
@@ -189,27 +196,50 @@ function pintarPregunta(){
     }
 }
 
-// ===============================
-function marcar(btn){
-    document.querySelectorAll(".opcion").forEach(x=>x.classList.remove("seleccionada"));
+// =======================================
+// SELECCIÓN (ARREGLADA)
+function seleccionar(btn){
+    document.querySelectorAll(".opcion").forEach(o=>{
+        o.classList.remove("seleccionada");
+    });
     btn.classList.add("seleccionada");
 }
 
-// ===============================
+// =======================================
 export function comprobar(){
 
     const r=limpiar(document.getElementById("respuesta").value);
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    if(r===ok){
+    const correcto = r===ok;
+
+    if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
     }else{
-        resultado.innerText="✘ Incorrecto";
+        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
+    animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    setTimeout(()=>siguientePregunta(),1000);
+    setTimeout(()=>iniciarJuego(materia+nivel),1000);
+}
+
+// =======================================
+export function actualizarPuntos(){
+    const score = document.getElementById("score");
+    if(score){
+        score.innerText = "Puntos: " + puntos;
+    }
+}
+
+// =======================================
+function calc(op,max){
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+    if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a}-${b}`,r:(a-b).toString()};
+    return {p:`${a}×${b}`,r:(a*b).toString()};
 }

@@ -1,6 +1,10 @@
 // =======================================
 import { comprobarRecompensas } from "./recompensas.js";
+import { db } from "./firebase-config.js";
+import { auth } from "./firebase-config.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+// =======================================
 // ✅ PROGRESO GLOBAL
 let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos: 0 };
 
@@ -19,23 +23,17 @@ function limpiar(t){
 }
 
 // =======================================
-// ✅ LEVENSHTEIN (AÑADIDO)
+// ✅ LEVENSHTEIN
 function levenshtein(a, b){
 
     const matrix = [];
 
-    for (let i = 0; i <= b.length; i++){
-        matrix[i] = [i];
-    }
-
-    for (let j = 0; j <= a.length; j++){
-        matrix[0][j] = j;
-    }
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
-
-            if (b.charAt(i-1) === a.charAt(j-1)){
+            if (b.charAt(i-1) === a.charAt(j-1)) {
                 matrix[i][j] = matrix[i-1][j-1];
             } else {
                 matrix[i][j] = Math.min(
@@ -73,6 +71,25 @@ function actualizarPuntos(){
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
+}
+
+// =======================================
+// ✅ FIREBASE
+async function guardarEnFirebase(){
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    try{
+        await setDoc(doc(db, "usuarios", user.uid), {
+            puntos: puntos,
+            aciertos: datos.aciertos,
+            fecha: new Date()
+        }, { merge: true });
+
+    }catch(e){
+        console.error("Firebase error:", e);
+    }
 }
 
 // =======================================
@@ -277,7 +294,6 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    // ✅ USA LEVENSHTEIN
     const distancia = levenshtein(r, ok);
     const correcto = distancia <= 1;
 
@@ -294,6 +310,7 @@ export function comprobar(){
 
     guardarProgreso();
     comprobarRecompensas(datos.aciertos);
+    guardarEnFirebase(); // ✅ FIREBASE
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

@@ -22,14 +22,19 @@
 <!-- CAJA DEL JUEGO -->
 <div class="game-box">
 
+    <!-- PREGUNTA -->
     <div id="pregunta"></div>
 
+    <!-- OPCIONES -->
     <div id="zona"></div>
 
+    <!-- INPUT (solo si hace falta) -->
     <input id="respuesta" type="text">
 
+    <!-- BOTÓN -->
     <button id="btnComprobar">Comprobar</button>
 
+    <!-- RESULTADO -->
     <p id="resultado"></p>
 
 </div>
@@ -39,11 +44,11 @@
 
 import { iniciarJuego, comprobar, cargarDesdeFirebase } from "./js/juegos-master.js";
 
-// ✅ ARRANQUE SEGURO
 window.onload = () => {
 
     try {
 
+        // ✅ leer parámetros
         const params = new URLSearchParams(window.location.search);
 
         const materia = params.get("materia") || "castellano";
@@ -53,22 +58,22 @@ window.onload = () => {
 
         console.log("KEY:", key);
 
-        // ✅ PONER TÍTULO
+        // ✅ título
         document.getElementById("tituloJuego").innerText =
             materia.toUpperCase() + " - Nivel " + nivel;
 
-        // ✅ CARGAR FIREBASE (NO BLOQUEA)
+        // ✅ NO bloquea nunca
         cargarDesdeFirebase();
 
-        // ✅ INICIAR JUEGO
+        // ✅ iniciar juego
         iniciarJuego(key);
 
-        // ✅ BOTÓN
+        // ✅ botón comprobar
         document.getElementById("btnComprobar").onclick = comprobar;
 
-    } catch (error) {
+    } catch (e) {
 
-        console.error("Error general:", error);
+        console.error("ERROR:", e);
         document.getElementById("pregunta").innerText = "Error cargando juego";
 
     }
@@ -79,4 +84,3 @@ window.onload = () => {
 
 </body>
 </html>
-``

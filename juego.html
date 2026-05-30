@@ -1,16 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- BOTÓN VOLVER -->
+<button class="btn-volver" onclick="history.back()">⬅ Volver</button>
+
+<!-- TITULO -->
+<h2 id="tituloJuego"></h2>
+
+<!-- PUNTOS -->
+<div id="score">Puntos: 0</div>
+
+<!-- CAJA JUEGO -->
+<div class="game-box">
+
+    <div id="pregunta"></div>
+
+    <div id="zona"></div>
+
+    <input id="respuesta" type="text">
+
+    <button id="btnComprobar">Comprobar</button>
+
+    <p id="resultado"></p>
+
+</div>
+
+<!-- SCRIPT -->
+<script type="module">
+
 import { iniciarJuego, comprobar, cargarDesdeFirebase } from "./js/juegos-master.js";
 
 window.onload = () => {
 
+    // ✅ parámetros de la URL
     const params = new URLSearchParams(window.location.search);
-    const key = (params.get("materia") || "castellano") + (params.get("nivel") || "1");
 
-    document.getElementById("tituloJuego").innerText = key;
+    const materia = params.get("materia") || "castellano";
+    const nivel = params.get("nivel") || "1";
 
-    cargarDesdeFirebase(); ✅
+    const key = materia + nivel;
 
+    console.log("KEY:", key);
+
+    // ✅ título
+    document.getElementById("tituloJuego").innerText =
+        materia.toUpperCase() + " - Nivel " + nivel;
+
+    // ✅ cargar datos (NO BLOQUEA)
+    cargarDesdeFirebase();
+
+    // ✅ iniciar juego
     iniciarJuego(key);
 
+    // ✅ botón comprobar
     document.getElementById("btnComprobar").onclick = comprobar;
 };
-``
+
+</script>
+
+</body>
+</html>

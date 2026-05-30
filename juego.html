@@ -1,87 +1,18 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego</title>
-
-    <link rel="stylesheet" href="css/style.css">
-</head>
-
-<body>
-
-<!-- BOTÓN VOLVER -->
-<button class="btn-volver" onclick="history.back()">⬅ Volver</button>
-
-<!-- TÍTULO DEL JUEGO -->
-<h2 id="tituloJuego"></h2>
-
-<!-- PUNTOS -->
-<div id="score">Puntos: 0</div>
-
-<!-- CAJA DEL JUEGO -->
-<div class="game-box">
-
-    <!-- PREGUNTA -->
-    <div id="pregunta"></div>
-
-    <!-- OPCIONES -->
-    <div id="zona"></div>
-
-    <!-- INPUT (para escribir) -->
-    <input id="respuesta" type="text">
-
-    <!-- BOTÓN -->
-    <button id="btnComprobar">Comprobar</button>
-
-    <!-- RESULTADO -->
-    <p id="resultado"></p>
-
-</div>
-
-<!-- SCRIPT -->
-<script type="module">
-
-import { iniciarJuego, comprobar, cargarDesdeFirebase } from "./js/juegos-master.js";
+import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
 window.onload = () => {
 
-    try {
+    const params = new URLSearchParams(window.location.search);
 
-        // ✅ coger parámetros de la URL
-        const params = new URLSearchParams(window.location.search);
+    const materia = params.get("materia");
+    const nivel = params.get("nivel");
 
-        const materia = params.get("materia") || "castellano";
-        const nivel = params.get("nivel") || "1";
+    const key = materia + nivel;
 
-        // ✅ clave del juego
-        const key = materia + nivel;
+    document.getElementById("tituloJuego").innerText =
+        materia.toUpperCase() + " - Nivel " + nivel;
 
-        console.log("Nivel cargado:", key);
+    iniciarJuego(key);
 
-        // ✅ TÍTULO BONITO
-        document.getElementById("tituloJuego").innerText =
-            materia.toUpperCase() + " - Nivel " + nivel;
-
-        // ✅ CARGAR DATOS (no bloquea)
-        cargarDesdeFirebase();
-
-        // ✅ INICIAR NIVEL
-        iniciarJuego(key);
-
-        // ✅ BOTÓN COMPROBAR
-        document.getElementById("btnComprobar").onclick = comprobar;
-
-    } catch (error) {
-
-        console.error("Error cargando juego:", error);
-        document.getElementById("pregunta").innerText = "Error cargando el juego";
-
-    }
-
+    document.getElementById("btnComprobar").onclick = comprobar;
 };
-
-</script>
-
-</body>
-</html>

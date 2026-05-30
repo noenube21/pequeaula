@@ -14,6 +14,39 @@ function limpiar(t){
 }
 
 // =======================================
+// ✅ LEVENSHTEIN AÑADIDO
+function levenshtein(a, b){
+
+    const matrix = [];
+
+    for (let i = 0; i <= b.length; i++){
+        matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= a.length; j++){
+        matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++){
+        for (let j = 1; j <= a.length; j++){
+
+            if (b.charAt(i-1) === a.charAt(j-1)){
+                matrix[i][j] = matrix[i-1][j-1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i-1][j-1] + 1,
+                    matrix[i][j-1] + 1,
+                    matrix[i-1][j] + 1
+                );
+            }
+
+        }
+    }
+
+    return matrix[b.length][a.length];
+}
+
+// =======================================
 function animarResultado(el, ok){
     el.style.transition = "0.3s";
     el.style.transform = "scale(1.2)";
@@ -61,12 +94,10 @@ function generarOpciones(correcta, lista){
 // JUEGOS COMPLETOS
 const Juegos = {
 
-    // MATEMÁTICAS
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    // INGLÉS
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
@@ -93,7 +124,6 @@ const Juegos = {
         }))
     },
 
-    // CASTELLANO
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -120,7 +150,6 @@ const Juegos = {
         ]
     },
 
-    // CIENCIAS
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
@@ -185,7 +214,6 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
-    // LETRAS
     if(preguntaActual.tipo==="letras"){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -206,12 +234,10 @@ export function iniciarJuego(key){
         });
     }
 
-    // INPUT
     else if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
 
-    // TEST
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -243,7 +269,8 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    const correcto = r === ok;
+    // ✅ CAMBIO AQUÍ → LEVENSHTEIN
+    const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
         resultado.innerText="✔ Correcto";
@@ -256,7 +283,6 @@ export function comprobar(){
     actualizarPuntos();
 
     setTimeout(()=>{
-        iniciarJuego(claveActual); // ✅ ARREGLO CLAVE
+        iniciarJuego(claveActual);
     },1000);
 }
-``

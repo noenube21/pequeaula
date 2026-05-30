@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 
-/* 🔥 CENTRADO GLOBAL (CLAVE) */
+/* BODY */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -11,139 +11,57 @@ body {
 
     display: flex;
     flex-direction: column;
-    align-items: center; /* ✅ centra TODO */
+    align-items: center;
 
     background-image: url("../assets/img/fondo-escolar.png");
     background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-
-    min-height: 100vh;
 }
 
-/* 🔥 PUNTOS (ARREGLADO) */
+/* SCORE */
 #score {
-    font-size: 22px;
-    font-weight: bold;
-    margin: 10px 0;
-    text-align: center;
-    width: 100%;
-}
-
-/* BOTÓN VOLVER */
-.btn-volver {
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    background: #ff6f61;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 15px;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.btn-volver:hover {
-    background: #e85a4f;
-}
-
-/* BOTONES GENERALES */
-button, .btn {
-    background: #4fc3f7;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.2s;
-    display: block;
-    margin: 10px auto;
-}
-
-button:hover, .btn:hover {
-    background: #0288d1;
-}
-
-/* INICIO */
-.inicio-container {
-    text-align: center;
-    margin-top: 120px;
-}
-
-.inicio-title {
-    font-size: 3rem;
-}
-
-.logo-img {
-    width: 220px;
-    margin: 20px auto;
-}
-
-/* MENÚ */
-.card-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.card {
-    background: white;
-    width: 180px;
-    padding: 20px;
-    border-radius: 20px;
-    border: 3px solid #ffcc4d;
-    text-align: center;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-.card img {
-    width: 110px;
-}
-
-/* 🔥 JUEGO (MUY IMPORTANTE) */
-.game-box {
-    background: white;
-    width: 350px;
-    padding: 25px;
-    border-radius: 20px;
-    border: 3px solid #ffcc4d;
-    text-align: center;
-    margin: 20px auto;
-}
-
-/* 🔥 PREGUNTA */
-.pregunta {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-/* 🔥 OPCIONES */
-.opcion {
-    display: block;
-    margin: 10px auto;
-    padding: 12px;
-
-    #score {
     text-align: center;
     font-size: 22px;
     margin: 10px;
     font-weight: bold;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* BOTONES */
+button, .btn {
+    background: #4fc3f7;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin: 8px;
 }
 
+/* 🔥 OPCIONES */
+.opcion {
+    background: white !important;
+    color: black !important;
+    border: 2px solid #333;
+}
+
+/* 🔥 SELECCIÓN */
+.opcion.seleccionada {
+    background: #4fc3f7 !important;
+    color: white !important;
+    border: 2px solid #0288d1 !important;
+}
+
+/* GAME BOX */
 .game-box {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
     margin-top: 20px;
 }
 
+/* INPUT */
+#respuesta {
+    width: 90%;
+    padding: 10px;
+    margin: 10px;
+}
+``

@@ -1,0 +1,74 @@
+{
+  "ingles1": [
+    {"p":"dog =","r":"perro","tipo":"test","opciones":["perro","gato","mesa"]},
+    {"p":"cat =","r":"gato","tipo":"test","opciones":["perro","gato","casa"]},
+    {"p":"sun =","r":"sol","tipo":"test","opciones":["sol","luna","mesa"]},
+    {"p":"moon =","r":"luna","tipo":"test","opciones":["sol","luna","coche"]},
+    {"p":"water =","r":"agua","tipo":"test","opciones":["agua","fuego","tierra"]},
+    {"p":"book =","r":"libro","tipo":"test","opciones":["libro","mesa","coche"]},
+    {"p":"house =","r":"casa","tipo":"test","opciones":["casa","perro","mesa"]},
+    {"p":"door =","r":"puerta","tipo":"test","opciones":["ventana","puerta","mesa"]},
+    {"p":"chair =","r":"silla","tipo":"test","opciones":["silla","mesa","cama"]}
+  ],
+
+  "ingles2": [
+    {"p":"dog =","r":"perro","tipo":"input"},
+    {"p":"cat =","r":"gato","tipo":"input"},
+    {"p":"sun =","r":"sol","tipo":"input"},
+    {"p":"moon =","r":"luna","tipo":"input"},
+    {"p":"water =","r":"agua","tipo":"input"},
+    {"p":"book =","r":"libro","tipo":"input"},
+    {"p":"house =","r":"casa","tipo":"input"}
+  ],
+
+  "ingles3": [
+    {"p":"perro =","r":"dog","tipo":"test","opciones":["dog","cat","sun"]},
+    {"p":"gato =","r":"cat","tipo":"test","opciones":["dog","cat","moon"]},
+    {"p":"sol =","r":"sun","tipo":"test","opciones":["sun","dog","book"]},
+    {"p":"luna =","r":"moon","tipo":"test","opciones":["moon","house","dog"]},
+    {"p":"agua =","r":"water","tipo":"test","opciones":["water","fire","earth"]}
+  ],
+
+  "castellano1": [
+    {"p":"c__a","r":"casa","tipo":"test","opciones":["casa","cama","copa"]},
+    {"p":"m__a","r":"mesa","tipo":"test","opciones":["mesa","masa","misa"]},
+    {"p":"p__o","r":"pato","tipo":"test","opciones":["pato","peto","pito"]},
+    {"p":"g__o","r":"gato","tipo":"test","opciones":["gato","gota","goma"]},
+    {"p":"m__o","r":"mono","tipo":"test","opciones":["mono","mina","mano"]}
+  ],
+
+  "castellano2": [
+    {"p":"M _ S A","r":"mesa","tipo":"letras","opciones":["e","o","i"]},
+    {"p":"C _ M A","r":"cama","tipo":"letras","opciones":["a","o","e"]},
+    {"p":"P _ T O","r":"pato","tipo":"letras","opciones":["a","e","i"]},
+    {"p":"G _ T O","r":"gato","tipo":"letras","opciones":["a","e","i"]}
+  ],
+
+  "castellano3": [
+    {"p":"¿Verbo?","r":"correr","tipo":"test","opciones":["correr","mesa","perro"]},
+    {"p":"¿Sustantivo?","r":"mesa","tipo":"test","opciones":["mesa","leer","correr"]},
+    {"p":"¿Verbo?","r":"leer","tipo":"test","opciones":["leer","puerta","silla"]},
+    {"p":"¿Sustantivo?","r":"gato","tipo":"test","opciones":["gato","correr","leer"]}
+  ],
+
+  "ciencias1": [
+    {"p":"¿Gas que respiramos?","r":"oxigeno","tipo":"test","opciones":["oxígeno","agua","fuego"]},
+    {"p":"¿Planeta rojo?","r":"marte","tipo":"test","opciones":["marte","tierra","júpiter"]},
+    {"p":"¿Animal acuático?","r":"pez","tipo":"test","opciones":["pez","perro","gato"]},
+    {"p":"¿Necesario para vivir?","r":"agua","tipo":"test","opciones":["agua","metal","plástico"]}
+  ],
+
+  "ciencias2": [
+    {"p":"¿Forma de la Tierra?","r":"redonda","tipo":"test","opciones":["redonda","plana","cuadrada"]},
+    {"p":"¿Dónde viven los peces?","r":"agua","tipo":"test","opciones":["agua","aire","tierra"]},
+    {"p":"¿El sol es?","r":"estrella","tipo":"test","opciones":["estrella","planeta","luna"]}
+  ],
+
+  "ciencias3": [
+    {"p":"¿Órgano que late?","r":"corazon","tipo":"test","opciones":["corazón","ojo","mano"]},
+    {"p":"¿Órgano para ver?","r":"ojo","tipo":"test","opciones":["ojo","pierna","brazo"]},
+    {"p":"¿Qué respiramos?","r":"oxigeno","tipo":"test","opciones":["oxígeno","agua","humo"]},
+    {"p":"¿Planeta donde vivimos?","r":"tierra","tipo":"test","opciones":["tierra","marte","saturno"]}
+  ]
+}
+``

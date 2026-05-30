@@ -15,7 +15,6 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
-
 puntos = datos.puntos;
 
 // =======================================
@@ -33,11 +32,14 @@ function levenshtein(a, b){
     for (let i = 0; i <= b.length; i++){
         matrix[i] = [i];
     }
+
     for (let j = 0; j <= a.length; j++){
         matrix[0][j] = j;
     }
+
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
+
             if (b.charAt(i-1) === a.charAt(j-1)){
                 matrix[i][j] = matrix[i-1][j-1];
             } else {
@@ -49,6 +51,7 @@ function levenshtein(a, b){
             }
         }
     }
+
     return matrix[b.length][a.length];
 }
 
@@ -57,6 +60,7 @@ function animarResultado(el, ok){
     el.style.transition = "0.3s";
     el.style.transform = "scale(1.2)";
     el.style.color = ok ? "green" : "red";
+
     setTimeout(() => {
         el.style.transform = "scale(1)";
     }, 300);
@@ -131,23 +135,6 @@ const Juegos = {
         }))
     },
 
-    ingles2:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[1]} =`,
-            r:x[0],
-            tipo:"test",
-            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
-        }))
-    },
-
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -159,19 +146,10 @@ const Juegos = {
         }))
     },
 
-    castellano2:{
-        preguntas:[
-            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
-            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
-        ]
-    },
-
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
-            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]}
         ]
     }
 };
@@ -181,8 +159,7 @@ export function iniciarJuego(key){
 
     claveActual = key;
     juegoActual = Juegos[key];
-
-    preguntasRestantes = []; // 🔥 IMPORTANTE reset
+    preguntasRestantes = [];
 
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
@@ -194,7 +171,6 @@ export function iniciarJuego(key){
     resultado.innerHTML="";
     input.value="";
 
-    input.focus();
     actualizarPuntos();
 
     if(!juegoActual){
@@ -210,7 +186,6 @@ export function iniciarJuego(key){
     }
 
     preguntasRestantes = [...juegoActual.preguntas];
-
     siguientePregunta();
 }
 
@@ -234,39 +209,18 @@ function siguientePregunta(){
 
     input.style.display="none";
 
-    if(preguntaActual.tipo==="letras"){
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-            b.className="btn opcion";
+    preguntaActual.opciones.forEach(op=>{
+        const b=document.createElement("button");
+        b.innerText=op;
+        b.className="btn opcion";
 
-            b.onclick=()=>{
-                let palabra = preguntaActual.p
-                    .replace("_", op)
-                    .replace(/ /g,"")
-                    .toLowerCase();
+        b.onclick=()=>{
+            input.value = op;
+            seleccionar(b);
+        };
 
-                input.value = palabra;
-                seleccionar(b);
-            };
-
-            zona.appendChild(b);
-        });
-
-    } else {
-        preguntaActual.opciones?.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-            b.className="btn opcion";
-
-            b.onclick=()=>{
-                input.value = op;
-                seleccionar(b);
-            };
-
-            zona.appendChild(b);
-        });
-    }
+        zona.appendChild(b);
+    });
 }
 
 // =======================================
@@ -291,7 +245,7 @@ export function comprobar(){
         puntos++;
         datos.aciertos++;
     }else{
-        resultado.innerText=`✘ Incorrecto. Correcta: ${preguntaActual.r}`;
+        resultado.innerText=`✘ Incorrecto. ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);

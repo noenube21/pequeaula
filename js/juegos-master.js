@@ -3,7 +3,6 @@
 import { db, auth } from "./firebase-config.js";
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// =======================================
 const materia = window.materia;
 const nivel = window.nivel;
 
@@ -31,14 +30,19 @@ function animarResultado(el, ok){
 }
 
 // =======================================
-// ✅ JSON
+// JSON
 async function cargarJSON(){
-    const res = await fetch("js/preguntas.json");
-    return await res.json();
+    try {
+        const res = await fetch("js/preguntas.json");
+        return await res.json();
+    } catch(e){
+        console.error("Error JSON:", e);
+        return null;
+    }
 }
 
 // =======================================
-// ✅ FIREBASE GUARDAR
+// FIREBASE GUARDAR
 async function guardarProgreso(){
 
     const user = auth.currentUser;
@@ -56,7 +60,7 @@ async function guardarProgreso(){
 }
 
 // =======================================
-// ✅ FIREBASE CARGAR
+// FIREBASE CARGAR
 async function cargarProgreso(){
 
     const user = auth.currentUser;
@@ -67,19 +71,14 @@ async function cargarProgreso(){
 
     if(snap.exists()){
         const data = snap.data();
-
         puntos = data.puntos || 0;
-
-        if(data.recompensas){
-            localStorage.setItem("recompensas", JSON.stringify(data.recompensas));
-        }
 
         actualizarPuntos();
     }
 }
 
 // =======================================
-// ✅ GENERADOR MATEMÁTICAS
+// MATEMÁTICAS
 function calc(op,max){
     let a=Math.floor(Math.random()*max);
     let b=Math.floor(Math.random()*max);
@@ -91,14 +90,16 @@ function calc(op,max){
 
 // =======================================
 // MOTOR
-
 export async function iniciarJuego(key){
 
     await cargarProgreso();
 
     const dataJSON = await cargarJSON();
 
-    // ✅ MATEMÁTICAS aleatorias
+    console.log("KEY:", key);
+    console.log("JSON:", dataJSON);
+
+    // ✅ MATEMÁTICAS
     if(key.includes("matematicas")){
         juegoActual = {
             generar: () => calc(
@@ -110,12 +111,20 @@ export async function iniciarJuego(key){
         };
     }
 
-    // ✅ RESTO desde JSON
-    else if(dataJSON[key]){
-        juegoActual = { preguntas: dataJSON[key] };
-    } else {
-        console.error("Nivel no encontrado:", key);
-        return;
+    // ✅ RESTO
+    else {
+        if(!dataJSON || !dataJSON[key]){
+            console.error("No hay preguntas para:", key);
+
+            // ✅ FALLBACK PARA QUE SIEMPRE FUNCIONE
+            juegoActual = {
+                preguntas: [
+                    {p:"Pregunta de prueba", r:"respuesta", tipo:"input"}
+                ]
+            };
+        } else {
+            juegoActual = { preguntas: dataJSON[key] };
+        }
     }
 
     const pregunta=document.getElementById("pregunta");
@@ -137,7 +146,7 @@ export async function iniciarJuego(key){
         return;
     }
 
-    // ✅ JSON preguntas
+    // ✅ PREGUNTAS JSON
     if(!preguntasRestantes.length){
         preguntasRestantes=[...juegoActual.preguntas];
     }
@@ -151,12 +160,11 @@ export async function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
-    // 🔤 INPUT
+    // ✅ TIPOS
     if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
 
-    // 🔡 LETRAS
     else if(preguntaActual.tipo==="letras"){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -174,7 +182,6 @@ export async function iniciarJuego(key){
         });
     }
 
-    // ✅ TEST
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -194,7 +201,7 @@ export async function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ PUNTOS
+// PUNTOS
 export function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
@@ -203,8 +210,7 @@ export function actualizarPuntos(){
 }
 
 // =======================================
-// ✅ COMPROBAR
-
+// COMPROBAR
 export function comprobar(){
 
     const btn = document.getElementById("btnComprobar");
@@ -219,12 +225,11 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-    }else{
+    } else {
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);
-
     actualizarPuntos();
 
     let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos:0 };

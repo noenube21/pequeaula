@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -12,13 +13,13 @@
 <!-- BOTÓN VOLVER -->
 <button class="btn-volver" onclick="history.back()">⬅ Volver</button>
 
-<!-- TITULO -->
+<!-- TÍTULO -->
 <h2 id="tituloJuego"></h2>
 
 <!-- PUNTOS -->
 <div id="score">Puntos: 0</div>
 
-<!-- CAJA JUEGO -->
+<!-- CAJA DEL JUEGO -->
 <div class="game-box">
 
     <div id="pregunta"></div>
@@ -38,33 +39,44 @@
 
 import { iniciarJuego, comprobar, cargarDesdeFirebase } from "./js/juegos-master.js";
 
+// ✅ ARRANQUE SEGURO
 window.onload = () => {
 
-    // ✅ parámetros de la URL
-    const params = new URLSearchParams(window.location.search);
+    try {
 
-    const materia = params.get("materia") || "castellano";
-    const nivel = params.get("nivel") || "1";
+        const params = new URLSearchParams(window.location.search);
 
-    const key = materia + nivel;
+        const materia = params.get("materia") || "castellano";
+        const nivel = params.get("nivel") || "1";
 
-    console.log("KEY:", key);
+        const key = materia + nivel;
 
-    // ✅ título
-    document.getElementById("tituloJuego").innerText =
-        materia.toUpperCase() + " - Nivel " + nivel;
+        console.log("KEY:", key);
 
-    // ✅ cargar datos (NO BLOQUEA)
-    cargarDesdeFirebase();
+        // ✅ PONER TÍTULO
+        document.getElementById("tituloJuego").innerText =
+            materia.toUpperCase() + " - Nivel " + nivel;
 
-    // ✅ iniciar juego
-    iniciarJuego(key);
+        // ✅ CARGAR FIREBASE (NO BLOQUEA)
+        cargarDesdeFirebase();
 
-    // ✅ botón comprobar
-    document.getElementById("btnComprobar").onclick = comprobar;
+        // ✅ INICIAR JUEGO
+        iniciarJuego(key);
+
+        // ✅ BOTÓN
+        document.getElementById("btnComprobar").onclick = comprobar;
+
+    } catch (error) {
+
+        console.error("Error general:", error);
+        document.getElementById("pregunta").innerText = "Error cargando juego";
+
+    }
+
 };
 
 </script>
 
 </body>
 </html>
+``

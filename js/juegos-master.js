@@ -1,5 +1,5 @@
 // =======================================
-// 🔥 IMPORTACIONES FIREBASE
+// ✅ FIREBASE
 import { db, auth } from "./firebase-config.js";
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -9,6 +9,8 @@ const nivel = window.nivel;
 
 let preguntasRestantes = [];
 let puntos = 0;
+let juegoActual = null;
+let preguntaActual = null;
 
 // =======================================
 // LIMPIAR TEXTO
@@ -20,62 +22,44 @@ function limpiar(t){
 }
 
 // =======================================
-// ANIMACIÓN
 function animarResultado(el, ok){
     el.style.transition = "0.3s";
     el.style.transform = "scale(1.2)";
     el.style.color = ok ? "green" : "red";
 
-    setTimeout(() => {
-        el.style.transform = "scale(1)";
-    }, 300);
+    setTimeout(() => el.style.transform = "scale(1)", 300);
 }
 
 // =======================================
-// BASE DATOS PREGUNTAS
-const inglesBase = [
-["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"]
-];
+// 🔥 JSON (PREGUNTAS EXTERNAS)
 
-// OPCIONES
-function generarOpciones(correcta, lista){
-    const otras = lista.filter(x=>x!==correcta);
-    const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
-    return [correcta,...rand].sort(()=>0.5-Math.random());
+async function cargarJSON(){
+    const res = await fetch("js/preguntas.json");
+    return await res.json();
 }
 
 // =======================================
-// JUEGOS
-const Juegos = {
-    matematicas1:{ generar:()=>calc("+",10) },
+// FIREBASE GUARDAR
 
-    ingles1:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"test",
-            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
-        }))
-    }
-};
-
-// =======================================
-// FIRESTORE: GUARDAR
 async function guardarProgreso(){
 
     const user = auth.currentUser;
     if(!user) return;
 
+    const datosLocal = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos: 0 };
+    const recompensas = JSON.parse(localStorage.getItem("recompensas")) || [];
+
     await setDoc(doc(db,"usuarios",user.uid),{
         puntos: puntos,
-        aciertos: JSON.parse(localStorage.getItem("progreso"))?.aciertos || 0,
+        aciertos: datosLocal.aciertos,
+        recompensas: recompensas,
         fecha: new Date()
     });
-
 }
 
 // =======================================
-// FIRESTORE: CARGAR
+// FIREBASE CARGAR
+
 async function cargarProgreso(){
 
     const user = auth.currentUser;
@@ -86,23 +70,33 @@ async function cargarProgreso(){
 
     if(snap.exists()){
         const data = snap.data();
+
         puntos = data.puntos || 0;
+
+        if(data.recompensas){
+            localStorage.setItem("recompensas", JSON.stringify(data.recompensas));
+        }
+
         actualizarPuntos();
     }
-
 }
 
 // =======================================
-// MOTOR
+// MOTOR DEL JUEGO
 
-let juegoActual = null;
-let preguntaActual = null;
+export async function iniciarJuego(key){
 
-export function iniciarJuego(key){
+    await cargarProgreso();
 
-    juegoActual = Juegos[key];
+    const dataJSON = await cargarJSON();
 
-    cargarProgreso(); // ✅ cargar datos
+    // ✅ coger preguntas del JSON
+    if(dataJSON[key]){
+        juegoActual = { preguntas: dataJSON[key] };
+    } else {
+        console.error("No existe ese nivel en JSON:", key);
+        return;
+    }
 
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
@@ -114,13 +108,6 @@ export function iniciarJuego(key){
     resultado.innerHTML="";
     input.value="";
     input.focus();
-
-    if(juegoActual.generar){
-        preguntaActual=juegoActual.generar();
-        input.style.display="block";
-        pregunta.innerText=preguntaActual.p;
-        return;
-    }
 
     if(!preguntasRestantes.length){
         preguntasRestantes=[...juegoActual.preguntas];
@@ -135,24 +122,53 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
-    preguntaActual.opciones.forEach(op=>{
-        const b=document.createElement("button");
-        b.innerText=op;
-        b.className="btn opcion";
+    // ================= TIPOS =================
 
-        b.onclick=()=>{
-            input.value = op;
+    // 🔤 INPUT
+    if(preguntaActual.tipo==="input"){
+        input.style.display="block";
+    }
 
-            document.querySelectorAll(".opcion").forEach(x=>x.classList.remove("seleccionada"));
-            b.classList.add("seleccionada");
-        };
+    // 🔡 LETRAS
+    else if(preguntaActual.tipo==="letras"){
+        preguntaActual.opciones.forEach(op=>{
+            const b=document.createElement("button");
+            b.innerText=op;
+            b.className="btn opcion";
 
-        zona.appendChild(b);
-    });
+            b.onclick=()=>{
+                input.value=preguntaActual.p.replace("_",op).replace(/ /g,"").toLowerCase();
+
+                document.querySelectorAll(".opcion").forEach(x=>x.classList.remove("seleccionada"));
+                b.classList.add("seleccionada");
+            };
+
+            zona.appendChild(b);
+        });
+    }
+
+    // ✅ TEST (con selección visual)
+    else{
+        preguntaActual.opciones.forEach(op=>{
+            const b=document.createElement("button");
+            b.innerText=op;
+            b.className="btn opcion";
+
+            b.onclick=()=>{
+                input.value = op;
+
+                document.querySelectorAll(".opcion").forEach(x=>x.classList.remove("seleccionada"));
+                b.classList.add("seleccionada");
+            };
+
+            zona.appendChild(b);
+        });
+    }
 }
 
 // =======================================
 // PUNTOS
+
 export function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
@@ -172,13 +188,13 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    // ✅ comprobación mejorada
+    // ✅ mejor comparación
     const correcto = r === ok || r.includes(ok) || ok.includes(r);
 
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-    } else {
+    }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
@@ -186,7 +202,6 @@ export function comprobar(){
 
     actualizarPuntos();
 
-    // ✅ LOCAL STORAGE
     let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos:0 };
 
     if(correcto){
@@ -196,20 +211,10 @@ export function comprobar(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
-    // ✅ FIRESTORE
     guardarProgreso();
 
     setTimeout(()=>{
         btn.disabled = false;
         iniciarJuego(materia+nivel);
     },1000);
-}
-
-// =======================================
-// MATE
-function calc(op,max){
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
-    if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
-    return {p:`${a}-${b}`,r:(a-b).toString()};
 }

@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 
-/* FONDO */
+/* BODY */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -11,6 +11,13 @@ body {
     background-image: url("../assets/img/fondo-escolar.png");
     background-size: cover;
     background-position: center;
+    text-align: center; /* ✅ centra textos */
+}
+
+/* TITULO */
+h1, h2 {
+    text-align: center;
+    margin-top: 20px;
 }
 
 /* BOTÓN VOLVER */
@@ -20,21 +27,26 @@ body {
     top: 20px;
     background: #ff6f61;
     color: white;
-    padding: 10px;
+    padding: 8px 16px;
     border-radius: 10px;
     border: none;
-    cursor: pointer;
 }
 
-/* CONTENIDO */
+/* SCORE */
+#score {
+    text-align: center;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+/* CAJA JUEGO */
 .game-box {
     background: white;
-    width: 320px; /* ✅ tamaño normal como antes */
+    width: 320px;
     padding: 20px;
     border-radius: 15px;
     border: 2px solid #ffcc4d;
-    text-align: center;
-    margin: 80px auto;
+    margin: 30px auto; /* ✅ centra caja */
 }
 
 /* PREGUNTA */
@@ -47,21 +59,21 @@ body {
 button, .btn {
     background: #4fc3f7;
     color: white;
-    padding: 10px;
+    padding: 8px 12px;
     border-radius: 10px;
     border: none;
-    cursor: pointer;
     margin: 5px;
+    cursor: pointer;
 }
 
-/* ✅ OPCIONES (ARREGLADO COLOR) */
+/* OPCIONES */
 .opcion {
     background: white !important;
     color: black !important;
     border: 2px solid #333;
 }
 
-/* ✅ SELECCIÓN */
+/* SELECCIÓN */
 .opcion.seleccionada {
     background: #4fc3f7 !important;
     color: white !important;
@@ -78,11 +90,26 @@ button, .btn {
 /* RESULTADO */
 #resultado {
     margin-top: 10px;
+    font-weight: bold;
 }
 
-/* ✅ PUNTOS */
-#score {
-    text-align: center;
-    font-size: 18px;
-    margin-top: 10px;
+/* MENÚ (ARREGLA IMÁGENES GIGANTES) */
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: white;
+    width: 180px;
+    padding: 10px;
+    border-radius: 15px;
+    border: 2px solid #ffcc4d;
+}
+
+.card img {
+    width: 120px;
+    height: auto;
 }

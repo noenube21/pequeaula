@@ -1,21 +1,36 @@
-/* RESET (IMPORTANTE PARA RESPONSIVE) */
+/* RESET */
 * {
     box-sizing: border-box;
 }
 
-/* FONDO */
+/* 🔥 CENTRADO GLOBAL (CLAVE) */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
     padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ✅ centra TODO */
+
     background-image: url("../assets/img/fondo-escolar.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+
     min-height: 100vh;
 }
 
-/* BOTÓN VOLVER (MEJOR POSICIÓN EN MÓVIL) */
+/* 🔥 PUNTOS (ARREGLADO) */
+#score {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-align: center;
+    width: 100%;
+}
+
+/* BOTÓN VOLVER */
 .btn-volver {
     position: absolute;
     left: 20px;
@@ -33,7 +48,7 @@ body {
     background: #e85a4f;
 }
 
-/* BOTONES GENERALES (MEJORADOS) */
+/* BOTONES GENERALES */
 button, .btn {
     background: #4fc3f7;
     color: white;
@@ -59,7 +74,6 @@ button:hover, .btn:hover {
 
 .inicio-title {
     font-size: 3rem;
-    margin-bottom: 10px;
 }
 
 .logo-img {
@@ -67,7 +81,7 @@ button:hover, .btn:hover {
     margin: 20px auto;
 }
 
-/* MENÚ (ARREGLADO PARA RESPONSIVE) */
+/* MENÚ */
 .card-container {
     display: flex;
     justify-content: center;
@@ -82,8 +96,6 @@ button:hover, .btn:hover {
     border-radius: 20px;
     border: 3px solid #ffcc4d;
     text-align: center;
-    cursor: pointer;
-    transition: 0.2s;
 }
 
 .card:hover {
@@ -92,107 +104,28 @@ button:hover, .btn:hover {
 
 .card img {
     width: 110px;
-    height: 110px;
-    object-fit: contain;
 }
 
-/* JUEGO */
+/* 🔥 JUEGO (MUY IMPORTANTE) */
 .game-box {
     background: white;
-    width: 330px;
+    width: 350px;
     padding: 25px;
     border-radius: 20px;
     border: 3px solid #ffcc4d;
     text-align: center;
-    margin: 30px auto;
+    margin: 20px auto;
 }
 
-/* ✅ SELECCIÓN DE OPCIONES (IMPORTANTÍSIMO) */
+/* 🔥 PREGUNTA */
+.pregunta {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* 🔥 OPCIONES */
 .opcion {
     display: block;
     margin: 10px auto;
     padding: 12px;
-    border-radius: 10px;
-    border: 2px solid #333;
-    background: white;
-    cursor: pointer;
-}
-
-.opcion.seleccionada {
-    background: #81d4fa;
-    border-color: #0288d1;
-}
-
-/* LOGIN */
-.login-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-box {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px 20px;
-    width: 300px;
-    border-radius: 20px;
-    text-align: center;
-    border: 3px solid #ffcc4d;
-}
-
-.login-box input {
-    width: 90%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: 2px solid #ffcc4d;
-}
-
-.avatar {
-    width: 90px;
-    cursor: pointer;
-    border-radius: 20px;
-}
-
-/* TÍTULOS */
-h1, h2, h3 {
-    text-align: center;
-    font-weight: bold;
-}
-
-/* ✅ RESPONSIVE (LO MÁS IMPORTANTE) */
-@media (max-width: 768px) {
-
-    .btn-volver {
-        position: static;
-        display: block;
-        margin: 10px auto;
-    }
-
-    .inicio-title {
-        font-size: 2rem;
-    }
-
-    .card-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .card {
-        width: 90%;
-    }
-
-    .game-box {
-        width: 95%;
-    }
-
-    canvas {
-        width: 100%;
-        height: auto;
-    }
-
-    button, .btn {
-        width: 90%;
-        font-size: 18px;
-    }
-}

@@ -1,9 +1,14 @@
 // =======================================
+import { comprobarRecompensas } from "./recompensas.js";
+
+// ✅ PROGRESO GLOBAL (ACUMULATIVO)
+let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos: 0 };
+
 let preguntasRestantes = [];
-let puntos = 0;
+let puntos = datos.puntos; // ✅ ahora acumula
 let preguntaActual = null;
 let juegoActual = null;
-let claveActual = ""; // ✅ AÑADIDO
+let claveActual = ""; // ✅ necesario para cambiar preguntas
 
 // =======================================
 function limpiar(t){
@@ -30,6 +35,12 @@ function actualizarPuntos(){
     if(score){
         score.innerText = "Puntos: " + puntos;
     }
+}
+
+// =======================================
+function guardarProgreso(){
+    datos.puntos = puntos;
+    localStorage.setItem("progreso", JSON.stringify(datos));
 }
 
 // =======================================
@@ -61,10 +72,12 @@ function generarOpciones(correcta, lista){
 // JUEGOS
 const Juegos = {
 
+    // MATEMÁTICAS
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
+    // INGLÉS
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
@@ -91,6 +104,7 @@ const Juegos = {
         }))
     },
 
+    // CASTELLANO
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -117,11 +131,29 @@ const Juegos = {
         ]
     },
 
+    // ✅ CIENCIAS COMPLETO
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
+        ]
+    },
+
+    ciencias2:{
+        preguntas:[
+            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
+            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
+            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
+            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
+            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
         ]
     }
 };
@@ -129,7 +161,7 @@ const Juegos = {
 // =======================================
 export function iniciarJuego(key){
 
-    claveActual = key; // ✅ GUARDAMOS CLAVE
+    claveActual = key;
     juegoActual = Juegos[key];
 
     const pregunta=document.getElementById("pregunta");
@@ -144,6 +176,7 @@ export function iniciarJuego(key){
 
     input.focus();
 
+    // matemáticas
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -159,7 +192,7 @@ export function iniciarJuego(key){
         Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
 
-    pregunta.innerText=preguntaActual.p;
+    pregunta.innerText = preguntaActual.p;
 
     zona.innerHTML="";
     input.style.display="none";
@@ -171,21 +204,25 @@ export function iniciarJuego(key){
             b.className="btn opcion";
 
             b.onclick=()=>{
+
                 let palabra = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"")
                     .toLowerCase();
 
                 input.value = palabra;
+
                 seleccionar(b);
             };
 
             zona.appendChild(b);
         });
     }
+
     else if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
+
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -222,6 +259,7 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
+        datos.aciertos++; // ✅ acumulativo
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
@@ -229,9 +267,14 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    // ✅ ✅ ✅ ESTE ES EL ARREGLO CLAVE
+    // ✅ GUARDAR
+    guardarProgreso();
+
+    // ✅ RECOMPENSAS
+    comprobarRecompensas(datos.aciertos);
+
+    // ✅ CAMBIO DE PREGUNTA (CORRECTO)
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },1000);
 }
-``

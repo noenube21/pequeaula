@@ -2,7 +2,7 @@
 import { comprobarRecompensas } from "./recompensas.js";
 import { db } from "./firebase-config.js";
 import { auth } from "./firebase-config.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // =======================================
 // ✅ PROGRESO GLOBAL
@@ -74,7 +74,7 @@ function guardarProgreso(){
 }
 
 // =======================================
-// ✅ FIREBASE
+// ✅ GUARDAR FIREBASE
 async function guardarEnFirebase(){
 
     const user = auth.currentUser;
@@ -89,6 +89,31 @@ async function guardarEnFirebase(){
 
     }catch(e){
         console.error("Firebase error:", e);
+    }
+}
+
+// =======================================
+// ✅ CARGAR FIREBASE
+export async function cargarDesdeFirebase(){
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    try{
+        const ref = doc(db, "usuarios", user.uid);
+        const snap = await getDoc(ref);
+
+        if(snap.exists()){
+            const data = snap.data();
+
+            datos.aciertos = data.aciertos || 0;
+            puntos = data.puntos || 0;
+
+            actualizarPuntos();
+        }
+
+    }catch(e){
+        console.error("Error cargando Firebase:", e);
     }
 }
 
@@ -310,10 +335,9 @@ export function comprobar(){
 
     guardarProgreso();
     comprobarRecompensas(datos.aciertos);
-    guardarEnFirebase(); // ✅ FIREBASE
+    guardarEnFirebase();
 
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },1000);
 }
-``

@@ -51,7 +51,6 @@ function levenshtein(a, b){
                     matrix[i-1][j] + 1
                 );
             }
-
         }
     }
 
@@ -83,11 +82,10 @@ function guardarProgreso(){
     localStorage.setItem("progreso", JSON.stringify(datos));
 }
 
-// ✅ FIREBASE (NO ROMPE NADA)
+// ✅ FIREBASE SEGURA (NO ROMPE)
 async function guardarEnFirebase(){
     try {
-        if(!auth) return;
-        const user = auth.currentUser;
+        const user = auth && auth.currentUser;
         if(!user) return;
 
         await setDoc(doc(db, "usuarios", user.uid), {
@@ -138,23 +136,6 @@ const Juegos = {
         }))
     },
 
-    ingles2:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[1]} =`,
-            r:x[0],
-            tipo:"test",
-            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
-        }))
-    },
-
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -166,26 +147,10 @@ const Juegos = {
         }))
     },
 
-    castellano2:{
-        preguntas:[
-            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
-            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
-        ]
-    },
-
-    castellano3:{
-        preguntas:[
-            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
-            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]}
-        ]
-    },
-
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
-            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
+            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]}
         ]
     }
 };
@@ -225,12 +190,6 @@ export function iniciarJuego(key){
         preguntasRestantes = [...juegoActual.preguntas];
     }
 
-    // ✅ SEGURIDAD (NO MÁS PANTALLA VACÍA)
-    if(!preguntasRestantes.length){
-        pregunta.innerText = "Error cargando preguntas";
-        return;
-    }
-
     preguntaActual = preguntasRestantes.splice(
         Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
@@ -258,13 +217,7 @@ export function iniciarJuego(key){
 
             zona.appendChild(b);
         });
-    }
-
-    else if(preguntaActual.tipo==="input"){
-        input.style.display="block";
-    }
-
-    else{
+    } else {
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;

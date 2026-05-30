@@ -12,21 +12,14 @@
 <button class="btn-volver" onclick="history.back()">⬅ Volver</button>
 
 <h2 id="tituloJuego"></h2>
-
 <div id="score">Puntos: 0</div>
 
 <div class="game-box">
-
-    <div id="pregunta" class="pregunta"></div>
-
+    <div id="pregunta"></div>
     <div id="zona"></div>
-
-    <input id="respuesta" type="text" placeholder="Escribe tu respuesta">
-
+    <input id="respuesta" type="text">
     <button id="btnComprobar">Comprobar</button>
-
     <p id="resultado"></p>
-
 </div>
 
 <script type="module">
@@ -35,19 +28,19 @@ import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
 window.onload = () => {
 
-    const params = new URLSearchParams(location.search);
-    const materia = params.get("materia");
-    const nivel = params.get("nivel");
+    const params = new URLSearchParams(window.location.search);
 
-    if (!materia || !nivel) {
-        document.getElementById("pregunta").innerText = "Error cargando";
-        return;
-    }
+    const materia = params.get("materia") || "castellano";
+    const nivel = params.get("nivel") || "1";
+
+    const key = materia + nivel;
+
+    console.log("KEY FINAL:", key);
 
     document.getElementById("tituloJuego").innerText =
         materia.toUpperCase() + " - Nivel " + nivel;
 
-    iniciarJuego(materia + nivel);
+    iniciarJuego(key);
 
     document.getElementById("btnComprobar").onclick = comprobar;
 };

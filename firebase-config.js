@@ -12,6 +12,14 @@ const firebaseConfig = {
   measurementId: "G-800FVPXMEF"
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// ✅ Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+
+// ✅ Autenticación
+const auth = getAuth(app);
+
+// ✅ Base de datos (LO IMPORTANTE)
+const db = getFirestore(app);
+
+// ✅ Exportar solo lo necesario
+export { auth, db };

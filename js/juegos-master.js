@@ -1,20 +1,20 @@
 import { comprobarRecompensas } from "./recompensas.js";
 
-// ✅ PROGRESO GLOBAL (AÑADIDO)
-let datos = JSON.parse(localStorage.getItem("progreso")) || {
-    aciertos: 0,
-    puntos: 0
-};
-
-// ✅ USAR PUNTOS GUARDADOS
-puntos = datos.puntos;
-
 // =======================================
 let preguntasRestantes = [];
 let puntos = 0;
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
+
+// ✅ PROGRESO GLOBAL (AÑADIDO BIEN)
+let datos = JSON.parse(localStorage.getItem("progreso")) || {
+    aciertos: 0,
+    puntos: 0
+};
+
+// ✅ IMPORTANTE → después de declarar puntos
+puntos = datos.puntos;
 
 // =======================================
 function limpiar(t){
@@ -25,7 +25,6 @@ function limpiar(t){
 }
 
 // =======================================
-// ✅ LEVENSHTEIN AÑADIDO
 function levenshtein(a, b){
 
     const matrix = [];
@@ -75,14 +74,14 @@ function actualizarPuntos(){
         score.innerText = "Puntos: " + puntos;
     }
 }
-// ✅ GUARDAR PROGRESO (AÑADIDO)
+
+// ✅ NUEVO
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
 }
 
 // =======================================
-// GENERADOR MATEMÁTICAS
 function calc(op,max){
     let a=Math.floor(Math.random()*max);
     let b=Math.floor(Math.random()*max);
@@ -93,13 +92,11 @@ function calc(op,max){
 }
 
 // =======================================
-// BASE INGLES
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
 
-// generar opciones
 function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
@@ -107,7 +104,6 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// JUEGOS COMPLETOS
 const Juegos = {
 
     matematicas1:{ generar:()=>calc("+",10) },
@@ -172,23 +168,6 @@ const Juegos = {
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
-    },
-
-    ciencias2:{
-        preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
-            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
-            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
-            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
-            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
-            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
-        ]
     }
 };
 
@@ -209,6 +188,8 @@ export function iniciarJuego(key){
     input.value="";
 
     input.focus();
+
+    actualizarPuntos(); // ✅ importante
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
@@ -285,19 +266,21 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    // ✅ CAMBIO AQUÍ → LEVENSHTEIN
     const correcto = levenshtein(r, ok) <= 1;
 
-  if(correcto){
-    resultado.innerText="✔ Correcto";
-    puntos++;
-    datos.aciertos++; // ✅ NUEVO
-}
+    if(correcto){
+        resultado.innerText="✔ Correcto";
+        puntos++;
+        datos.aciertos++; // ✅ clave
+    }else{
+        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+    }
 
     animarResultado(resultado, correcto);
     actualizarPuntos();
-    guardarProgreso(); // ✅ NUEVO
-comprobarRecompensas(datos.aciertos); // ✅ NUEVO
+
+    guardarProgreso(); // ✅ guardar
+    comprobarRecompensas(datos.aciertos); // ✅ recompensas
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

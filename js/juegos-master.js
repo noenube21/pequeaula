@@ -86,20 +86,25 @@ function guardarProgreso(){
 // ✅ GUARDAR EN FIREBASE
 async function guardarEnFirebase(){
 
-    const user = auth.currentUser;
+    try {
 
-    // si no hay usuario, no hace nada (no rompe)
-    if(!user) return;
+        // ✅ comprobar si existe auth
+        if(!auth) return;
 
-    try{
+        const user = auth.currentUser;
+
+        // ✅ si NO hay usuario → salir SIN error
+        if(!user) return;
 
         await setDoc(doc(db, "usuarios", user.uid), {
             puntos: puntos,
             aciertos: datos.aciertos
         }, { merge: true });
 
-    }catch(error){
-        console.log("Firebase error:", error);
+    } catch (error) {
+
+        // ✅ MUY IMPORTANTE: no romper el juego
+        console.log("Firebase ignorado:", error);
     }
 }
 // =======================================

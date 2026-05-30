@@ -1,3 +1,14 @@
+import { comprobarRecompensas } from "./recompensas.js";
+
+// ✅ PROGRESO GLOBAL (AÑADIDO)
+let datos = JSON.parse(localStorage.getItem("progreso")) || {
+    aciertos: 0,
+    puntos: 0
+};
+
+// ✅ USAR PUNTOS GUARDADOS
+puntos = datos.puntos;
+
 // =======================================
 let preguntasRestantes = [];
 let puntos = 0;
@@ -63,6 +74,11 @@ function actualizarPuntos(){
     if(score){
         score.innerText = "Puntos: " + puntos;
     }
+}
+// ✅ GUARDAR PROGRESO (AÑADIDO)
+function guardarProgreso(){
+    datos.puntos = puntos;
+    localStorage.setItem("progreso", JSON.stringify(datos));
 }
 
 // =======================================
@@ -272,15 +288,16 @@ export function comprobar(){
     // ✅ CAMBIO AQUÍ → LEVENSHTEIN
     const correcto = levenshtein(r, ok) <= 1;
 
-    if(correcto){
-        resultado.innerText="✔ Correcto";
-        puntos++;
-    }else{
-        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
-    }
+  if(correcto){
+    resultado.innerText="✔ Correcto";
+    puntos++;
+    datos.aciertos++; // ✅ NUEVO
+}
 
     animarResultado(resultado, correcto);
     actualizarPuntos();
+    guardarProgreso(); // ✅ NUEVO
+comprobarRecompensas(datos.aciertos); // ✅ NUEVO
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

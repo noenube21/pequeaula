@@ -10,13 +10,12 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ PROGRESO GLOBAL (AÑADIDO BIEN)
+// ✅ PROGRESO GLOBAL
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
 
-// ✅ IMPORTANTE → después de declarar puntos
 puntos = datos.puntos;
 
 // =======================================
@@ -29,20 +28,16 @@ function limpiar(t){
 
 // =======================================
 function levenshtein(a, b){
-
     const matrix = [];
 
     for (let i = 0; i <= b.length; i++){
         matrix[i] = [i];
     }
-
     for (let j = 0; j <= a.length; j++){
         matrix[0][j] = j;
     }
-
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
-
             if (b.charAt(i-1) === a.charAt(j-1)){
                 matrix[i][j] = matrix[i-1][j-1];
             } else {
@@ -52,10 +47,8 @@ function levenshtein(a, b){
                     matrix[i-1][j] + 1
                 );
             }
-
         }
     }
-
     return matrix[b.length][a.length];
 }
 
@@ -64,7 +57,6 @@ function animarResultado(el, ok){
     el.style.transition = "0.3s";
     el.style.transform = "scale(1.2)";
     el.style.color = ok ? "green" : "red";
-
     setTimeout(() => {
         el.style.transform = "scale(1)";
     }, 300);
@@ -78,22 +70,17 @@ function actualizarPuntos(){
     }
 }
 
-// ✅ NUEVO
+// =======================================
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
 }
-// ✅ GUARDAR EN FIREBASE
+
+// =======================================
 async function guardarEnFirebase(){
-
     try {
-
-        // ✅ comprobar si existe auth
         if(!auth) return;
-
         const user = auth.currentUser;
-
-        // ✅ si NO hay usuario → salir SIN error
         if(!user) return;
 
         await setDoc(doc(db, "usuarios", user.uid), {
@@ -102,11 +89,10 @@ async function guardarEnFirebase(){
         }, { merge: true });
 
     } catch (error) {
-
-        // ✅ MUY IMPORTANTE: no romper el juego
         console.log("Firebase ignorado:", error);
     }
 }
+
 // =======================================
 function calc(op,max){
     let a=Math.floor(Math.random()*max);
@@ -181,13 +167,6 @@ const Juegos = {
         ]
     },
 
-    castellano3:{
-        preguntas:[
-            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
-            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]}
-        ]
-    },
-
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
@@ -203,6 +182,8 @@ export function iniciarJuego(key){
     claveActual = key;
     juegoActual = Juegos[key];
 
+    preguntasRestantes = []; // 🔥 IMPORTANTE reset
+
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
     const input=document.getElementById("respuesta");
@@ -214,8 +195,12 @@ export function iniciarJuego(key){
     input.value="";
 
     input.focus();
+    actualizarPuntos();
 
-    actualizarPuntos(); // ✅ importante
+    if(!juegoActual){
+        pregunta.innerText="Nivel no encontrado";
+        return;
+    }
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
@@ -224,17 +209,29 @@ export function iniciarJuego(key){
         return;
     }
 
-    if(!preguntasRestantes.length){
-        preguntasRestantes = [...juegoActual.preguntas];
-    }
+    preguntasRestantes = [...juegoActual.preguntas];
 
-    preguntaActual = preguntasRestantes.splice(
-        Math.floor(Math.random()*preguntasRestantes.length),1
-    )[0];
+    siguientePregunta();
+}
 
-    pregunta.innerText = preguntaActual.p;
+// =======================================
+function siguientePregunta(){
+
+    const pregunta=document.getElementById("pregunta");
+    const zona=document.getElementById("zona");
+    const input=document.getElementById("respuesta");
 
     zona.innerHTML="";
+    input.value="";
+
+    if(preguntasRestantes.length === 0){
+        pregunta.innerText = "FIN 🎉";
+        return;
+    }
+
+    preguntaActual = preguntasRestantes.pop();
+    pregunta.innerText = preguntaActual.p;
+
     input.style.display="none";
 
     if(preguntaActual.tipo==="letras"){
@@ -255,14 +252,9 @@ export function iniciarJuego(key){
 
             zona.appendChild(b);
         });
-    }
 
-    else if(preguntaActual.tipo==="input"){
-        input.style.display="block";
-    }
-
-    else{
-        preguntaActual.opciones.forEach(op=>{
+    } else {
+        preguntaActual.opciones?.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
             b.className="btn opcion";
@@ -297,23 +289,21 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-        datos.aciertos++; // ✅ clave
+        datos.aciertos++;
     }else{
-        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText=`✘ Incorrecto. Correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    guardarProgreso(); // ✅ guardar
-try {
-    comprobarRecompensas(datos.aciertos);
-} catch(e) {
-    console.log("Recompensas ignoradas");
-}
-    guardarEnFirebase(); // ✅ NUEVO
+    guardarProgreso();
+
+    try { comprobarRecompensas(datos.aciertos); } catch(e){}
+
+    guardarEnFirebase();
 
     setTimeout(()=>{
-        iniciarJuego(claveActual);
+        siguientePregunta();
     },1000);
 }

@@ -1,25 +1,16 @@
-<script type="module">
-
 import { iniciarJuego, comprobar, cargarDesdeFirebase } from "./js/juegos-master.js";
 
 window.onload = () => {
 
     const params = new URLSearchParams(window.location.search);
+    const key = (params.get("materia") || "castellano") + (params.get("nivel") || "1");
 
-    const materia = params.get("materia") || "castellano";
-    const nivel = params.get("nivel") || "1";
+    document.getElementById("tituloJuego").innerText = key;
 
-    const key = materia + nivel;
-
-    document.getElementById("tituloJuego").innerText =
-        materia.toUpperCase() + " - Nivel " + nivel;
-
-    // ✅ NO bloquea
-    cargarDesdeFirebase();
+    cargarDesdeFirebase(); ✅
 
     iniciarJuego(key);
 
     document.getElementById("btnComprobar").onclick = comprobar;
 };
-
-</script>
+``

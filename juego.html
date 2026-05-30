@@ -24,9 +24,10 @@
 
 <script type="module">
 
-import { iniciarJuego, comprobar } from "./js/juegos-master.js";
+import { iniciarJuego, comprobar, cargarDesdeFirebase } from "./js/juegos-master.js";
 
-window.onload = () => {
+// ✅ AHORA ES ASYNC (CLAVE)
+window.onload = async () => {
 
     const params = new URLSearchParams(window.location.search);
 
@@ -40,8 +41,13 @@ window.onload = () => {
     document.getElementById("tituloJuego").innerText =
         materia.toUpperCase() + " - Nivel " + nivel;
 
+    // ✅ NUEVO: cargar progreso desde Firebase
+    await cargarDesdeFirebase();
+
+    // ✅ luego iniciar juego
     iniciarJuego(key);
 
+    // ✅ botón comprobar
     document.getElementById("btnComprobar").onclick = comprobar;
 };
 

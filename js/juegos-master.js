@@ -31,16 +31,14 @@ function animarResultado(el, ok){
 }
 
 // =======================================
-// 🔥 JSON (PREGUNTAS EXTERNAS)
-
+// ✅ JSON
 async function cargarJSON(){
     const res = await fetch("js/preguntas.json");
     return await res.json();
 }
 
 // =======================================
-// FIREBASE GUARDAR
-
+// ✅ FIREBASE GUARDAR
 async function guardarProgreso(){
 
     const user = auth.currentUser;
@@ -58,8 +56,7 @@ async function guardarProgreso(){
 }
 
 // =======================================
-// FIREBASE CARGAR
-
+// ✅ FIREBASE CARGAR
 async function cargarProgreso(){
 
     const user = auth.currentUser;
@@ -82,7 +79,18 @@ async function cargarProgreso(){
 }
 
 // =======================================
-// MOTOR DEL JUEGO
+// ✅ GENERADOR MATEMÁTICAS
+function calc(op,max){
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+
+    if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a}-${b}`,r:(a-b).toString()};
+    return {p:`${a}×${b}`,r:(a*b).toString()};
+}
+
+// =======================================
+// MOTOR
 
 export async function iniciarJuego(key){
 
@@ -90,11 +98,23 @@ export async function iniciarJuego(key){
 
     const dataJSON = await cargarJSON();
 
-    // ✅ coger preguntas del JSON
-    if(dataJSON[key]){
+    // ✅ MATEMÁTICAS aleatorias
+    if(key.includes("matematicas")){
+        juegoActual = {
+            generar: () => calc(
+                key.includes("1") ? "+" :
+                key.includes("2") ? "-" : "*",
+                key.includes("1") ? 10 :
+                key.includes("2") ? 20 : 10
+            )
+        };
+    }
+
+    // ✅ RESTO desde JSON
+    else if(dataJSON[key]){
         juegoActual = { preguntas: dataJSON[key] };
     } else {
-        console.error("No existe ese nivel en JSON:", key);
+        console.error("Nivel no encontrado:", key);
         return;
     }
 
@@ -109,6 +129,15 @@ export async function iniciarJuego(key){
     input.value="";
     input.focus();
 
+    // ✅ MATEMÁTICAS
+    if(juegoActual.generar){
+        preguntaActual = juegoActual.generar();
+        input.style.display="block";
+        pregunta.innerText = preguntaActual.p;
+        return;
+    }
+
+    // ✅ JSON preguntas
     if(!preguntasRestantes.length){
         preguntasRestantes=[...juegoActual.preguntas];
     }
@@ -121,8 +150,6 @@ export async function iniciarJuego(key){
 
     zona.innerHTML="";
     input.style.display="none";
-
-    // ================= TIPOS =================
 
     // 🔤 INPUT
     if(preguntaActual.tipo==="input"){
@@ -147,7 +174,7 @@ export async function iniciarJuego(key){
         });
     }
 
-    // ✅ TEST (con selección visual)
+    // ✅ TEST
     else{
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
@@ -167,8 +194,7 @@ export async function iniciarJuego(key){
 }
 
 // =======================================
-// PUNTOS
-
+// ✅ PUNTOS
 export function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
@@ -177,7 +203,7 @@ export function actualizarPuntos(){
 }
 
 // =======================================
-// COMPROBAR
+// ✅ COMPROBAR
 
 export function comprobar(){
 
@@ -188,7 +214,6 @@ export function comprobar(){
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    // ✅ mejor comparación
     const correcto = r === ok || r.includes(ok) || ok.includes(r);
 
     if(correcto){

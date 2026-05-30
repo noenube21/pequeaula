@@ -147,3 +147,29 @@ button:hover, .btn:hover {
 /* RESULTADO */
 #resultado {
     margin-top: 10px;
+    font-weight: bold;
+}
+
+/* SCORE */
+#score {
+    font-size: 20px;
+    margin: 10px;
+    font-weight: bold;
+}
+
+/* ================================== */
+/* ✅ AQUI ESTA EL FIX (LO ÚNICO NUEVO) */
+
+/* OPCIONES NORMALES */
+.opcion {
+    background: white !important;
+    color: black !important;
+    border: 2px solid #333 !important;
+}
+
+/* OPCIÓN SELECCIONADA */
+.opcion.seleccionada {
+    background: #4fc3f7 !important;
+    color: white !important;
+    border: 2px solid #0288d1 !important;
+}

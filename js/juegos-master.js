@@ -62,7 +62,6 @@ async function guardarEnFirebase(){
             puntos:puntos,
             aciertos:datos.aciertos
         },{merge:true});
-
     }catch(e){
         console.log("Firebase guardar error");
     }
@@ -79,13 +78,10 @@ export async function cargarDesdeFirebase(){
 
         if(snap.exists()){
             const d = snap.data();
-
             puntos = d.puntos || 0;
             datos.aciertos = d.aciertos || 0;
-
             actualizarPuntos();
         }
-
     }catch(e){
         console.log("Firebase ignorado");
     }
@@ -179,7 +175,6 @@ const Juegos = {
 export function iniciarJuego(key){
 
     claveActual = key;
-
     juegoActual = Juegos[key];
 
     const pregunta=document.getElementById("pregunta");
@@ -221,7 +216,20 @@ function siguientePregunta(){
     }
 
     preguntaActual=preguntasRestantes.pop();
+
+    if(!preguntaActual || !preguntaActual.p){
+        p.innerText="Error pregunta";
+        return;
+    }
+
     p.innerText=preguntaActual.p;
+
+    if(!preguntaActual.opciones){
+        input.style.display="block";
+        return;
+    }
+
+    input.style.display="none";
 
     preguntaActual.opciones.forEach(op=>{
         const b=document.createElement("button");

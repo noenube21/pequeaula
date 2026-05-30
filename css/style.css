@@ -1,3 +1,8 @@
+/* RESET (IMPORTANTE PARA RESPONSIVE) */
+* {
+    box-sizing: border-box;
+}
+
 /* FONDO */
 body {
     font-family: 'Poppins', Arial, sans-serif;
@@ -10,7 +15,7 @@ body {
     min-height: 100vh;
 }
 
-/* BOTÓN VOLVER PARA TODAS LAS PÁGINAS */
+/* BOTÓN VOLVER (MEJOR POSICIÓN EN MÓVIL) */
 .btn-volver {
     position: absolute;
     left: 20px;
@@ -23,54 +28,51 @@ body {
     font-size: 18px;
     cursor: pointer;
 }
+
 .btn-volver:hover {
     background: #e85a4f;
+}
+
+/* BOTONES GENERALES (MEJORADOS) */
+button, .btn {
+    background: #4fc3f7;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: block;
+    margin: 10px auto;
+}
+
+button:hover, .btn:hover {
+    background: #0288d1;
 }
 
 /* INICIO */
 .inicio-container {
     text-align: center;
-    margin-top: 150px;
+    margin-top: 120px;
 }
+
 .inicio-title {
     font-size: 3rem;
     margin-bottom: 10px;
 }
+
 .logo-img {
     width: 220px;
     margin: 20px auto;
 }
-.btn {
-    display: inline-block;
-    background: #ff6f61;
-    color: white;
-    padding: 12px 25px;
-    border-radius: 15px;
-    text-decoration: none;
-    font-size: 20px;
-}
 
-/* HEADER */
-.topbar {
-    text-align: center;
-    padding: 20px 0;
-}
-.logo {
-    font-size: 35px;
-    font-weight: bold;
-}
-
-/* MENÚ */
-.menu-subtitle {
-    text-align: center;
-    font-size: 26px;
-}
-
+/* MENÚ (ARREGLADO PARA RESPONSIVE) */
 .card-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 25px;
+    gap: 20px;
 }
 
 .card {
@@ -81,10 +83,16 @@ body {
     border: 3px solid #ffcc4d;
     text-align: center;
     cursor: pointer;
+    transition: 0.2s;
 }
+
+.card:hover {
+    transform: scale(1.05);
+}
+
 .card img {
-    width: 110px !important;
-    height: 110px !important;
+    width: 110px;
+    height: 110px;
     object-fit: contain;
 }
 
@@ -98,12 +106,24 @@ body {
     text-align: center;
     margin: 30px auto;
 }
-.pregunta {
-    font-size: 24px;
-    margin-bottom: 15px;
+
+/* ✅ SELECCIÓN DE OPCIONES (IMPORTANTÍSIMO) */
+.opcion {
+    display: block;
+    margin: 10px auto;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #333;
+    background: white;
+    cursor: pointer;
 }
 
-/* CENTRADO LOGIN */
+.opcion.seleccionada {
+    background: #81d4fa;
+    border-color: #0288d1;
+}
+
+/* LOGIN */
 .login-container {
     min-height: 100vh;
     display: flex;
@@ -126,83 +146,53 @@ body {
     margin: 10px 0;
     border-radius: 10px;
     border: 2px solid #ffcc4d;
-    font-size: 16px;
-}
-
-.login-box button {
-    background: #ff6f61;
-    color: white;
-    padding: 12px;
-    border: none;
-    width: 100%;
-    border-radius: 15px;
-    font-size: 18px;
-    cursor: pointer;
-}
-.login-box button:hover {
-    background: #e85a4f;
-}
-
-.avatar-selector {
-    margin: 15px 0;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
 }
 
 .avatar {
     width: 90px;
     cursor: pointer;
     border-radius: 20px;
-    border: 3px solid transparent;
 }
 
-.avatar:hover {
-    transform: scale(1.09);
-    border-color: #ffcc4d;
+/* TÍTULOS */
+h1, h2, h3 {
+    text-align: center;
+    font-weight: bold;
 }
 
-/* CENTRADO PROGRESO */
-.progreso-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+/* ✅ RESPONSIVE (LO MÁS IMPORTANTE) */
+@media (max-width: 768px) {
 
-.progreso-box {
-    background: rgba(255,255,255,0.9);
-    padding: 30px;
-    width: 350px;
-    border-radius: 20px;
-    border: 3px solid #ffcc4d;
-    text-align: left;
-}
+    .btn-volver {
+        position: static;
+        display: block;
+        margin: 10px auto;
+    }
 
-.progreso-box p {
-    margin: 6px 0;
-    font-size: 18px;
-}
+    .inicio-title {
+        font-size: 2rem;
+    }
 
-/* ⭐ TÍTULOS VISIBLES Y GRANDES (VERSIÓN SIMPLE Y SEGURA) ⭐ */
-h1, h2, h3, .menu-subtitle, .titulo-juego, .inicio-title {
-    font-family: 'Poppins', Arial, sans-serif !important;
-    font-weight: 900 !important;
-    text-align: center !important;
-    text-transform: uppercase !important;
-    color: #222 !important;
-    text-shadow: 2px 2px 4px rgba(255,255,255,0.9) !important;
-}
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
 
-/* Tamaños */
-h1, .inicio-title {
-    font-size: 3rem !important;
-}
+    .card {
+        width: 90%;
+    }
 
-h2, .menu-subtitle, .titulo-juego {
-    font-size: 2.3rem !important;
-}
+    .game-box {
+        width: 95%;
+    }
 
-h3 {
-    font-size: 1.6rem !important;
+    canvas {
+        width: 100%;
+        height: auto;
+    }
+
+    button, .btn {
+        width: 90%;
+        font-size: 18px;
+    }
 }

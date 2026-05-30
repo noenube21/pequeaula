@@ -1,13 +1,17 @@
+// =======================================
+// 🔥 IMPORTACIONES FIREBASE
 import { db, auth } from "./firebase-config.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
 // =======================================
 const materia = window.materia;
 const nivel = window.nivel;
 
 let preguntasRestantes = [];
-let puntos = 0; // ✅ NUEVO
+let puntos = 0;
 
-// ✅ LIMPIAR TEXTO
+// =======================================
+// LIMPIAR TEXTO
 function limpiar(t){
     return t.toLowerCase()
         .normalize("NFD")
@@ -16,7 +20,7 @@ function limpiar(t){
 }
 
 // =======================================
-// ANIMACIÓN SIMPLE
+// ANIMACIÓN
 function animarResultado(el, ok){
     el.style.transition = "0.3s";
     el.style.transform = "scale(1.2)";
@@ -28,20 +32,12 @@ function animarResultado(el, ok){
 }
 
 // =======================================
-// BASES
-
+// BASE DATOS PREGUNTAS
 const inglesBase = [
-["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
-["tree","árbol"],["chair","silla"],["food","comida"],["fish","pez"],
-["flower","flor"],["house","casa"],["door","puerta"],
-["window","ventana"],["cold","frio"],["hot","caliente"],
-["happy","feliz"],["sad","triste"],["big","grande"],["small","pequeño"],
-["fast","rápido"],["slow","lento"],["light","luz"],
-["dark","oscuro"],["sky","cielo"],["earth","tierra"]
+["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"]
 ];
 
-// generar opciones
+// OPCIONES
 function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
@@ -50,11 +46,8 @@ function generarOpciones(correcta, lista){
 
 // =======================================
 // JUEGOS
-
 const Juegos = {
     matematicas1:{ generar:()=>calc("+",10) },
-    matematicas2:{ generar:()=>calc("-",20) },
-    matematicas3:{ generar:()=>calc("*",10) },
 
     ingles1:{
         preguntas: inglesBase.map(x=>({
@@ -63,35 +56,53 @@ const Juegos = {
             tipo:"test",
             opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
         }))
-    },
-
-    ingles2:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[1]} =`,
-            r:x[0],
-            tipo:"test",
-            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
-        }))
     }
 };
 
 // =======================================
+// FIRESTORE: GUARDAR
+async function guardarProgreso(){
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    await setDoc(doc(db,"usuarios",user.uid),{
+        puntos: puntos,
+        aciertos: JSON.parse(localStorage.getItem("progreso"))?.aciertos || 0,
+        fecha: new Date()
+    });
+
+}
+
+// =======================================
+// FIRESTORE: CARGAR
+async function cargarProgreso(){
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    const ref = doc(db,"usuarios",user.uid);
+    const snap = await getDoc(ref);
+
+    if(snap.exists()){
+        const data = snap.data();
+        puntos = data.puntos || 0;
+        actualizarPuntos();
+    }
+
+}
+
+// =======================================
 // MOTOR
 
-let juegoActual=null;
-let preguntaActual=null;
+let juegoActual = null;
+let preguntaActual = null;
 
 export function iniciarJuego(key){
 
     juegoActual = Juegos[key];
+
+    cargarProgreso(); // ✅ cargar datos
 
     const pregunta=document.getElementById("pregunta");
     const zona=document.getElementById("zona");
@@ -102,13 +113,8 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     resultado.innerHTML="";
     input.value="";
-
-    // ✅ foco en input
     input.focus();
 
-    document.getElementById("btnComprobar").onclick=comprobar;
-
-    // matematicas
     if(juegoActual.generar){
         preguntaActual=juegoActual.generar();
         input.style.display="block";
@@ -120,7 +126,7 @@ export function iniciarJuego(key){
         preguntasRestantes=[...juegoActual.preguntas];
     }
 
-    preguntaActual=preguntasRestantes.splice(
+    preguntaActual = preguntasRestantes.splice(
         Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
 
@@ -129,7 +135,6 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
-    // test
     preguntaActual.opciones.forEach(op=>{
         const b=document.createElement("button");
         b.innerText=op;
@@ -138,9 +143,7 @@ export function iniciarJuego(key){
         b.onclick=()=>{
             input.value = op;
 
-            // quitar selección anterior ✅
             document.querySelectorAll(".opcion").forEach(x=>x.classList.remove("seleccionada"));
-
             b.classList.add("seleccionada");
         };
 
@@ -150,7 +153,6 @@ export function iniciarJuego(key){
 
 // =======================================
 // PUNTOS
-
 export function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
@@ -164,36 +166,38 @@ export function actualizarPuntos(){
 export function comprobar(){
 
     const btn = document.getElementById("btnComprobar");
-    btn.disabled = true; // ✅ evita spam
+    btn.disabled = true;
 
     const r=limpiar(document.getElementById("respuesta").value);
     const ok=limpiar(preguntaActual.r);
     const resultado=document.getElementById("resultado");
 
-    // ✅ mejora comparación (más flexible)
+    // ✅ comprobación mejorada
     const correcto = r === ok || r.includes(ok) || ok.includes(r);
 
     if(correcto){
         resultado.innerText="✔ Correcto";
-        puntos++; // ✅ suma puntos
-    }else{
+        puntos++;
+    } else {
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);
 
-    // ✅ ACTUALIZAR MARCADOR
     actualizarPuntos();
 
-    // ✅ GUARDAR DATOS
+    // ✅ LOCAL STORAGE
     let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0, puntos:0 };
 
-    if (correcto) {
-        datos.aciertos += 1;
-        datos.puntos += 1;
+    if(correcto){
+        datos.aciertos++;
+        datos.puntos++;
     }
 
     localStorage.setItem("progreso", JSON.stringify(datos));
+
+    // ✅ FIRESTORE
+    guardarProgreso();
 
     setTimeout(()=>{
         btn.disabled = false;
@@ -207,6 +211,5 @@ function calc(op,max){
     let a=Math.floor(Math.random()*max);
     let b=Math.floor(Math.random()*max);
     if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a}-${b}`,r:(a-b).toString()};
-    return {p:`${a}×${b}`,r:(a*b).toString()};
+    return {p:`${a}-${b}`,r:(a-b).toString()};
 }

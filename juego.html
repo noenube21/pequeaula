@@ -14,7 +14,7 @@ window.onload = () => {
     document.getElementById("tituloJuego").innerText =
         materia.toUpperCase() + " - Nivel " + nivel;
 
-    // ✅ NO await → no bloquea
+    // ✅ NO bloquea
     cargarDesdeFirebase();
 
     iniciarJuego(key);

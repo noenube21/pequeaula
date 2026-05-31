@@ -26,17 +26,14 @@ export async function cargarFirebase(){
     const user = auth.currentUser;
     if(!user) return;
 
-    const ref = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(ref);
+    const snap = await getDoc(doc(db, "usuarios", user.uid));
 
     if(snap.exists()){
         const data = snap.data();
-
         puntos = data.puntos || 0;
         datos.aciertos = data.aciertos || 0;
     }
 
-    // ✅ sincronizar también con localStorage
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
 
@@ -49,7 +46,7 @@ async function guardarEnFirebase(){
     if(!user) return;
 
     await setDoc(doc(db, "usuarios", user.uid), {
-        puntos: puntos,
+        puntos,
         aciertos: datos.aciertos
     }, { merge: true });
 }
@@ -157,71 +154,11 @@ const Juegos = {
         }))
     },
 
-    ingles2:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[1]} =`,
-            r:x[0],
-            tipo:"test",
-            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
-        }))
-    },
-
-    castellano1:{
-        preguntas:[
-            "casa","mesa","mango","plato","huevo","lago"
-        ].map(p=>({
-            p:`${p[0]}__${p.slice(2)}`,
-            r:p,
-            tipo:"test",
-            opciones: generarOpciones(p,["casa","mesa","mango","pato","taza","mano"])
-        }))
-    },
-
-    castellano2:{
-        preguntas:[
-            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
-            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
-        ]
-    },
-
-    castellano3:{
-        preguntas:[
-            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
-            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]}
-        ]
-    },
-
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
-        ]
-    },
-
-    ciencias2:{
-        preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
-            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
-            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
-            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
-            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
-            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
         ]
     }
 };
@@ -237,20 +174,14 @@ export function iniciarJuego(key){
     const input=document.getElementById("respuesta");
     const resultado=document.getElementById("resultado");
 
-    if(!juegoActual){
-        pregunta.innerText = "Error cargando juego";
-        return;
-    }
-
     pregunta.innerHTML="";
     zona.innerHTML="";
     resultado.innerHTML="";
     input.value="";
 
-    input.focus();
     actualizarPuntos();
 
-    // ✅ MATEMÁTICAS (NO tocar preguntas)
+    // ✅ matemáticas
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -258,7 +189,7 @@ export function iniciarJuego(key){
         return;
     }
 
-    // ✅ RESTO (IMPORTANTE)
+    // ✅ resto
     preguntasRestantes = [...juegoActual.preguntas];
 
     preguntaActual = preguntasRestantes.splice(
@@ -270,44 +201,21 @@ export function iniciarJuego(key){
     zona.innerHTML="";
     input.style.display="none";
 
-    if(preguntaActual.tipo==="letras"){
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-            b.className="btn opcion";
+    preguntaActual.opciones.forEach(op=>{
+        const b=document.createElement("button");
+        b.innerText=op;
+        b.className="btn opcion";
 
-            b.onclick=()=>{
-                let palabra = preguntaActual.p
-                    .replace("_", op)
-                    .replace(/ /g,"")
-                    .toLowerCase();
+        b.onclick=()=>{
+            input.value = op;
+            seleccionar();
+        };
 
-                input.value = palabra;
-                seleccionar(b);
-            };
+        zona.appendChild(b);
+    });
+}
 
-            zona.appendChild(b);
-        });
-    }
-
-    else if(preguntaActual.tipo==="input"){
-        input.style.display="block";
-    }
-
-    else{
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-            b.className="btn opcion";
-
-            b.onclick=()=>{
-                input.value = op;
-                seleccionar(b);
-            };
-
-            zona.appendChild(b);
-        });
-        // =======================================
+// =======================================
 function seleccionar(){
     comprobar();
 }
@@ -316,24 +224,15 @@ function seleccionar(){
 function siguientePregunta(){
 
     if(juegoActual.generar){
-
         preguntaActual = juegoActual.generar();
-
-        document.getElementById("pregunta").innerText =
-            preguntaActual.p;
-
+        document.getElementById("pregunta").innerText = preguntaActual.p;
         document.getElementById("respuesta").value = "";
-
         return;
     }
 
     if(preguntasRestantes.length === 0){
-
-        document.getElementById("pregunta").innerHTML =
-            "🎉 Nivel completado";
-
+        document.getElementById("pregunta").innerHTML = "🎉 Nivel completado";
         document.getElementById("zona").innerHTML = "";
-
         return;
     }
 
@@ -342,8 +241,7 @@ function siguientePregunta(){
         1
     )[0];
 
-    document.getElementById("pregunta").innerText =
-        preguntaActual.p;
+    document.getElementById("pregunta").innerText = preguntaActual.p;
 }
 
 // =======================================
@@ -351,19 +249,15 @@ export async function comprobar(){
 
     if(!preguntaActual) return;
 
-    const resultado =
-        document.getElementById("resultado");
+    const resultado = document.getElementById("resultado");
 
-    const respuesta =
-        limpiar(
-            document.getElementById("respuesta").value
-        );
+    const respuesta = limpiar(
+        document.getElementById("respuesta").value
+    );
 
-    const correcta =
-        limpiar(preguntaActual.r);
+    const correcta = limpiar(preguntaActual.r);
 
-    const ok =
-        respuesta === correcta ||
+    const ok = respuesta === correcta ||
         levenshtein(respuesta, correcta) <= 1;
 
     if(ok){
@@ -377,29 +271,21 @@ export async function comprobar(){
         await guardarEnFirebase();
 
         try{
-            comprobarRecompensas(
-                datos.aciertos,
-                puntos
-            );
+            comprobarRecompensas(datos.aciertos, puntos);
         }catch(e){}
 
-        resultado.innerHTML =
-            "✅ Correcto";
-
+        resultado.innerHTML = "✅ Correcto";
         animarResultado(resultado,true);
 
     }else{
 
         resultado.innerHTML =
-            "❌ Correcta: " +
-            preguntaActual.r;
+            "❌ Correcta: " + preguntaActual.r;
 
         animarResultado(resultado,false);
     }
 
-    setTimeout(()=>{
+    setTimeout(() => {
         siguientePregunta();
     },1000);
-}
-    }
 }

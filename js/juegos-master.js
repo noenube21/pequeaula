@@ -18,7 +18,7 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
     puntos: 0
 };
 
-// ✅ 🔴 IMPORTANTE → NO usar localStorage como base
+// ✅ NO depender de localStorage
 puntos = 0;
 
 // =======================================
@@ -37,7 +37,11 @@ export async function cargarFirebase(){
         datos.aciertos = data.aciertos || 0;
     }
 
-    actualizarPuntos(); // ✅ refresca pantalla
+    // ✅ sincroniza también en local
+    datos.puntos = puntos;
+    localStorage.setItem("progreso", JSON.stringify(datos));
+
+    actualizarPuntos();
 }
 
 // =======================================
@@ -84,7 +88,6 @@ function levenshtein(a, b){
                     matrix[i-1][j] + 1
                 );
             }
-
         }
     }
 
@@ -242,7 +245,15 @@ export function iniciarJuego(key){
     input.focus();
     actualizarPuntos();
 
-    // ✅ 🔥 SIEMPRE reiniciar preguntas (arreglo ciencias1)
+    // ✅ MATEMÁTICAS (MUY IMPORTANTE)
+    if(juegoActual.generar){
+        preguntaActual = juegoActual.generar();
+        input.style.display="block";
+        pregunta.innerText = preguntaActual.p;
+        return;
+    }
+
+    // ✅ DEMÁS JUEGOS
     preguntasRestantes = [...juegoActual.preguntas];
 
     preguntaActual = preguntasRestantes.splice(
@@ -293,40 +304,4 @@ export function iniciarJuego(key){
         });
     }
 }
-
-// =======================================
-function seleccionar(btn){
-    document.querySelectorAll(".opcion").forEach(o=>{
-        o.classList.remove("seleccionada");
-    });
-    btn.classList.add("seleccionada");
-}
-
-// =======================================
-export function comprobar(){
-
-    const r=limpiar(document.getElementById("respuesta").value);
-    const ok=limpiar(preguntaActual.r);
-    const resultado=document.getElementById("resultado");
-
-    const correcto = levenshtein(r, ok) <= 1;
-
-    if(correcto){
-        resultado.innerText="✔ Correcto";
-        puntos++;
-        datos.aciertos++;
-    }else{
-        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
-    }
-
-    animarResultado(resultado, correcto);
-    actualizarPuntos();
-
-    guardarProgreso();
-    comprobarRecompensas(datos.aciertos);
-    guardarEnFirebase();
-
-    setTimeout(()=>{
-        iniciarJuego(claveActual);
-    },1000);
-}
+``

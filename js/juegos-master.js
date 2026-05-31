@@ -36,7 +36,6 @@ export async function cargarFirebase(){
         datos.aciertos = data.aciertos || 0;
     }
 
-    // ✅ sincronizar local y nube (CLAVE para móvil/PC)
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
 
@@ -244,7 +243,6 @@ export function iniciarJuego(key){
 
     actualizarPuntos();
 
-    // ✅ MATEMÁTICAS
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -252,7 +250,6 @@ export function iniciarJuego(key){
         return;
     }
 
-    // ✅ SOLO cargar si está vacío (CLAVE)
     if(!preguntasRestantes.length){
         preguntasRestantes = [...juegoActual.preguntas];
     }
@@ -312,4 +309,31 @@ function seleccionar(btn){
         o.classList.remove("seleccionada");
     });
     if(btn) btn.classList.add("seleccionada");
+}
+
+// =======================================
+export async function comprobar(){
+
+    const r = limpiar(document.getElementById("respuesta").value);
+    const ok = limpiar(preguntaActual.r);
+
+    const resultado=document.getElementById("resultado");
+
+    if(levenshtein(r, ok) <= 1){
+        resultado.innerText="✔ Correcto";
+        puntos++;
+        datos.aciertos++;
+    }else{
+        resultado.innerText=`✘ Incorrecto. ${preguntaActual.r}`;
+    }
+
+    animarResultado(resultado,true);
+    actualizarPuntos();
+
+    guardarProgreso();
+    comprobarRecompensas(datos.aciertos);
+    await guardarEnFirebase();
+
+    preguntasRestantes = [];
+    setTimeout(()=>iniciarJuego(claveActual),1000);
 }

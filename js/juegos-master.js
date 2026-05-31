@@ -169,6 +169,22 @@ const Juegos = {
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
     }
+    ciencias2:{
+        preguntas:[
+            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
+            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
+            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
+            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
+            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
+        ]
+    }
 };
 
 // =======================================

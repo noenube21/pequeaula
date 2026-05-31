@@ -68,15 +68,9 @@ import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ ESTE ES EL CAMBIO CLAVE (USUARIO REAL)
-onAuthStateChanged(auth, async (user) => {
+// ✅ función que SIEMPRE arranca el juego
+function arrancarJuego(){
 
-    if(user){
-        // ✅ cargar datos del usuario correcto
-        await cargarFirebase();
-    }
-
-    // ✅ iniciar juego normalmente
     const params = new URLSearchParams(window.location.search);
 
     const materia = params.get("materia") || "castellano";
@@ -90,7 +84,35 @@ onAuthStateChanged(auth, async (user) => {
     iniciarJuego(key);
 
     document.getElementById("btnComprobar").onclick = comprobar;
+}
+
+let yaArrancado = false;
+
+// ✅ Firebase control perfecto
+onAuthStateChanged(auth, async (user) => {
+
+    if(user){
+        try{
+            await cargarFirebase();
+        }catch(e){
+            console.log("Error cargando Firebase");
+        }
+    }
+
+    if(!yaArrancado){
+        yaArrancado = true;
+        arrancarJuego();
+    }
 });
+
+// ✅ fallback SIEMPRE (esto evita pantalla vacía)
+setTimeout(() => {
+    if(!yaArrancado){
+        console.log("Fallback juego");
+        yaArrancado = true;
+        arrancarJuego();
+    }
+}, 1200);
 
 </script>
 

@@ -1,5 +1,4 @@
-import { comprobarRecompensas } from "./recompensas.js";
-
+ import { comprobarRecompensas } from "./recompensas.js";
 // =======================================
 let preguntasRestantes = [];
 let puntos = 0;

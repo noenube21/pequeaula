@@ -69,17 +69,22 @@ import { auth } from "./firebase-config.js";
 import { signInAnonymously } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ primero login + cargar Firebase
-signInAnonymously(auth).then(async () => {
+// ✅ TODO EL FLUJO CORRECTO (IMPORTANTE)
+async function iniciarTodo(){
 
-    await cargarFirebase();
+    try{
 
-    // ✅ luego iniciar juego (MUY IMPORTANTE)
-    iniciarApp();
-});
+        // 1️⃣ login Firebase
+        await signInAnonymously(auth);
 
-function iniciarApp(){
+        // 2️⃣ cargar datos (puntos)
+        await cargarFirebase();
 
+    }catch(e){
+        console.log("Firebase no carga, seguimos normal");
+    }
+
+    // 3️⃣ iniciar juego (SIEMPRE)
     const params = new URLSearchParams(window.location.search);
 
     const materia = params.get("materia") || "castellano";
@@ -87,16 +92,16 @@ function iniciarApp(){
 
     const key = materia + nivel;
 
-    // título
     document.getElementById("tituloJuego").innerText =
         materia.toUpperCase() + " - Nivel " + nivel;
 
-    // iniciar juego
     iniciarJuego(key);
 
-    // botón
     document.getElementById("btnComprobar").onclick = comprobar;
 }
+
+// ✅ ARRANQUE
+window.onload = iniciarTodo;
 
 </script>
 

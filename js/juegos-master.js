@@ -18,7 +18,8 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
     puntos: 0
 };
 
-puntos = datos.puntos;
+// ✅ 🔥 CAMBIO CLAVE → ya NO depende del dispositivo
+puntos = 0;
 
 // =======================================
 export async function cargarFirebase(){
@@ -36,6 +37,7 @@ export async function cargarFirebase(){
         datos.aciertos = data.aciertos || 0;
     }
 
+    // ✅ sincronización total
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
 
@@ -312,16 +314,22 @@ function seleccionar(btn){
 }
 
 // =======================================
+function siguientePregunta(){
+    iniciarJuego(claveActual);
+}
+
+// =======================================
 export async function comprobar(){
+
+    if(!preguntaActual) return;
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
-
     const resultado=document.getElementById("resultado");
 
     if(levenshtein(r, ok) <= 1){
         resultado.innerText="✔ Correcto";
-        puntos++;
+        puntos+=10;
         datos.aciertos++;
     }else{
         resultado.innerText=`✘ Incorrecto. ${preguntaActual.r}`;
@@ -334,6 +342,8 @@ export async function comprobar(){
     comprobarRecompensas(datos.aciertos);
     await guardarEnFirebase();
 
-    preguntasRestantes = [];
-    setTimeout(()=>iniciarJuego(claveActual),1000);
+    // ✅ 🔥 CAMBIO CLAVE
+    setTimeout(()=>{
+        siguientePregunta();
+    },1000);
 }

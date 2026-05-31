@@ -1,114 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego</title>
+<head-8"><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juego</title>
 
-    <link rel="stylesheet" href="css/style.css">
+<style>
+body{ text-align:center; }
+#respuesta{ margin:10px; }
+</style>
 
-    <style>
-        body{
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-        }
-
-        .game-box{
-            width:500px;
-            max-width:90%;
-        }
-
-        #pregunta{
-            font-size:22px;
-            margin-bottom:20px;
-            font-weight:bold;
-        }
-
-        #zona button{
-            display:block;
-            width:80%;
-            margin:8px auto;
-        }
-
-        #respuesta{
-            width:80%;
-            margin:10px auto;
-            display:none;
-        }
-
-        #btnComprobar{
-            display:none;
-            margin:10px auto;
-        }
-    </style>
 </head>
-
 <body>
 
-<button onclick="history.back()">⬅ Volver</button>
-
 <h2 id="tituloJuego"></h2>
-
 <div id="score">Puntos: 0</div>
 
-<div class="game-box">
+<div id="pregunta"></div>
 
-    <div id="pregunta"></div>
+<input id="respuesta">
+<button id="btnComprobar">Comprobar</button>
 
-    <div id="zona"></div>
-
-    <input id="respuesta" type="text">
-
-    <button id="btnComprobar">Comprobar</button>
-
-    <p id="resultado"></p>
-
-</div>
+<p id="resultado"></p>
 
 <script type="module">
-
 import { iniciarJuego, comprobar, cargarFirebase } from "./js/juegos-master.js";
 import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ INICIAR BIEN
-function empezar(){
+const params = new URLSearchParams(window.location.search);
+const materia = params.get("materia") || "matematicas";
+const nivel = params.get("nivel") || "1";
 
-    const params = new URLSearchParams(window.location.search);
+document.getElementById("tituloJuego").innerText =
+    materia + " nivel " + nivel;
 
-    const materia = params.get("materia") || "castellano";
-    const nivel = params.get("nivel") || "1";
-
-    const key = materia + nivel;
-
-    document.getElementById("tituloJuego").innerText =
-        materia.toUpperCase() + " - Nivel " + nivel;
-
-    iniciarJuego(key);
-
-    document.getElementById("btnComprobar").onclick = comprobar;
-
-    // ✅ ENTER también funciona
-    document.getElementById("respuesta").addEventListener("keydown", (e)=>{
-        if(e.key === "Enter"){
-            comprobar();
-        }
-    });
-}
-
-// ✅ CLAVE: esperar Firebase
 onAuthStateChanged(auth, async (user)=>{
-
-    if(user){
-        await cargarFirebase();
-    }
-
-    empezar();
+    if(user) await cargarFirebase();
+    iniciarJuego(materia+nivel);
 });
 
+document.getElementById("btnComprobar").onclick = comprobar;
+
+document.getElementById("respuesta").addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") comprobar();
+});
 </script>
 
 </body>
 </html>
+

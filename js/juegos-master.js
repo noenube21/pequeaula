@@ -2,17 +2,15 @@ import { getDoc, doc, setDoc }
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { db, auth } from "../firebase-config.js";
 
-// ========================
-let preguntaActual = null;
+// =========================
+let juegoActual;
 let preguntas = [];
-let juego = null;
-
+let preguntaActual;
 let puntos = 0;
 let bloqueado = false;
 
-// ========================
+// =========================
 export async function cargarFirebase(){
-
     const user = auth.currentUser;
     if(!user) return;
 
@@ -26,164 +24,153 @@ export async function cargarFirebase(){
         puntos = 0;
     }
 
-    pintarPuntos();
+    actualizarPuntos();
 }
 
-// ========================
+// =========================
 async function guardarFirebase(){
-
     const user = auth.currentUser;
     if(!user) return;
 
-    await setDoc(doc(db,"usuarios",user.uid),{
-        puntos
-    },{merge:true});
+    await setDoc(doc(db,"usuarios",user.uid),
+    { puntos },{ merge:true });
 }
 
-// ========================
-function pintarPuntos(){
-    const el = document.getElementById("score");
-    if(el) el.innerText = "Puntos: " + puntos;
+// =========================
+function actualizarPuntos(){
+    document.getElementById("score").innerText =
+        "Puntos: " + puntos;
 }
 
-// ========================
+// =========================
 function limpiar(t){
     return t.toLowerCase().trim()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g,"");
 }
 
-// ========================
+// =========================
 function rnd(n){
     return Math.floor(Math.random()*n);
 }
 
-// ========================
+// =========================
 // DATOS
-const inglesBase = [
+const ingles = [
 ["dog","perro"],["cat","gato"],["car","coche"],
 ["sun","sol"],["moon","luna"],["milk","leche"],
-["book","libro"],["water","agua"],
-["house","casa"],["food","comida"]
+["book","libro"],["water","agua"]
 ];
 
-function opciones(correcta, lista){
+// =========================
+function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     return [correcta,...otras.sort(()=>Math.random()-0.5).slice(0,2)]
         .sort(()=>Math.random()-0.5);
 }
 
-// ========================
-function gen(op,max){
-    let a=rnd(max), b=rnd(max);
+// =========================
+function generarMates(){
+    let a = rnd(20);
+    let b = rnd(20);
 
-    if(op==="+") return {p:`${a}+${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a}-${b}`,r:(a-b).toString()};
-    return {p:`${a}×${b}`,r:(a*b).toString()};
+    return {
+        p: a + " + " + b,
+        r: (a+b).toString(),
+        tipo: "input"
+    };
 }
 
-// ========================
+// =========================
 const Juegos = {
 
-    matematicas1:{ generar:()=>gen("+",20) },
-    matematicas2:{ generar:()=>gen("-",20) },
-    matematicas3:{ generar:()=>gen("*",10) },
+    matematicas1:{ generar: generarMates },
+    matematicas2:{ generar: generarMates },
+    matematicas3:{ generar: generarMates },
 
     ingles1:{
-        preguntas: inglesBase.map(x=>({
+        preguntas: ingles.map(x=>({
             p:x[0]+" =",
             r:x[1],
             tipo:"test",
-            opciones: opciones(x[1],inglesBase.map(y=>y[1]))
+            opciones: generarOpciones(x[1],ingles.map(y=>y[1]))
         }))
     },
 
     ingles2:{
-        preguntas: inglesBase.map(x=>({
+        preguntas: ingles.map(x=>({
             p:x[0]+" =",
             r:x[1],
             tipo:"input"
         }))
     },
 
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:x[1]+" =",
-            r:x[0],
-            tipo:"test",
-            opciones: opciones(x[0],inglesBase.map(y=>y[0]))
-        }))
-    },
-
-    castellano1:{
-        preguntas:["casa","mesa","lago","plato","silla","taza","perro","gato"]
-            .map(p=>({
-                p:p[0]+"__"+p.slice(2),
-                r:p,
-                tipo:"test",
-                opciones:["casa","mesa","pato","taza"]
-            }))
-    },
-
     castellano2:{
         preguntas:[
-            {p:"M _ S A",r:"mesa",tipo:"letras",opciones:["e","o","i"]},
-            {p:"C _ M A",r:"cama",tipo:"letras",opciones:["a","o","e"]},
-            {p:"P _ T O",r:"pato",tipo:"letras",opciones:["a","e","i"]},
-            {p:"L _ G O",r:"lago",tipo:"letras",opciones:["a","o","u"]}
+            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
+            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]}
         ]
     },
 
     ciencias1:{
         preguntas:[
-            {p:"Gas que respiramos",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
-            {p:"Planeta rojo",r:"marte",tipo:"test",opciones:["marte","tierra","venus"]},
-            {p:"Animal acuático",r:"pez",tipo:"test",opciones:["pez","gato","perro"]}
+            {p:"Gas respiramos",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
+            {p:"Planeta rojo",r:"marte",tipo:"test",opciones:["marte","tierra","venus"]}
         ]
     }
 };
 
-// ========================
+// =========================
 export function iniciarJuego(key){
 
-    juego = Juegos[key];
-    if(!juego) return;
+    juegoActual = Juegos[key];
 
-    preguntas = juego.generar ? [] : [...juego.preguntas];
-    siguiente();
+    if(!juegoActual){
+        document.getElementById("pregunta").innerText = "Error nivel";
+        return;
+    }
+
+    preguntas = juegoActual.generar
+        ? []
+        : [...juegoActual.preguntas];
+
+    siguientePregunta();
 }
 
-// ========================
-function siguiente(){
+// =========================
+function siguientePregunta(){
 
-    const p = document.getElementById("pregunta");
-    const z = document.getElementById("zona");
+    const pregunta = document.getElementById("pregunta");
+    const zona = document.getElementById("zona");
     const input = document.getElementById("respuesta");
     const btn = document.getElementById("btnComprobar");
 
     bloqueado = false;
-    z.innerHTML="";
+    zona.innerHTML="";
     input.value="";
 
     // ✅ MATEMÁTICAS
-    if(juego.generar){
-        preguntaActual = juego.generar();
-        p.innerText = preguntaActual.p;
+    if(juegoActual.generar){
+        preguntaActual = juegoActual.generar();
+        pregunta.innerText = preguntaActual.p;
 
         input.style.display="block";
         btn.style.display="block";
         return;
     }
 
+    // ✅ FIN
     if(!preguntas.length){
-        p.innerText="🎉 Nivel terminado";
+        pregunta.innerText="🎉 Nivel terminado";
         input.style.display="none";
         btn.style.display="none";
+        zona.innerHTML="";
         return;
     }
 
+    // ✅ NUEVA
     preguntaActual = preguntas.splice(rnd(preguntas.length),1)[0];
-    p.innerText = preguntaActual.p;
+    pregunta.innerText = preguntaActual.p;
 
     // INPUT
     if(preguntaActual.tipo==="input"){
@@ -202,11 +189,13 @@ function siguiente(){
             b.innerText=op;
 
             b.onclick=()=>{
-                input.value = preguntaActual.p.replace("_",op).replace(/ /g,"");
+                input.value = preguntaActual.p
+                    .replace("_",op)
+                    .replace(/ /g,"");
                 comprobar();
             };
 
-            z.appendChild(b);
+            zona.appendChild(b);
         });
         return;
     }
@@ -217,15 +206,15 @@ function siguiente(){
         b.innerText=op;
 
         b.onclick=()=>{
-            input.value = op;
+            input.value=op;
             comprobar();
         };
 
-        z.appendChild(b);
+        zona.appendChild(b);
     });
 }
 
-// ========================
+// =========================
 export async function comprobar(){
 
     if(bloqueado) return;
@@ -233,17 +222,21 @@ export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
-    const res = document.getElementById("resultado");
+
+    const resultado = document.getElementById("resultado");
 
     if(r === ok){
         puntos += 1;
-        res.innerText="✅";
+        resultado.innerText = "✅ Correcto";
     }else{
-        res.innerText="❌ "+preguntaActual.r;
+        resultado.innerText = "❌ " + preguntaActual.r;
     }
 
-    pintarPuntos();
+    actualizarPuntos();
     await guardarFirebase();
 
-    setTimeout(()=>siguiente(),700);
+    setTimeout(()=>{
+        siguientePregunta();
+    },700);
 }
+``

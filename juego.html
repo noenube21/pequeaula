@@ -34,7 +34,11 @@
         #respuesta {
             width: 80%;
             margin: 10px auto;
-            display: block;
+            display: none; /* ✅ FIX: oculto hasta que toque */
+        }
+
+        #btnComprobar {
+            display: none; /* ✅ FIX: solo en input */
         }
     </style>
 </head>
@@ -68,7 +72,7 @@ import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ función que SIEMPRE arranca el juego
+// ✅ función para arrancar juego BIEN
 function arrancarJuego(){
 
     const params = new URLSearchParams(window.location.search);
@@ -83,20 +87,24 @@ function arrancarJuego(){
 
     iniciarJuego(key);
 
+    // ✅ botón controlar
     document.getElementById("btnComprobar").onclick = comprobar;
+
+    // ✅ enter para escribir (muy importante)
+    document.getElementById("respuesta").addEventListener("keypress", (e)=>{
+        if(e.key === "Enter"){
+            comprobar();
+        }
+    });
 }
 
 let yaArrancado = false;
 
-// ✅ Firebase control perfecto
+// ✅ ESPERA REAL a Firebase (CLAVE)
 onAuthStateChanged(auth, async (user) => {
 
     if(user){
-        try{
-            await cargarFirebase();
-        }catch(e){
-            console.log("Error cargando Firebase");
-        }
+        await cargarFirebase(); // 🔥 SIEMPRE primero Firebase
     }
 
     if(!yaArrancado){
@@ -105,14 +113,13 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// ✅ fallback SIEMPRE (esto evita pantalla vacía)
+// ✅ fallback (por si Firebase tarda)
 setTimeout(() => {
     if(!yaArrancado){
-        console.log("Fallback juego");
         yaArrancado = true;
         arrancarJuego();
     }
-}, 1200);
+}, 1500);
 
 </script>
 

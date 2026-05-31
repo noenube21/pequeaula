@@ -7,13 +7,12 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ PROGRESO GLOBAL (AÑADIDO BIEN)
+// ✅ PROGRESO GLOBAL
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
 
-// ✅ IMPORTANTE → después de declarar puntos
 puntos = datos.puntos;
 
 // =======================================
@@ -75,7 +74,7 @@ function actualizarPuntos(){
     }
 }
 
-// ✅ NUEVO
+// =======================================
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
@@ -168,7 +167,8 @@ const Juegos = {
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
-    }
+    },
+
     ciencias2:{
         preguntas:[
             {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
@@ -186,6 +186,7 @@ const Juegos = {
         ]
     }
 };
+``
 
 // =======================================
 export function iniciarJuego(key){

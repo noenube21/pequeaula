@@ -1,45 +1,59 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juego</title>
+<head><html lang="es">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego</title>
 
-<style>
-body{
-    text-align:center;
-    font-family: Arial;
-}
+    <style>
+        body{
+            text-align:center;
+            font-family: Arial;
+        }
 
-#pregunta{
-    font-size:24px;
-    margin:20px;
-}
+        #pregunta{
+            font-size:24px;
+            margin:20px;
+            font-weight:bold;
+        }
 
-#zona button{
-    display:block;
-    margin:10px auto;
-}
+        #zona button{
+            display:block;
+            width:80%;
+            margin:8px auto;
+        }
 
-#respuesta{
-    margin:10px;
-}
-</style>
+        #respuesta{
+            width:200px;
+            padding:5px;
+            margin:10px;
+        }
+
+        #btnComprobar{
+            margin:10px;
+            padding:6px 12px;
+        }
+    </style>
 </head>
 
 <body>
 
+<button onclick="history.back()">⬅ Volver</button>
+
 <h2 id="tituloJuego"></h2>
+
 <div id="score">Puntos: 0</div>
 
 <div id="pregunta"></div>
+
 <div id="zona"></div>
 
-<input id="respuesta">
+<input id="respuesta" type="text" autocomplete="off">
+
 <button id="btnComprobar">Comprobar</button>
 
 <p id="resultado"></p>
 
+<!-- ========================= -->
 <script type="module">
 
 import { iniciarJuego, comprobar, cargarFirebase } from "./js/juegos-master.js";
@@ -47,26 +61,38 @@ import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
+// ✅ leer parámetros (materia y nivel)
 const params = new URLSearchParams(window.location.search);
 const materia = params.get("materia") || "matematicas";
 const nivel = params.get("nivel") || "1";
+const key = materia + nivel;
 
+// ✅ título
 document.getElementById("tituloJuego").innerText =
-    materia + " nivel " + nivel;
+    materia.toUpperCase() + " NIVEL " + nivel;
 
+// ✅ esperar Firebase (MUY IMPORTANTE)
 onAuthStateChanged(auth, async (user)=>{
+
     if(user){
         await cargarFirebase();
     }
-    iniciarJuego(materia+nivel);
+
+    iniciarJuego(key);
 });
 
+// ✅ botón comprobar
 document.getElementById("btnComprobar").onclick = comprobar;
 
-document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter") comprobar();
+// ✅ ENTER también envía respuesta
+document.getElementById("respuesta").addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+        comprobar();
+    }
 });
 
 </script>
+
 </body>
 </html>
+

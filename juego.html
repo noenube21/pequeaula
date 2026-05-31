@@ -66,25 +66,39 @@
 
 import { iniciarJuego, comprobar, cargarFirebase } from "./js/juegos-master.js";
 import { auth } from "./firebase-config.js";
-import { signInAnonymously } 
-from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ TODO EL FLUJO CORRECTO (IMPORTANTE)
+// ✅ ESPERAR A QUE EL USUARIO ESTÉ LOGUEADO
+function esperarUsuario(){
+
+    return new Promise(resolve => {
+
+        const intervalo = setInterval(() => {
+
+            if(auth.currentUser){
+                clearInterval(intervalo);
+                resolve(auth.currentUser);
+            }
+
+        }, 100); // revisa cada 100ms
+
+    });
+}
+
+// ✅ INICIO CORRECTO
 async function iniciarTodo(){
 
-    try{
+    try {
+        // 🔥 esperar usuario (login real)
+        await esperarUsuario();
 
-        // 1️⃣ login Firebase
-        await signInAnonymously(auth);
-
-        // 2️⃣ cargar datos (puntos)
+        // 🔥 cargar datos de Firebase
         await cargarFirebase();
 
-    }catch(e){
-        console.log("Firebase no carga, seguimos normal");
+    } catch(e){
+        console.log("Firebase falla pero seguimos");
     }
 
-    // 3️⃣ iniciar juego (SIEMPRE)
+    // ✅ INICIAR JUEGO SIEMPRE
     const params = new URLSearchParams(window.location.search);
 
     const materia = params.get("materia") || "castellano";
@@ -107,4 +121,3 @@ window.onload = iniciarTodo;
 
 </body>
 </html>
-``

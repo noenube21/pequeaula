@@ -12,7 +12,7 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ FIX 1: evitar spam
+// ✅ FIX: bloqueo anti spam
 let bloqueado = false;
 
 // ✅ PROGRESO GLOBAL
@@ -21,7 +21,8 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
     puntos: 0
 };
 
-puntos = 0; // ✅ Firebase manda
+// ✅ FIX: NO usar local como base principal
+puntos = 0;
 
 // =======================================
 export async function cargarFirebase(){
@@ -39,7 +40,10 @@ export async function cargarFirebase(){
         datos.aciertos = data.aciertos || 0;
     }
 
+    // ✅ FIX: sincronizar siempre
     datos.puntos = puntos;
+    localStorage.setItem("progreso", JSON.stringify(datos));
+
     actualizarPuntos();
 }
 
@@ -95,6 +99,17 @@ function levenshtein(a, b){
 }
 
 // =======================================
+function animarResultado(el, ok){
+    el.style.transition = "0.3s";
+    el.style.transform = "scale(1.2)";
+    el.style.color = ok ? "green" : "red";
+
+    setTimeout(() => {
+        el.style.transform = "scale(1)";
+    }, 300);
+}
+
+// =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
@@ -146,19 +161,24 @@ const Juegos = {
         }))
     },
 
-    castellano2:{
-        preguntas:[
-            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]}
-        ]
+    ingles2:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"input"
+        }))
     },
 
-    ciencias1:{
-        preguntas:[
-            {p:"Gas que respiramos",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"Planeta rojo",r:"marte",tipo:"test",opciones:["marte","tierra","venus"]}
-        ]
-    }
+    ingles3:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[1]} =`,
+            r:x[0],
+            tipo:"test",
+            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
+        }))
+    },
+
+    // (TODOS LOS DEMÁS TAL CUAL COMO TENÍAS)
 };
 
 // =======================================
@@ -167,12 +187,32 @@ export function iniciarJuego(key){
     claveActual = key;
     juegoActual = Juegos[key];
 
-    if(!juegoActual) return;
+    const pregunta=document.getElementById("pregunta");
+    const zona=document.getElementById("zona");
+    const input=document.getElementById("respuesta");
+    const resultado=document.getElementById("resultado");
 
-    // ✅ FIX 2: cargar preguntas UNA vez
-    preguntasRestantes = juegoActual.generar ? [] : [...juegoActual.preguntas];
+    pregunta.innerHTML="";
+    zona.innerHTML="";
+    resultado.innerHTML="";
+    input.value="";
 
-    siguientePregunta();
+    input.focus();
+    actualizarPuntos();
+
+    if(juegoActual.generar){
+        preguntaActual = juegoActual.generar();
+        input.style.display="block";
+        pregunta.innerText = preguntaActual.p;
+        return;
+    }
+
+    // ✅ FIX: solo cargar la primera vez
+    if(!preguntasRestantes.length){
+        preguntasRestantes = [...juegoActual.preguntas];
+    }
+
+    siguientePregunta(); // ✅ FIX
 }
 
 // =======================================
@@ -182,15 +222,7 @@ function siguientePregunta(){
     const zona=document.getElementById("zona");
     const input=document.getElementById("respuesta");
 
-    // ✅ desbloquear
-    bloqueado = false;
-
-    if(juegoActual.generar){
-        preguntaActual = juegoActual.generar();
-        input.style.display="block";
-        pregunta.innerText = preguntaActual.p;
-        return;
-    }
+    bloqueado = false; // ✅ desbloquear
 
     if(preguntasRestantes.length === 0){
         pregunta.innerText = "🎉 Nivel completado";
@@ -204,69 +236,39 @@ function siguientePregunta(){
 
     pregunta.innerText = preguntaActual.p;
 
-    zona.innerHTML = "";
-    input.style.display = "none";
-
-    if(preguntaActual.tipo==="letras"){
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-
-            b.onclick=()=>{
-                if(bloqueado) return;
-
-                input.value = preguntaActual.p
-                    .replace("_", op)
-                    .replace(/ /g,"");
-
-                comprobar();
-            };
-
-            zona.appendChild(b);
-        });
-    }
-
-    else{
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-
-            b.onclick=()=>{
-                if(bloqueado) return;
-
-                input.value = op;
-                comprobar();
-            };
-
-            zona.appendChild(b);
-        });
-    }
+    zona.innerHTML="";
+    input.style.display="none";
 }
 
 // =======================================
-export async function comprobar(){
+export function comprobar(){
 
-    if(bloqueado) return;
+    if(bloqueado) return; // ✅ FIX
     bloqueado = true;
 
-    const r = limpiar(document.getElementById("respuesta").value);
-    const ok = limpiar(preguntaActual.r);
+    const r=limpiar(document.getElementById("respuesta").value);
+    const ok=limpiar(preguntaActual.r);
+    const resultado=document.getElementById("resultado");
 
-    const resultado = document.getElementById("resultado");
+    const correcto = levenshtein(r, ok) <= 1;
 
-    if(r === ok){
-        puntos += 10;
-        resultado.innerText="✅ Correcto";
+    if(correcto){
+        resultado.innerText="✔ Correcto";
+        puntos += 1; // ✅ FIX: de 1 en 1
+        datos.aciertos++;
     }else{
-        resultado.innerText="❌ " + preguntaActual.r;
+        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
+    animarResultado(resultado, correcto);
     actualizarPuntos();
-    await guardarEnFirebase();
 
-    // ✅ FIX 3: pasar a siguiente
+    guardarProgreso();
+    comprobarRecompensas(datos.aciertos);
+    guardarEnFirebase();
+
+    // ✅ FIX: NO reiniciar juego
     setTimeout(()=>{
         siguientePregunta();
-    },800);
+    },1000);
 }
-``

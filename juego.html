@@ -2,84 +2,53 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Juego</title>
 
 <style>
-body{
-    text-align:center;
-    font-family: Arial;
-}
+body{ text-align:center; }
 
-#pregunta{
-    font-size:24px;
-    margin:20px;
-}
+#pregunta{ font-size:24px; margin:20px; }
 
 #zona button{
     display:block;
-    width:200px;
     margin:8px auto;
 }
 
-#respuesta{
-    margin:10px;
-    padding:5px;
-}
-
-.opcion.seleccionada{
-    background-color: lightblue;
-}
+#respuesta{ margin:10px; }
 </style>
 
 </head>
 
 <body>
 
-<button onclick="history.back()">⬅ Volver</button>
-
 <h2 id="tituloJuego"></h2>
-
 <div id="score">Puntos: 0</div>
 
 <div id="pregunta"></div>
-
 <div id="zona"></div>
 
-<input id="respuesta" type="text">
-
+<input id="respuesta">
 <button id="btnComprobar">Comprobar</button>
 
 <p id="resultado"></p>
 
 <script type="module">
-
 import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
-// ✅ leer parámetros URL
 const params = new URLSearchParams(window.location.search);
-const materia = params.get("materia") || "castellano";
+const materia = params.get("materia") || "matematicas";
 const nivel = params.get("nivel") || "1";
 
-const key = materia + nivel;
-
-// ✅ título
 document.getElementById("tituloJuego").innerText =
-    materia.toUpperCase() + " NIVEL " + nivel;
+    materia + " nivel " + nivel;
 
-// ✅ iniciar juego directamente (SIN Firebase)
-iniciarJuego(key);
+iniciarJuego(materia+nivel);
 
-// ✅ botón comprobar
 document.getElementById("btnComprobar").onclick = comprobar;
 
-// ✅ ENTER también funciona
-document.getElementById("respuesta").addEventListener("keydown", (e)=>{
-    if(e.key === "Enter"){
-        comprobar();
-    }
+document.getElementById("respuesta").addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") comprobar();
 });
-
 </script>
 
 </body>

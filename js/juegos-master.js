@@ -307,5 +307,99 @@ export function iniciarJuego(key){
 
             zona.appendChild(b);
         });
+        // =======================================
+function seleccionar(){
+    comprobar();
+}
+
+// =======================================
+function siguientePregunta(){
+
+    if(juegoActual.generar){
+
+        preguntaActual = juegoActual.generar();
+
+        document.getElementById("pregunta").innerText =
+            preguntaActual.p;
+
+        document.getElementById("respuesta").value = "";
+
+        return;
+    }
+
+    if(preguntasRestantes.length === 0){
+
+        document.getElementById("pregunta").innerHTML =
+            "🎉 Nivel completado";
+
+        document.getElementById("zona").innerHTML = "";
+
+        return;
+    }
+
+    preguntaActual = preguntasRestantes.splice(
+        Math.floor(Math.random()*preguntasRestantes.length),
+        1
+    )[0];
+
+    document.getElementById("pregunta").innerText =
+        preguntaActual.p;
+}
+
+// =======================================
+export async function comprobar(){
+
+    if(!preguntaActual) return;
+
+    const resultado =
+        document.getElementById("resultado");
+
+    const respuesta =
+        limpiar(
+            document.getElementById("respuesta").value
+        );
+
+    const correcta =
+        limpiar(preguntaActual.r);
+
+    const ok =
+        respuesta === correcta ||
+        levenshtein(respuesta, correcta) <= 1;
+
+    if(ok){
+
+        puntos += 10;
+        datos.aciertos++;
+
+        guardarProgreso();
+        actualizarPuntos();
+
+        await guardarEnFirebase();
+
+        try{
+            comprobarRecompensas(
+                datos.aciertos,
+                puntos
+            );
+        }catch(e){}
+
+        resultado.innerHTML =
+            "✅ Correcto";
+
+        animarResultado(resultado,true);
+
+    }else{
+
+        resultado.innerHTML =
+            "❌ Correcta: " +
+            preguntaActual.r;
+
+        animarResultado(resultado,false);
+    }
+
+    setTimeout(()=>{
+        siguientePregunta();
+    },1000);
+}
     }
 }

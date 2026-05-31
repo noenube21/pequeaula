@@ -18,7 +18,8 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
     puntos: 0
 };
 
-puntos = datos.puntos;
+// ✅ 🔴 IMPORTANTE → NO usar localStorage como base
+puntos = 0;
 
 // =======================================
 export async function cargarFirebase(){
@@ -35,6 +36,8 @@ export async function cargarFirebase(){
         puntos = data.puntos || 0;
         datos.aciertos = data.aciertos || 0;
     }
+
+    actualizarPuntos(); // ✅ refresca pantalla
 }
 
 // =======================================
@@ -239,16 +242,8 @@ export function iniciarJuego(key){
     input.focus();
     actualizarPuntos();
 
-    if(juegoActual.generar){
-        preguntaActual = juegoActual.generar();
-        input.style.display="block";
-        pregunta.innerText = preguntaActual.p;
-        return;
-    }
-
-    if(!preguntasRestantes.length){
-        preguntasRestantes = [...juegoActual.preguntas];
-    }
+    // ✅ 🔥 SIEMPRE reiniciar preguntas (arreglo ciencias1)
+    preguntasRestantes = [...juegoActual.preguntas];
 
     preguntaActual = preguntasRestantes.splice(
         Math.floor(Math.random()*preguntasRestantes.length),1

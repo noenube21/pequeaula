@@ -37,7 +37,6 @@
             display: block;
         }
     </style>
-
 </head>
 
 <body>
@@ -66,39 +65,18 @@
 
 import { iniciarJuego, comprobar, cargarFirebase } from "./js/juegos-master.js";
 import { auth } from "./firebase-config.js";
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ ESPERAR A QUE EL USUARIO ESTÉ LOGUEADO
-function esperarUsuario(){
+// ✅ ESTE ES EL CAMBIO CLAVE (USUARIO REAL)
+onAuthStateChanged(auth, async (user) => {
 
-    return new Promise(resolve => {
-
-        const intervalo = setInterval(() => {
-
-            if(auth.currentUser){
-                clearInterval(intervalo);
-                resolve(auth.currentUser);
-            }
-
-        }, 100); // revisa cada 100ms
-
-    });
-}
-
-// ✅ INICIO CORRECTO
-async function iniciarTodo(){
-
-    try {
-        // 🔥 esperar usuario (login real)
-        await esperarUsuario();
-
-        // 🔥 cargar datos de Firebase
+    if(user){
+        // ✅ cargar datos del usuario correcto
         await cargarFirebase();
-
-    } catch(e){
-        console.log("Firebase falla pero seguimos");
     }
 
-    // ✅ INICIAR JUEGO SIEMPRE
+    // ✅ iniciar juego normalmente
     const params = new URLSearchParams(window.location.search);
 
     const materia = params.get("materia") || "castellano";
@@ -112,10 +90,7 @@ async function iniciarTodo(){
     iniciarJuego(key);
 
     document.getElementById("btnComprobar").onclick = comprobar;
-}
-
-// ✅ ARRANQUE
-window.onload = iniciarTodo;
+});
 
 </script>
 

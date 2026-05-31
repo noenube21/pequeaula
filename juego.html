@@ -8,44 +8,45 @@
     <link rel="stylesheet" href="css/style.css">
 
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
         }
 
-        .game-box {
-            width: 500px;
-            max-width: 90%;
+        .game-box{
+            width:500px;
+            max-width:90%;
         }
 
-        #pregunta {
-            font-size: 22px;
-            margin-bottom: 20px;
-            font-weight: bold;
+        #pregunta{
+            font-size:22px;
+            margin-bottom:20px;
+            font-weight:bold;
         }
 
-        #zona button {
-            display: block;
-            width: 80%;
-            margin: 8px auto;
+        #zona button{
+            display:block;
+            width:80%;
+            margin:8px auto;
         }
 
-        #respuesta {
-            width: 80%;
-            margin: 10px auto;
-            display: none; /* ✅ FIX: oculto hasta que toque */
+        #respuesta{
+            width:80%;
+            margin:10px auto;
+            display:none;
         }
 
-        #btnComprobar {
-            display: none; /* ✅ FIX: solo en input */
+        #btnComprobar{
+            display:none;
+            margin:10px auto;
         }
     </style>
 </head>
 
 <body>
 
-<button class="btn-volver" onclick="history.back()">⬅ Volver</button>
+<button onclick="history.back()">⬅ Volver</button>
 
 <h2 id="tituloJuego"></h2>
 
@@ -72,8 +73,8 @@ import { auth } from "./firebase-config.js";
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ función para arrancar juego BIEN
-function arrancarJuego(){
+// ✅ INICIAR BIEN
+function empezar(){
 
     const params = new URLSearchParams(window.location.search);
 
@@ -87,39 +88,25 @@ function arrancarJuego(){
 
     iniciarJuego(key);
 
-    // ✅ botón controlar
     document.getElementById("btnComprobar").onclick = comprobar;
 
-    // ✅ enter para escribir (muy importante)
-    document.getElementById("respuesta").addEventListener("keypress", (e)=>{
+    // ✅ ENTER también funciona
+    document.getElementById("respuesta").addEventListener("keydown", (e)=>{
         if(e.key === "Enter"){
             comprobar();
         }
     });
 }
 
-let yaArrancado = false;
-
-// ✅ ESPERA REAL a Firebase (CLAVE)
-onAuthStateChanged(auth, async (user) => {
+// ✅ CLAVE: esperar Firebase
+onAuthStateChanged(auth, async (user)=>{
 
     if(user){
-        await cargarFirebase(); // 🔥 SIEMPRE primero Firebase
+        await cargarFirebase();
     }
 
-    if(!yaArrancado){
-        yaArrancado = true;
-        arrancarJuego();
-    }
+    empezar();
 });
-
-// ✅ fallback (por si Firebase tarda)
-setTimeout(() => {
-    if(!yaArrancado){
-        yaArrancado = true;
-        arrancarJuego();
-    }
-}, 1500);
 
 </script>
 

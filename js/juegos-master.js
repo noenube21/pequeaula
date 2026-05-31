@@ -1,10 +1,5 @@
 import { comprobarRecompensas } from "./recompensas.js";
 
-// ✅ FIREBASE IMPORTS
-import { getDoc, doc, setDoc } 
-from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { db, auth } from "../firebase-config.js";
-
 // =======================================
 let preguntasRestantes = [];
 let puntos = 0;
@@ -12,41 +7,14 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ PROGRESO GLOBAL
+// ✅ PROGRESO GLOBAL (AÑADIDO BIEN)
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
 
+// ✅ IMPORTANTE → después de declarar puntos
 puntos = datos.puntos;
-
-// =======================================
-export async function cargarFirebase(){
-
-    const user = auth.currentUser;
-    if(!user) return;
-
-    const ref = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(ref);
-
-    if(snap.exists()){
-        const data = snap.data();
-
-        puntos = data.puntos || 0;
-        datos.aciertos = data.aciertos || 0;
-    }
-}
-
-// =======================================
-async function guardarEnFirebase(){
-    const user = auth.currentUser;
-    if(!user) return;
-
-    await setDoc(doc(db, "usuarios", user.uid), {
-        puntos: puntos,
-        aciertos: datos.aciertos
-    }, { merge: true });
-}
 
 // =======================================
 function limpiar(t){
@@ -107,7 +75,7 @@ function actualizarPuntos(){
     }
 }
 
-// =======================================
+// ✅ NUEVO
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
@@ -200,23 +168,6 @@ const Juegos = {
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
-    },
-
-    ciencias2:{
-        preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
-            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
-            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
-            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
-            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
-            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
-        ]
     }
 };
 
@@ -237,7 +188,8 @@ export function iniciarJuego(key){
     input.value="";
 
     input.focus();
-    actualizarPuntos();
+
+    actualizarPuntos(); // ✅ importante
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
@@ -319,7 +271,7 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-        datos.aciertos++;
+        datos.aciertos++; // ✅ clave
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
@@ -327,9 +279,8 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    guardarProgreso();
-    comprobarRecompensas(datos.aciertos);
-    guardarEnFirebase();
+    guardarProgreso(); // ✅ guardar
+    comprobarRecompensas(datos.aciertos); // ✅ recompensas
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

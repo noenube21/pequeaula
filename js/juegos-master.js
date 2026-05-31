@@ -1,6 +1,6 @@
 import { comprobarRecompensas } from "./recompensas.js";
 
-// ✅ FIREBASE IMPORTS (AÑADIDO)
+// ✅ FIREBASE IMPORTS
 import { getDoc, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { db, auth } from "../firebase-config.js";

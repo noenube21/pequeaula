@@ -1,6 +1,6 @@
 import { comprobarRecompensas } from "./recompensas.js";
 
-// FIREBASE
+// ✅ FIREBASE
 import { getDoc, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { db, auth } from "../firebase-config.js";
@@ -38,7 +38,7 @@ async function guardarEnFirebase(){
     if(!user) return;
 
     await setDoc(doc(db,"usuarios",user.uid),
-    { puntos },{ merge:true });
+    { puntos }, { merge:true });
 }
 
 // =======================================
@@ -52,7 +52,9 @@ function limpiar(t){
 // =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
-    if(score) score.innerText = "Puntos: " + puntos;
+    if(score){
+        score.innerText = "Puntos: " + puntos;
+    }
 }
 
 // =======================================
@@ -81,7 +83,7 @@ function generarOpciones(correcta, lista){
 // =======================================
 const Juegos = {
 
-    // ✅ MATEMÁTICAS (infinitas)
+    // ✅ MATEMÁTICAS
     matematicas1:{ generar:()=>calc("+",20) },
     matematicas2:{ generar:()=>calc("-",30) },
     matematicas3:{ generar:()=>calc("*",12) },
@@ -179,6 +181,8 @@ export function iniciarJuego(key){
     claveActual = key;
     juegoActual = Juegos[key];
 
+    if(!juegoActual) return;
+
     preguntasRestantes = juegoActual.generar
         ? []
         : [...juegoActual.preguntas];
@@ -204,7 +208,7 @@ function siguientePregunta(){
     }
 
     if(preguntasRestantes.length === 0){
-        p.innerText = "🎉 Nivel completado";
+        p.innerText="🎉 Nivel completado";
         z.innerHTML="";
         return;
     }
@@ -225,7 +229,7 @@ function siguientePregunta(){
 
     input.style.display="none";
 
-    preguntaActual.opciones?.forEach(op=>{
+    preguntaActual.opciones.forEach(op=>{
         const b=document.createElement("button");
         b.innerText=op;
 
@@ -238,7 +242,6 @@ function siguientePregunta(){
         z.appendChild(b);
     });
 
-    // ✅ letras tipo castellano
     if(preguntaActual.tipo==="letras"){
         z.innerHTML="";
         preguntaActual.opciones.forEach(op=>{
@@ -263,13 +266,14 @@ export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
+
     const resultado=document.getElementById("resultado");
 
     if(r === ok){
-        puntos += 1; // ✅ SIEMPRE DE 1 EN 1
+        puntos += 1;
         resultado.innerText="✅ Correcto";
     }else{
-        resultado.innerText="❌ "+preguntaActual.r;
+        resultado.innerText="❌ " + preguntaActual.r;
     }
 
     actualizarPuntos();

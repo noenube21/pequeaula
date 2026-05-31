@@ -1,5 +1,10 @@
 import { comprobarRecompensas } from "./recompensas.js";
 
+// ✅ FIREBASE IMPORTS (AÑADIDO)
+import { getDoc, doc, setDoc } 
+from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { db, auth } from "../firebase-config.js";
+
 // =======================================
 let preguntasRestantes = [];
 let puntos = 0;
@@ -14,6 +19,34 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
 };
 
 puntos = datos.puntos;
+
+// =======================================
+export async function cargarFirebase(){
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    const ref = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(ref);
+
+    if(snap.exists()){
+        const data = snap.data();
+
+        puntos = data.puntos || 0;
+        datos.aciertos = data.aciertos || 0;
+    }
+}
+
+// =======================================
+async function guardarEnFirebase(){
+    const user = auth.currentUser;
+    if(!user) return;
+
+    await setDoc(doc(db, "usuarios", user.uid), {
+        puntos: puntos,
+        aciertos: datos.aciertos
+    }, { merge: true });
+}
 
 // =======================================
 function limpiar(t){
@@ -186,7 +219,6 @@ const Juegos = {
         ]
     }
 };
-``
 
 // =======================================
 export function iniciarJuego(key){
@@ -205,8 +237,7 @@ export function iniciarJuego(key){
     input.value="";
 
     input.focus();
-
-    actualizarPuntos(); // ✅ importante
+    actualizarPuntos();
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
@@ -288,7 +319,7 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-        datos.aciertos++; // ✅ clave
+        datos.aciertos++;
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
@@ -296,8 +327,9 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    guardarProgreso(); // ✅ guardar
-    comprobarRecompensas(datos.aciertos); // ✅ recompensas
+    guardarProgreso();
+    comprobarRecompensas(datos.aciertos);
+    guardarEnFirebase();
 
     setTimeout(()=>{
         iniciarJuego(claveActual);

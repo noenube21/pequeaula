@@ -1,15 +1,19 @@
 /* ================================== */
 /* RESET */
+/* ================================== */
+
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
 /* ================================== */
 /* BODY */
+/* ================================== */
+
 body{
-    font-family:'Poppins',Arial,sans-serif;
+    font-family:'Poppins', Arial, sans-serif;
 
     background-image:url("../assets/img/fondo-escolar.png");
     background-size:cover;
@@ -23,47 +27,87 @@ body{
 }
 
 /* ================================== */
-/* TITULOS */
+/* CONTENEDOR GENERAL */
+/* ================================== */
+
+.contenedor-principal{
+    width:90%;
+    max-width:1000px;
+
+    margin:30px auto;
+
+    background:rgba(255,255,255,0.92);
+
+    border-radius:25px;
+
+    padding:30px;
+
+    box-shadow:0 0 20px rgba(0,0,0,0.15);
+}
+
+/* ================================== */
+/* TITULO PRINCIPAL */
+/* ================================== */
+
+.titulo-app{
+    font-size:50px;
+    font-weight:bold;
+
+    color:#ff3b3b;
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+    text-shadow:2px 2px 4px rgba(0,0,0,0.15);
+}
+
 h1,h2,h3{
     text-align:center;
-    margin:20px 0;
+    margin:15px 0;
     color:#ff5a5a;
 }
 
 /* ================================== */
-/* BOTÓN VOLVER */
+/* BOTON VOLVER */
+/* ================================== */
+
 .btn-volver{
-    position:absolute;
+    position:fixed;
+
     top:20px;
     left:20px;
 
     background:#ff6f61;
     color:white;
 
-    padding:10px 15px;
     border:none;
     border-radius:12px;
 
+    padding:10px 15px;
+
     cursor:pointer;
+
+    z-index:999;
 }
 
 /* ================================== */
 /* BOTONES GENERALES */
+/* ================================== */
+
 button,
 .btn{
     background:#4fc3f7;
     color:white;
 
-    padding:10px 15px;
-
     border:none;
     border-radius:10px;
 
+    padding:10px 15px;
+
     cursor:pointer;
 
-    margin:5px;
-
-    transition:.2s;
+    transition:0.2s;
 }
 
 button:hover,
@@ -73,28 +117,34 @@ button:hover,
 
 /* ================================== */
 /* LOGIN */
+/* ================================== */
+
 .login-container{
     display:flex;
     justify-content:center;
     align-items:center;
+
     min-height:100vh;
 }
 
 .login-box{
-    background:rgba(255,255,255,.95);
+    width:320px;
 
-    width:300px;
+    background:rgba(255,255,255,0.95);
 
     padding:25px;
 
     border-radius:20px;
+
     border:2px solid #ffcc4d;
 }
 
 .login-box input{
     width:90%;
+
     padding:10px;
-    margin:8px 0;
+
+    margin:10px 0;
 
     border-radius:10px;
     border:2px solid #ffcc4d;
@@ -102,30 +152,41 @@ button:hover,
 
 /* ================================== */
 /* MENU */
+/* ================================== */
+
 .card-container{
     display:flex;
+
     justify-content:center;
     flex-wrap:wrap;
+
     gap:20px;
 
-    padding:20px;
+    margin-top:20px;
 }
 
 .card{
     background:white;
 
     width:180px;
+    min-height:210px;
+
+    border-radius:20px;
+
+    border:2px solid #ffcc4d;
 
     padding:15px;
 
-    border-radius:20px;
-    border:2px solid #ffcc4d;
-
-    text-align:center;
-
     cursor:pointer;
 
-    transition:.2s;
+    transition:0.2s;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
 }
 
 .card:hover{
@@ -135,104 +196,172 @@ button:hover,
 .card img{
     width:120px;
     height:auto;
+
     display:block;
+
     margin:auto;
+}
+
+.card h3{
+    margin-top:15px;
+
+    font-size:28px;
+
+    color:#ff5a5a;
 }
 
 /* ================================== */
 /* JUEGO */
+/* ================================== */
+
 .game-box{
-    background:rgba(255,255,255,.95);
+    width:420px;
 
-    width:320px;
+    background:rgba(255,255,255,0.95);
 
-    padding:20px;
+    margin:20px auto;
+
+    padding:25px;
 
     border-radius:20px;
+
     border:2px solid #ffcc4d;
+}
 
-    margin:30px auto;
+/* ================================== */
+/* TITULO DEL JUEGO */
+/* ================================== */
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+#tituloJuego{
+    font-size:40px;
+    font-weight:bold;
+}
+
+/* ================================== */
+/* PUNTOS */
+/* ================================== */
+
+#score{
+    font-size:32px;
+    font-weight:bold;
+
+    margin:20px 0;
+
+    color:black;
 }
 
 /* ================================== */
 /* PREGUNTA */
-.pregunta{
-    font-size:22px;
-    margin-bottom:15px;
-}
-
 /* ================================== */
-/* SCORE */
-#score{
-    font-size:22px;
+
+#pregunta{
+    font-size:32px;
     font-weight:bold;
-    margin-bottom:20px;
-}
 
-/* ================================== */
-/* ZONA OPCIONES */
-#zona{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    margin-bottom:15px;
-}
+    margin:25px 0;
 
-/* ================================== */
-/* INPUT */
-#respuesta{
-    width:90%;
-    max-width:250px;
-
-    padding:10px;
-
-    border-radius:10px;
-    border:2px solid #ffcc4d;
-
-    display:block;
-    margin:10px auto;
-}
-
-/* ================================== */
-/* RESULTADO */
-#resultado{
-    margin-top:15px;
-    font-weight:bold;
-    font-size:18px;
+    color:black;
 }
 
 /* ================================== */
 /* OPCIONES */
+/* ================================== */
+
+#zona{
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:20px;
+}
+
 .opcion{
-    width:120px;
+    min-width:140px;
 
     background:white !important;
     color:black !important;
 
     border:2px solid #333 !important;
-
-    transition:.2s;
-}
-
-/* OPCION MARCADA */
-.opcion.seleccionada{
-    background:#4fc3f7 !important;
-    color:white !important;
-    border:2px solid #0288d1 !important;
-}
-.opcion{
-    background:white !important;
-    color:black !important;
-    border:2px solid #333 !important;
 }
 
 .opcion.seleccionada{
     background:#4fc3f7 !important;
     color:white !important;
+
     border:2px solid #0288d1 !important;
+}
+
+/* ================================== */
+/* INPUT */
+/* ================================== */
+
+#respuesta{
+    display:block;
+
+    width:250px;
+
+    margin:15px auto;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    border:2px solid #ffcc4d;
+}
+
+/* ================================== */
+/* BOTON COMPROBAR */
+/* ================================== */
+
+#btnComprobar{
+    margin-top:10px;
+}
+
+/* ================================== */
+/* RESULTADO */
+/* ================================== */
+
+#resultado{
+    margin-top:20px;
+
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* ================================== */
+/* RESPONSIVE */
+/* ================================== */
+
+@media(max-width:768px){
+
+    .titulo-app{
+        font-size:36px;
+    }
+
+    .card{
+        width:150px;
+    }
+
+    .card img{
+        width:90px;
+    }
+
+    #tituloJuego{
+        font-size:28px;
+    }
+
+    #pregunta{
+        font-size:24px;
+    }
+
+    #score{
+        font-size:24px;
+    }
+
+    .game-box{
+        width:95%;
+    }
 }

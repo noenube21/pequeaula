@@ -63,7 +63,8 @@ Comprobar
 
 import {
     iniciarJuego,
-    comprobar
+    comprobar,
+    cargarDatosUsuario
 } from "./js/juegos-master.js";
 
 const params = new URLSearchParams(window.location.search);
@@ -76,7 +77,9 @@ const nivel =
 
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
+await cargarDatosUsuario();
 
+iniciarJuego(materia + nivel);
 iniciarJuego(materia + nivel);
 
 document.getElementById("btnComprobar").onclick =

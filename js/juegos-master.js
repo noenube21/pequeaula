@@ -12,39 +12,32 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ PROGRESO GLOBAL
+// =======================================
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
 
 puntos = datos.puntos;
+
+// =======================================
 export async function cargarDatosUsuario(){
 
     try{
 
-        const datosFirebase =
-            await cargarProgresoDB();
+        const datosFirebase = await cargarProgresoDB();
 
         if(datosFirebase){
 
             puntos = datosFirebase.puntos || 0;
-
-            datos.aciertos =
-                datosFirebase.aciertos || 0;
-
+            datos.aciertos = datosFirebase.aciertos || 0;
             datos.puntos = puntos;
 
             actualizarPuntos();
         }
 
     }catch(error){
-
-        console.error(
-            "Error cargando datos:",
-            error
-        );
-
+        console.error("Error cargando datos:", error);
     }
 }
 
@@ -72,15 +65,14 @@ function levenshtein(a, b){
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
 
-            if (b.charAt(i-1) === a.charAt(j-1)){
-                matrix[i][j] = matrix[i-1][j-1];
-            } else {
-                matrix[i][j] = Math.min(
+            matrix[i][j] =
+                b.charAt(i-1) === a.charAt(j-1)
+                ? matrix[i-1][j-1]
+                : Math.min(
                     matrix[i-1][j-1] + 1,
                     matrix[i][j-1] + 1,
                     matrix[i-1][j] + 1
                 );
-            }
         }
     }
 
@@ -111,15 +103,9 @@ async function guardarProgreso(){
 
     datos.puntos = puntos;
 
-    // Sigue guardando localmente
-    localStorage.setItem(
-        "progreso",
-        JSON.stringify(datos)
-    );
+    localStorage.setItem("progreso", JSON.stringify(datos));
 
-    // Guarda en Firestore
     try{
-
         await guardarProgresoDB({
             puntos: datos.puntos,
             aciertos: datos.aciertos,
@@ -127,19 +113,15 @@ async function guardarProgreso(){
         });
 
     }catch(error){
-
-        console.error(
-            "Error guardando en Firestore:",
-            error
-        );
-
+        console.error("Error guardando en Firestore:", error);
     }
 }
 
 // =======================================
 function calc(op,max){
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
+
+    let a = Math.floor(Math.random()*max);
+    let b = Math.floor(Math.random()*max);
 
     if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
     if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
@@ -152,10 +134,11 @@ const inglesBase = [
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
 
+// =======================================
 function generarOpciones(correcta, lista){
-    const otras = lista.filter(x=>x!==correcta);
-    const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
-    return [correcta,...rand].sort(()=>0.5-Math.random());
+    const otras = lista.filter(x => x !== correcta);
+    const rand = otras.sort(() => 0.5 - Math.random()).slice(0,2);
+    return [correcta, ...rand].sort(() => 0.5 - Math.random());
 }
 
 // =======================================
@@ -166,16 +149,16 @@ const Juegos = {
     matematicas3:{ generar:()=>calc("*",10) },
 
     ingles1:{
-        preguntas: inglesBase.map(x=>({
+        preguntas: inglesBase.map(x => ({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"test",
-            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
+            opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
         }))
     },
 
     ingles2:{
-        preguntas: inglesBase.map(x=>({
+        preguntas: inglesBase.map(x => ({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"input"
@@ -183,22 +166,21 @@ const Juegos = {
     },
 
     ingles3:{
-        preguntas: inglesBase.map(x=>({
+        preguntas: inglesBase.map(x => ({
             p:`${x[1]} =`,
             r:x[0],
             tipo:"test",
-            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
+            opciones: generarOpciones(x[0], inglesBase.map(y=>y[0]))
         }))
     },
 
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
-        ].map(p=>({
-            p:`${p[0]}__${p.slice(2)}`,
-            r:p,
-            tipo:"test",
-            opciones: generarOpciones(p,["casa","mesa","mango","pato","taza","mano"])
+        ].map(p => ({
+            p: p,
+            r: p,
+            tipo:"input"
         }))
     },
 
@@ -217,10 +199,9 @@ const Juegos = {
         ]
     },
 
-    // ✅ ARREGLADO
     ciencias1:{
         preguntas:[
-            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxigeno","agua","fuego"]},
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
@@ -236,9 +217,9 @@ const Juegos = {
 
     ciencias3:{
         preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
+            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazon","ojo","mano"]},
             {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
-            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxigeno","agua","humo"]},
             {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
         ]
     }
@@ -250,19 +231,19 @@ export function iniciarJuego(key){
     claveActual = key;
     juegoActual = Juegos[key];
 
-    const pregunta=document.getElementById("pregunta");
-    const zona=document.getElementById("zona");
-    const input=document.getElementById("respuesta");
-    const resultado=document.getElementById("resultado");
+    const pregunta = document.getElementById("pregunta");
+    const zona = document.getElementById("zona");
+    const input = document.getElementById("respuesta");
+    const resultado = document.getElementById("resultado");
 
-    pregunta.innerHTML="";
-    zona.innerHTML="";
-    resultado.innerHTML="";
-    input.value="";
+    pregunta.innerHTML = "";
+    zona.innerHTML = "";
+    resultado.innerHTML = "";
+    input.value = "";
+    input.style.display = "block";
 
-    // ✅ FIX IMPORTANTE (evita pantalla vacía)
     if(!juegoActual){
-        pregunta.innerText="Nivel no encontrado";
+        pregunta.innerText = "Nivel no encontrado";
         return;
     }
 
@@ -270,7 +251,6 @@ export function iniciarJuego(key){
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
-        input.style.display="block";
         pregunta.innerText = preguntaActual.p;
         return;
     }
@@ -279,26 +259,22 @@ export function iniciarJuego(key){
         preguntasRestantes = [...juegoActual.preguntas];
     }
 
-    if(!preguntasRestantes || preguntasRestantes.length===0){
-        pregunta.innerText="Error cargando preguntas";
-        return;
-    }
-
     preguntaActual = preguntasRestantes.splice(
-        Math.floor(Math.random()*preguntasRestantes.length),1
+        Math.floor(Math.random()*preguntasRestantes.length),
+        1
     )[0];
 
     pregunta.innerText = preguntaActual.p;
+    zona.innerHTML = "";
 
-    zona.innerHTML="";
-    input.style.display="none";
+    if(preguntaActual.tipo === "letras"){
+        input.style.display = "block";
 
-    if(preguntaActual.tipo==="letras"){
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
+        preguntaActual.opciones.forEach(op => {
+            const b = document.createElement("button");
+            b.innerText = op;
 
-            b.onclick=()=>{
+            b.onclick = () => {
                 input.value = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"");
@@ -306,57 +282,52 @@ export function iniciarJuego(key){
 
             zona.appendChild(b);
         });
+
+    } else if(preguntaActual.tipo === "input"){
+        input.style.display = "block";
+
+    } else {
+
+        input.style.display = "none";
+
+        preguntaActual.opciones.forEach(op => {
+
+            const b = document.createElement("button");
+            b.innerText = op;
+            b.classList.add("opcion");
+
+            b.onclick = () => {
+
+                document.querySelectorAll("#zona .opcion")
+                    .forEach(btn => btn.classList.remove("seleccionada"));
+
+                b.classList.add("seleccionada");
+                input.value = op;
+            };
+
+            zona.appendChild(b);
+        });
     }
-
-    else if(preguntaActual.tipo==="input"){
-        input.style.display="block";
-    }
-
-else{
-
-    preguntaActual.opciones.forEach(op=>{
-
-        const b=document.createElement("button");
-
-        b.innerText = op;
-
-        b.classList.add("opcion");
-
-        b.onclick = ()=>{
-
-            document
-            .querySelectorAll("#zona .opcion")
-            .forEach(btn=>{
-                btn.classList.remove("seleccionada");
-            });
-
-            b.classList.add("seleccionada");
-
-            input.value = op;
-        };
-
-        zona.appendChild(b);
-
-    });
-
-}
 }
 
 // =======================================
 export function comprobar(){
 
-    const r=limpiar(document.getElementById("respuesta").value);
-    const ok=limpiar(preguntaActual.r);
-    const resultado=document.getElementById("resultado");
+    if(!preguntaActual) return;
+
+    const r = limpiar(document.getElementById("respuesta").value);
+    const ok = limpiar(preguntaActual.r);
+    const resultado = document.getElementById("resultado");
 
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
         puntos++;
         datos.aciertos++;
-        resultado.innerText="✔ Correcto";
-    }else{
-        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText = "✔ Correcto";
+    } else {
+        resultado.innerText =
+            `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);
@@ -364,8 +335,7 @@ export function comprobar(){
     guardarProgreso();
     comprobarRecompensas(datos.aciertos);
 
-    setTimeout(()=>{
+    setTimeout(() => {
         iniciarJuego(claveActual);
-    },500);
+    }, 500);
 }
-``

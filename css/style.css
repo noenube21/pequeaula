@@ -15,7 +15,7 @@ body {
     background-size: cover;
     background-position: center;
 
-    text-align: center; /* ✅ centra todo texto */
+    text-align: center;
 }
 
 /* ================================== */
@@ -105,7 +105,7 @@ button:hover, .btn:hover {
     transform: scale(1.05);
 }
 
-/* 🔥 IMÁGENES CONTROLADAS */
+/* IMÁGENES */
 .card img {
     width: 120px;
     height: auto;
@@ -121,7 +121,7 @@ button:hover, .btn:hover {
     padding: 20px;
     border-radius: 20px;
     border: 2px solid #ffcc4d;
-    margin: 30px auto; /* ✅ centra */
+    margin: 30px auto;
 }
 
 /* PREGUNTA */
@@ -135,13 +135,16 @@ button:hover, .btn:hover {
     margin-bottom: 10px;
 }
 
-/* INPUT */
+/* ✅ ✅ ✅ INPUT ARREGLADO (LO IMPORTANTE) */
 #respuesta {
-    width: 90%;
+    width: 80%;
+    max-width: 300px;
+    min-width: 150px;
     padding: 8px;
     margin: 10px auto;
     border-radius: 10px;
     border: 2px solid #ffcc4d;
+    font-size: 16px;
 }
 
 /* RESULTADO */
@@ -158,9 +161,7 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ AQUI ESTA EL FIX (LO ÚNICO NUEVO) */
-
-/* OPCIONES NORMALES */
+/* OPCIONES */
 .opcion {
     background: white !important;
     color: black !important;

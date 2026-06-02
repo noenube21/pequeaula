@@ -14,26 +14,14 @@ body {
     background-image: url("../assets/img/fondo-escolar.png");
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;   /* ✅ FIX fondo */
+    min-height: 100vh;              /* ✅ evita cortes */
 
     text-align: center;
 }
 
 /* ================================== */
-/* ✅ TITULO BONITO (AÑADIDO) */
-#tituloJuego {
-    font-family: 'Fredoka', sans-serif;
-    font-size: 32px;
-    color: #ff6f61;
-
-    text-transform: uppercase;
-    letter-spacing: 2px;
-
-    text-shadow: 2px 2px 0 white,
-                 4px 4px 8px rgba(0,0,0,0.2);
-}
-
-/* ================================== */
-/* TITULOS */
+/* TITULOS (los tuyos se quedan iguales visualmente) */
 h1, h2, h3 {
     text-align: center;
     margin: 20px 0;
@@ -149,7 +137,7 @@ button:hover, .btn:hover {
     margin-bottom: 10px;
 }
 
-/* ✅ INPUT CORRECTO */
+/* ✅ INPUT BIEN CENTRADO */
 #respuesta {
     width: 80%;
     max-width: 300px;
@@ -176,13 +164,16 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ OPCIONES (ARREGLADO - SIN IMPORTANT) */
+/* ✅ OPCIONES (SELECCIÓN FUNCIONANDO) */
 
+/* NORMAL */
 .opcion {
     background: #4fc3f7;
     color: white;
+    border: 2px solid #0288d1;
 }
 
+/* SELECCIONADA */
 .opcion.seleccionada {
     background: #0288d1;
 }

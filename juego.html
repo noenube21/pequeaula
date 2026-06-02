@@ -1,140 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+    <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 <meta charset="UTF-8">
-<title>Peque Aula - Juego</title>
+<title>Juego</title>
 
+<!-- ✅ TU CSS -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
+body{ text-align:center; }
 
-body{
-    text-align:center;
-}
+#pregunta{ font-size:24px; margin:20px; }
 
-/* Pregunta más visible */
-#pregunta{
-    font-size:32px;
-    font-weight:bold;
-    margin:25px 0;
-}
-
-/* Zona de respuestas */
-#zona{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:15px;
-}
-
-/* Input centrado */
-#respuesta{
-    display:block;
-    margin:15px auto;
-    padding:8px;
-    font-size:16px;
-}
-
-/* Botones centrados */
 #zona button{
     display:block;
     margin:8px auto;
 }
 
-/* Contenedor principal centrado */
-.contenedor-principal{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-}
-
+#respuesta{ margin:10px; }
 </style>
 
 </head>
 
 <body>
 
-<!-- Botón volver -->
-<button onclick="history.back()" class="btn-volver">
-⬅ Volver
-</button>
+<h2 id="tituloJuego"></h2>
+<div id="score">Puntos: 0</div>
 
-<div class="contenedor-principal">
+<div id="pregunta"></div>
+<div id="zona"></div>
 
-    <!-- Título general -->
-    <h1 class="titulo-app">
-        PEQUE AULA
-    </h1>
+<input id="respuesta">
+<button id="btnComprobar">Comprobar</button>
 
-    <!-- Título del juego -->
-    <h2 id="tituloJuego"></h2>
-
-    <!-- Score -->
-    <div id="score">
-        Puntos: 0
-    </div>
-
-    <!-- Pregunta -->
-    <div id="pregunta"></div>
-
-    <!-- Zona de opciones -->
-    <div id="zona"></div>
-
-    <!-- Respuesta -->
-    <input id="respuesta" autocomplete="off" placeholder="Escribe tu respuesta">
-
-    <!-- Botón comprobar -->
-    <button id="btnComprobar">
-        Comprobar
-    </button>
-
-    <!-- Resultado -->
-    <p id="resultado"></p>
-
-</div>
+<p id="resultado"></p>
 
 <script type="module">
-
-import {
-    iniciarJuego,
-    comprobar,
-    cargarDatosUsuario
-} from "./js/juegos-master.js";
+import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
 const params = new URLSearchParams(window.location.search);
-
 const materia = params.get("materia") || "matematicas";
 const nivel = params.get("nivel") || "1";
 
-const materiaBonita =
-    materia.charAt(0).toUpperCase() + materia.slice(1);
-
 document.getElementById("tituloJuego").innerText =
-    materiaBonita + " - Nivel " + nivel;
+    materia + " nivel " + nivel;
 
-// 🔥 FIX IMPORTANTE: envolver en async seguro
-(async () => {
+iniciarJuego(materia+nivel);
 
-    try {
-        await cargarDatosUsuario();
-    } catch (e) {
-        console.log("Error cargando usuario (no crítico):", e);
-    }
+document.getElementById("btnComprobar").onclick = comprobar;
 
-    // 🔥 FIX CLAVE: asegurar arranque del juego
-    iniciarJuego(materia + nivel);
-
-    document.getElementById("btnComprobar").onclick = comprobar;
-
-    document.getElementById("respuesta")
-    .addEventListener("keydown", (e) => {
-        if (e.key === "Enter") comprobar();
-    });
-
-})();
+document.getElementById("respuesta").addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") comprobar();
+});
 </script>
 
 </body>

@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
+    <meta charset="UTF-8">
+    <title>Juego</title>
+
+    <!-- ✅ TU CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- ✅ BOTÓN VOLVER -->
     <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
-<meta charset="UTF-8">
-<title>Juego</title>
 
-<!-- ✅ TU CSS -->
-<link rel="stylesheet" href="css/style.css">
+    <style>
+    body{ text-align:center; }
 
-<style>
-body{ text-align:center; }
+    #pregunta{ font-size:24px; margin:20px; }
 
-#pregunta{ font-size:24px; margin:20px; }
+    #zona button{
+        display:block;
+        margin:8px auto;
+    }
 
-#zona button{
-    display:block;
-    margin:8px auto;
-}
-
-#respuesta{ margin:10px; }
-</style>
+    /* ✅ FIX IMPORTANTE: INPUT AJUSTADO */
+    #respuesta{
+        margin:10px;
+        width:80%;
+        max-width:300px;
+        min-width:150px;
+        padding:8px;
+        font-size:16px;
+        border-radius:8px;
+    }
+    </style>
 
 </head>
 

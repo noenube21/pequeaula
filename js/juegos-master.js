@@ -1,4 +1,5 @@
 import { comprobarRecompensas } from "./recompensas.js";
+import { guardarProgreso as guardarFirestore, cargarProgreso } from "./progreso.js";
 
 // =======================================
 let preguntasRestantes = [];
@@ -8,12 +9,28 @@ let juegoActual = null;
 let claveActual = "";
 
 // ✅ PROGRESO GLOBAL
-let datos = JSON.parse(localStorage.getItem("progreso")) || {
+let datos = {
     aciertos: 0,
     puntos: 0
 };
 
-puntos = datos.puntos;
+// =======================================
+// 🔥 FIREBASE: CARGAR USUARIO
+export async function cargarDatosUsuario(){
+
+    const remoto = await cargarProgreso();
+
+    if(remoto){
+        datos = remoto;
+    }else{
+        datos = JSON.parse(localStorage.getItem("progreso")) || {
+            aciertos: 0,
+            puntos: 0
+        };
+    }
+
+    puntos = datos.puntos || 0;
+}
 
 // =======================================
 function limpiar(t){
@@ -55,17 +72,6 @@ function levenshtein(a, b){
 }
 
 // =======================================
-function animarResultado(el, ok){
-    el.style.transition = "0.3s";
-    el.style.transform = "scale(1.2)";
-    el.style.color = ok ? "green" : "red";
-
-    setTimeout(() => {
-        el.style.transform = "scale(1)";
-    }, 300);
-}
-
-// =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
@@ -74,9 +80,12 @@ function actualizarPuntos(){
 }
 
 // =======================================
-function guardarProgreso(){
+async function guardarTodo(){
     datos.puntos = puntos;
+
     localStorage.setItem("progreso", JSON.stringify(datos));
+
+    await guardarFirestore(datos);
 }
 
 // =======================================
@@ -123,71 +132,14 @@ const Juegos = {
             r:x[1],
             tipo:"input"
         }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[1]} =`,
-            r:x[0],
-            tipo:"test",
-            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
-        }))
-    },
-
-    castellano1:{
-        preguntas:[
-            "casa","mesa","mango","plato","huevo","lago"
-        ].map(p=>({
-            p:`${p[0]}__${p.slice(2)}`,
-            r:p,
-            tipo:"test",
-            opciones: generarOpciones(p,["casa","mesa","mango","pato","taza","mano"])
-        }))
-    },
-
-    castellano2:{
-        preguntas:[
-            {p:"M _ S A", r:"mesa", tipo:"letras", opciones:["e","o","i"]},
-            {p:"C _ M A", r:"cama", tipo:"letras", opciones:["a","o","e"]},
-            {p:"P _ T O", r:"pato", tipo:"letras", opciones:["a","e","i"]}
-        ]
-    },
-
-    castellano3:{
-        preguntas:[
-            {p:"¿Verbo?",r:"correr",tipo:"test",opciones:["correr","mesa","perro"]},
-            {p:"¿Sustantivo?",r:"mesa",tipo:"test",opciones:["mesa","leer","correr"]}
-        ]
-    },
-
-    ciencias1:{
-        preguntas:[
-            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
-            {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
-            {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
-        ]
-    },
-
-    ciencias2:{
-        preguntas:[
-            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
-            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
-            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
-            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
-            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
-            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
-        ]
     }
 };
 
 // =======================================
 export function iniciarJuego(key){
+
+    // ✅ RESET SIEMPRE (IMPORTANTE)
+    preguntasRestantes = [];
 
     claveActual = key;
     juegoActual = Juegos[key];
@@ -209,12 +161,6 @@ export function iniciarJuego(key){
 
     actualizarPuntos();
 
-    // ✅ FIX DEFINITIVO (SIEMPRE RECARGA PREGUNTAS CUANDO SE VACÍAN)
-    if(!preguntasRestantes.length){
-        preguntasRestantes = [...juegoActual.preguntas];
-    }
-
-    // ✅ matemáticas
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
         input.style.display="block";
@@ -222,38 +168,15 @@ export function iniciarJuego(key){
         return;
     }
 
-    if(!preguntasRestantes.length){
-        pregunta.innerText="Error cargando preguntas";
-        return;
-    }
+    preguntasRestantes = [...juegoActual.preguntas];
 
-    preguntaActual = preguntasRestantes.splice(
-        Math.floor(Math.random()*preguntasRestantes.length),1
-    )[0];
+    preguntaActual = preguntasRestantes[Math.floor(Math.random()*preguntasRestantes.length)];
 
     pregunta.innerText = preguntaActual.p;
 
-    zona.innerHTML="";
     input.style.display="none";
 
-    if(preguntaActual.tipo==="letras"){
-        input.style.display="block";
-
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
-
-            b.onclick=()=>{
-                input.value = preguntaActual.p
-                    .replace("_", op)
-                    .replace(/ /g,"");
-            };
-
-            zona.appendChild(b);
-        });
-    }
-
-    else if(preguntaActual.tipo==="input"){
+    if(preguntaActual.tipo==="input"){
         input.style.display="block";
     }
 
@@ -272,7 +195,7 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-export function comprobar(){
+export async function comprobar(){
 
     const r=limpiar(document.getElementById("respuesta").value);
     const ok=limpiar(preguntaActual.r);
@@ -288,9 +211,8 @@ export function comprobar(){
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
-    animarResultado(resultado, correcto);
     actualizarPuntos();
-    guardarProgreso();
+    await guardarTodo();
     comprobarRecompensas(datos.aciertos);
 
     setTimeout(()=>{

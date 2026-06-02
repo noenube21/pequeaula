@@ -160,7 +160,7 @@ const Juegos = {
         ]
     },
 
-    // ✅ CIENCIAS (AÑADIDO COMPLETO)
+    // ✅ ARREGLADO
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
@@ -203,6 +203,12 @@ export function iniciarJuego(key){
     resultado.innerHTML="";
     input.value="";
 
+    // ✅ FIX IMPORTANTE (evita pantalla vacía)
+    if(!juegoActual){
+        pregunta.innerText="Nivel no encontrado";
+        return;
+    }
+
     actualizarPuntos();
 
     if(juegoActual.generar){
@@ -214,6 +220,11 @@ export function iniciarJuego(key){
 
     if(!preguntasRestantes.length){
         preguntasRestantes = [...juegoActual.preguntas];
+    }
+
+    if(!preguntasRestantes || preguntasRestantes.length===0){
+        pregunta.innerText="Error cargando preguntas";
+        return;
     }
 
     preguntaActual = preguntasRestantes.splice(
@@ -229,15 +240,11 @@ export function iniciarJuego(key){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
-            b.className="btn opcion";
 
             b.onclick=()=>{
                 input.value = preguntaActual.p
                     .replace("_", op)
-                    .replace(/ /g,"")
-                    .toLowerCase();
-
-                seleccionar(b);
+                    .replace(/ /g,"");
             };
 
             zona.appendChild(b);
@@ -252,24 +259,14 @@ export function iniciarJuego(key){
         preguntaActual.opciones.forEach(op=>{
             const b=document.createElement("button");
             b.innerText=op;
-            b.className="btn opcion";
 
             b.onclick=()=>{
                 input.value = op;
-                seleccionar(b);
             };
 
             zona.appendChild(b);
         });
     }
-}
-
-// =======================================
-function seleccionar(btn){
-    document.querySelectorAll(".opcion").forEach(o=>{
-        o.classList.remove("seleccionada");
-    });
-    btn.classList.add("seleccionada");
 }
 
 // =======================================
@@ -282,16 +279,15 @@ export function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-        resultado.innerText="✔ Correcto";
         puntos++;
         datos.aciertos++;
+        resultado.innerText="✔ Correcto";
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);
     actualizarPuntos();
-
     guardarProgreso();
     comprobarRecompensas(datos.aciertos);
 
@@ -299,3 +295,4 @@ export function comprobar(){
         iniciarJuego(claveActual);
     },500);
 }
+``

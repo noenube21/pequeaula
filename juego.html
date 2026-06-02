@@ -1,58 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 <meta charset="UTF-8">
 <title>Juego</title>
 
-<!-- ✅ TU CSS -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-body{ text-align:center; }
+body{
+    text-align:center;
+}
 
-#pregunta{ font-size:24px; margin:20px; }
+#pregunta{
+    font-size:24px;
+    margin:20px;
+}
+
+#zona{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+#respuesta{
+    display:block;
+    margin:10px auto;
+}
 
 #zona button{
     display:block;
     margin:8px auto;
 }
-
-#respuesta{ margin:10px; }
 </style>
 
 </head>
 
 <body>
 
+<button onclick="history.back()" class="btn-volver">
+⬅ Volver
+</button>
+
 <h2 id="tituloJuego"></h2>
+
 <div id="score">Puntos: 0</div>
 
 <div id="pregunta"></div>
+
 <div id="zona"></div>
 
 <input id="respuesta">
-<button id="btnComprobar">Comprobar</button>
+
+<button id="btnComprobar">
+Comprobar
+</button>
 
 <p id="resultado"></p>
 
 <script type="module">
-import { iniciarJuego, comprobar } from "./js/juegos-master.js";
+
+import {
+    iniciarJuego,
+    comprobar
+} from "./js/juegos-master.js";
 
 const params = new URLSearchParams(window.location.search);
-const materia = params.get("materia") || "matematicas";
-const nivel = params.get("nivel") || "1";
+
+const materia =
+    params.get("materia") || "matematicas";
+
+const nivel =
+    params.get("nivel") || "1";
 
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
 
-iniciarJuego(materia+nivel);
+iniciarJuego(materia + nivel);
 
-document.getElementById("btnComprobar").onclick = comprobar;
+document.getElementById("btnComprobar").onclick =
+    comprobar;
 
-document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter") comprobar();
+document.getElementById("respuesta")
+.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter"){
+        comprobar();
+    }
+
 });
+
 </script>
 
 </body>

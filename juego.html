@@ -2,40 +2,36 @@
 <html lang="es">
 <head>
 
-    <meta charset="UTF-8">
-    <title>Juego</title>
+<meta charset="UTF-8">
+<title>Juego</title>
 
-    <!-- ✅ TU CSS -->
-    <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css">
 
-    <!-- ✅ BOTÓN VOLVER -->
-    <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
+<style>
+body{ text-align:center; }
 
-    <style>
-    body{ text-align:center; }
+#pregunta{ font-size:24px; margin:20px; }
 
-    #pregunta{ font-size:24px; margin:20px; }
+#zona button{
+    display:block;
+    margin:8px auto;
+}
 
-    #zona button{
-        display:block;
-        margin:8px auto;
-    }
-
-    /* ✅ FIX IMPORTANTE: INPUT AJUSTADO */
-    #respuesta{
-        margin:10px;
-        width:80%;
-        max-width:300px;
-        min-width:150px;
-        padding:8px;
-        font-size:16px;
-        border-radius:8px;
-    }
-    </style>
+/* ✅ INPUT BIEN (centrado y no gigante) */
+#respuesta{
+    width:80%;
+    max-width:300px;
+    min-width:150px;
+    margin:10px auto;
+    display:block;
+}
+</style>
 
 </head>
 
 <body>
+
+<button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 
 <h2 id="tituloJuego"></h2>
 <div id="score">Puntos: 0</div>
@@ -69,3 +65,4 @@ document.getElementById("respuesta").addEventListener("keydown",(e)=>{
 
 </body>
 </html>
+``

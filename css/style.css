@@ -1,132 +1,227 @@
 /* ================================== */
 /* RESET */
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 /* ================================== */
 /* BODY */
-body {
-    font-family: 'Poppins', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+body{
+    font-family:'Poppins',Arial,sans-serif;
 
-    background-image: url("../assets/img/fondo-escolar.png");
-    background-size: cover;
-    background-position: center;
+    background-image:url("../assets/img/fondo-escolar.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
 
-    background-repeat: no-repeat;     /* ✅ FIX fondo */
-    background-attachment: fixed;     /* ✅ FIX fondo */
-    min-height: 100vh;                /* ✅ FIX fondo */
+    min-height:100vh;
 
-    text-align: center;
+    text-align:center;
 }
 
 /* ================================== */
-/* TITULOS (TUYO + rojo) */
-h1, h2, h3 {
-    text-align: center;
-    margin: 20px 0;
-    color: #ff4d4d;
+/* TITULOS */
+h1,h2,h3{
+    text-align:center;
+    margin:20px 0;
+    color:#ff5a5a;
 }
 
 /* ================================== */
 /* BOTÓN VOLVER */
-.btn-volver {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+.btn-volver{
+    position:absolute;
+    top:20px;
+    left:20px;
 
-    background: #ff6f61;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
+    background:#ff6f61;
+    color:white;
+
+    padding:10px 15px;
+    border:none;
+    border-radius:12px;
+
+    cursor:pointer;
 }
 
 /* ================================== */
 /* BOTONES GENERALES */
-button, .btn {
-    background: #4fc3f7;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    margin: 5px;
-    transition: 0.2s;
+button,
+.btn{
+    background:#4fc3f7;
+    color:white;
+
+    padding:10px 15px;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    margin:5px;
+
+    transition:.2s;
 }
 
-button:hover, .btn:hover {
-    background: #0288d1;
+button:hover,
+.btn:hover{
+    background:#0288d1;
 }
 
 /* ================================== */
-/* MENÚ (SOLO alineación) */
-.card {
-    text-align: center;
+/* LOGIN */
+.login-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
 }
 
-.card h3 {
-    text-align: center;
-    margin-top: 10px;
+.login-box{
+    background:rgba(255,255,255,.95);
+
+    width:300px;
+
+    padding:25px;
+
+    border-radius:20px;
+    border:2px solid #ffcc4d;
+}
+
+.login-box input{
+    width:90%;
+    padding:10px;
+    margin:8px 0;
+
+    border-radius:10px;
+    border:2px solid #ffcc4d;
+}
+
+/* ================================== */
+/* MENU */
+.card-container{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:20px;
+
+    padding:20px;
+}
+
+.card{
+    background:white;
+
+    width:180px;
+
+    padding:15px;
+
+    border-radius:20px;
+    border:2px solid #ffcc4d;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.card:hover{
+    transform:scale(1.05);
+}
+
+.card img{
+    width:120px;
+    height:auto;
+    display:block;
+    margin:auto;
 }
 
 /* ================================== */
 /* JUEGO */
-.game-box {
-    background: rgba(255,255,255,0.95);
-    width: 320px;
-    padding: 20px;
-    border-radius: 20px;
-    border: 2px solid #ffcc4d;
-    margin: 30px auto;
-}
+.game-box{
+    background:rgba(255,255,255,.95);
 
-.pregunta {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
+    width:320px;
 
-#zona {
-    margin-bottom: 10px;
-}
+    padding:20px;
 
-/* INPUT */
-#respuesta {
-    width: 90%;
-    max-width: 300px;
-    padding: 8px;
-    margin: 10px auto;
-    border-radius: 10px;
-    border: 2px solid #ffcc4d;
-    display: block;
-}
+    border-radius:20px;
+    border:2px solid #ffcc4d;
 
-/* RESULTADO */
-#resultado {
-    margin-top: 10px;
-    font-weight: bold;
-}
+    margin:30px auto;
 
-#score {
-    font-size: 20px;
-    margin: 10px;
-    font-weight: bold;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 /* ================================== */
-/* OPCIONES (igual que tenías) */
-.opcion {
-    background: white;
-    color: black;
-    border: 2px solid #333;
+/* PREGUNTA */
+.pregunta{
+    font-size:22px;
+    margin-bottom:15px;
 }
 
-/* ✅ selección al hacer click */
-.opcion.seleccionada {
-    background: #4fc3f7;
-    color: white;
-    border: 2px solid #0288d1;
+/* ================================== */
+/* SCORE */
+#score{
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+/* ================================== */
+/* ZONA OPCIONES */
+#zona{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+/* ================================== */
+/* INPUT */
+#respuesta{
+    width:90%;
+    max-width:250px;
+
+    padding:10px;
+
+    border-radius:10px;
+    border:2px solid #ffcc4d;
+
+    display:block;
+    margin:10px auto;
+}
+
+/* ================================== */
+/* RESULTADO */
+#resultado{
+    margin-top:15px;
+    font-weight:bold;
+    font-size:18px;
+}
+
+/* ================================== */
+/* OPCIONES */
+.opcion{
+    width:120px;
+
+    background:white !important;
+    color:black !important;
+
+    border:2px solid #333 !important;
+
+    transition:.2s;
+}
+
+/* OPCION MARCADA */
+.opcion.seleccionada{
+    background:#4fc3f7 !important;
+    color:white !important;
+    border:2px solid #0288d1 !important;
 }

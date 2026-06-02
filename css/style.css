@@ -5,11 +5,7 @@
 }
 
 /* ================================== */
-/* BODY (✅ FONDO ARREGLADO) */
-html, body {
-    height: 100%;
-}
-
+/* BODY */
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -19,26 +15,20 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* ✅ CLAVE */
 
     text-align: center;
 }
 
 /* ================================== */
-/* ✅ TITULO ROJO BONITO (COMO QUIERES) */
-#tituloJuego {
-    color: #ff4d4d;
-    font-size: 30px;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-shadow: 2px 2px 0 white;
-}
-
-/* ================================== */
-/* TITULOS */
+/* ✅ TITULOS ROJOS (EN TODO) */
 h1, h2, h3 {
     text-align: center;
     margin: 20px 0;
+
+    color: #ff4d4d;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 /* ================================== */
@@ -57,7 +47,7 @@ h1, h2, h3 {
 }
 
 /* ================================== */
-/* BOTONES */
+/* BOTONES GENERALES */
 button, .btn {
     background: #4fc3f7;
     color: white;
@@ -80,17 +70,18 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ INPUT CENTRADO BIEN (FIX) */
+/* ✅ INPUT CENTRADO DE VERDAD */
 #respuesta {
     width: 80%;
     max-width: 300px;
     min-width: 150px;
 
     padding: 8px;
+
     margin: 10px auto;
 
-    display: block;     /* ✅ CLAVE CENTRADO */
-
+    display: block;          /* ✅ MUY IMPORTANTE */
+    
     border-radius: 10px;
     border: 2px solid #ffcc4d;
 }
@@ -110,14 +101,16 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ OPCIONES (SELECCIÓN BIEN) */
+/* ✅ OPCIONES (SELECCIÓN FUNCIONANDO) */
 
+/* NORMAL */
 .opcion {
     background: #4fc3f7;
     color: white;
-    border: 2px solid transparent;
+    border: none;
 }
 
+/* SELECCIONADA */
 .opcion.seleccionada {
     background: #0288d1;
 }

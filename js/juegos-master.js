@@ -255,18 +255,34 @@ export function iniciarJuego(key){
         input.style.display="block";
     }
 
-    else{
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
+else{
 
-            b.onclick=()=>{
-                input.value = op;
-            };
+    preguntaActual.opciones.forEach(op=>{
 
-            zona.appendChild(b);
-        });
-    }
+        const b=document.createElement("button");
+
+        b.innerText = op;
+
+        b.classList.add("opcion");
+
+        b.onclick = ()=>{
+
+            document
+            .querySelectorAll("#zona .opcion")
+            .forEach(btn=>{
+                btn.classList.remove("seleccionada");
+            });
+
+            b.classList.add("seleccionada");
+
+            input.value = op;
+        };
+
+        zona.appendChild(b);
+
+    });
+
+}
 }
 
 // =======================================

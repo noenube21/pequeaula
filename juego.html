@@ -106,38 +106,35 @@ import {
 
 const params = new URLSearchParams(window.location.search);
 
-const materia =
-    params.get("materia") || "matematicas";
+const materia = params.get("materia") || "matematicas";
+const nivel = params.get("nivel") || "1";
 
-const nivel =
-    params.get("nivel") || "1";
-
-/* Título bonito */
 const materiaBonita =
-    materia.charAt(0).toUpperCase() +
-    materia.slice(1);
+    materia.charAt(0).toUpperCase() + materia.slice(1);
 
 document.getElementById("tituloJuego").innerText =
     materiaBonita + " - Nivel " + nivel;
 
-/* Cargar usuario */
-await cargarDatosUsuario();
+// 🔥 FIX IMPORTANTE: envolver en async seguro
+(async () => {
 
-/* ❌ ARREGLADO: estaba duplicado */
-iniciarJuego(materia + nivel);
-
-/* Botón comprobar */
-document.getElementById("btnComprobar").onclick =
-    comprobar;
-
-/* Enter para comprobar */
-document.getElementById("respuesta")
-.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        comprobar();
+    try {
+        await cargarDatosUsuario();
+    } catch (e) {
+        console.log("Error cargando usuario (no crítico):", e);
     }
-});
 
+    // 🔥 FIX CLAVE: asegurar arranque del juego
+    iniciarJuego(materia + nivel);
+
+    document.getElementById("btnComprobar").onclick = comprobar;
+
+    document.getElementById("respuesta")
+    .addEventListener("keydown", (e) => {
+        if (e.key === "Enter") comprobar();
+    });
+
+})();
 </script>
 
 </body>

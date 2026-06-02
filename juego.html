@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 <meta charset="UTF-8">
 <title>Juego</title>
 
+<!-- ✅ TU CSS -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
@@ -17,21 +18,12 @@ body{ text-align:center; }
     margin:8px auto;
 }
 
-/* ✅ INPUT BIEN (centrado y no gigante) */
-#respuesta{
-    width:80%;
-    max-width:300px;
-    min-width:150px;
-    margin:10px auto;
-    display:block;
-}
+#respuesta{ margin:10px; }
 </style>
 
 </head>
 
 <body>
-
-<button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 
 <h2 id="tituloJuego"></h2>
 <div id="score">Puntos: 0</div>
@@ -65,4 +57,3 @@ document.getElementById("respuesta").addEventListener("keydown",(e)=>{
 
 </body>
 </html>
-``

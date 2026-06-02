@@ -1,3 +1,8 @@
+import {
+    guardarProgreso,
+    cargarProgreso
+} from "./progreso-db.js";
+
 import { comprobarRecompensas } from "./recompensas.js";
 
 // =======================================
@@ -74,9 +79,33 @@ function actualizarPuntos(){
 }
 
 // =======================================
-function guardarProgreso(){
+async function guardarProgreso(){
+
     datos.puntos = puntos;
-    localStorage.setItem("progreso", JSON.stringify(datos));
+
+    // Sigue guardando localmente
+    localStorage.setItem(
+        "progreso",
+        JSON.stringify(datos)
+    );
+
+    // Guarda en Firestore
+    try{
+
+        await guardarProgresoDB({
+            puntos: datos.puntos,
+            aciertos: datos.aciertos,
+            ultimaSesion: new Date().toISOString()
+        });
+
+    }catch(error){
+
+        console.error(
+            "Error guardando en Firestore:",
+            error
+        );
+
+    }
 }
 
 // =======================================

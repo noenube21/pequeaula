@@ -15,16 +15,19 @@ body {
     background-size: cover;
     background-position: center;
 
+    background-repeat: no-repeat;     /* ✅ FIX fondo */
+    background-attachment: fixed;     /* ✅ FIX fondo */
+    min-height: 100vh;                /* ✅ FIX fondo */
+
     text-align: center;
 }
 
 /* ================================== */
-/* ✅ TITULOS (ROJOS SOLO TEXTO, NO DISEÑO) */
+/* TITULOS (TUYO + rojo) */
 h1, h2, h3 {
     text-align: center;
     margin: 20px 0;
-
-    color: #ff4d4d;   /* ✅ SOLO ESTO AÑADIDO */
+    color: #ff4d4d;
 }
 
 /* ================================== */
@@ -60,58 +63,14 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* LOGIN (NO TOCADO) */
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.login-box {
-    background: rgba(255,255,255,0.9);
-    width: 300px;
-    padding: 25px;
-    border-radius: 20px;
-    border: 2px solid #ffcc4d;
-}
-
-.login-box input {
-    width: 90%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 10px;
-    border: 2px solid #ffcc4d;
-}
-
-/* ================================== */
-/* MENÚ (NO TOCADO) */
-.card-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
+/* MENÚ (SOLO alineación) */
 .card {
-    background: white;
-    width: 180px;
-    padding: 15px;
-    border-radius: 20px;
-    border: 2px solid #ffcc4d;
     text-align: center;
-    cursor: pointer;
 }
 
-.card:hover {
-    transform: scale(1.05);
-}
-
-.card img {
-    width: 120px;
-    height: auto;
-    display: block;
-    margin: auto;
+.card h3 {
+    text-align: center;
+    margin-top: 10px;
 }
 
 /* ================================== */
@@ -134,19 +93,18 @@ button:hover, .btn:hover {
     margin-bottom: 10px;
 }
 
-/* ================================== */
-/* ✅ INPUT ARREGLADO (SIN CAMBIAR DISEÑO) */
+/* INPUT */
 #respuesta {
     width: 90%;
-    max-width: 300px;   /* ✅ añadido */
+    max-width: 300px;
     padding: 8px;
     margin: 10px auto;
     border-radius: 10px;
     border: 2px solid #ffcc4d;
-    display: block;     /* ✅ clave centrar */
+    display: block;
 }
 
-/* ================================== */
+/* RESULTADO */
 #resultado {
     margin-top: 10px;
     font-weight: bold;
@@ -159,13 +117,14 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ SELECCIÓN ARREGLADA (SOLO QUITAR IMPORTANT) */
+/* OPCIONES (igual que tenías) */
 .opcion {
     background: white;
     color: black;
     border: 2px solid #333;
 }
 
+/* ✅ selección al hacer click */
 .opcion.seleccionada {
     background: #4fc3f7;
     color: white;

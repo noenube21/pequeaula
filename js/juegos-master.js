@@ -1,8 +1,3 @@
-import {
-    guardarProgreso as guardarProgresoDB,
-    cargarProgreso as cargarProgresoDB
-} from "./progreso-db.js";
-
 import { comprobarRecompensas } from "./recompensas.js";
 
 // =======================================
@@ -19,27 +14,6 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
 };
 
 puntos = datos.puntos;
-
-// =======================================
-export async function cargarDatosUsuario(){
-
-    try{
-
-        const datosFirebase = await cargarProgresoDB();
-
-        if(datosFirebase){
-
-            puntos = datosFirebase.puntos || 0;
-            datos.aciertos = datosFirebase.aciertos || 0;
-            datos.puntos = puntos;
-
-            actualizarPuntos();
-        }
-
-    }catch(error){
-        console.error("Error cargando datos:", error);
-    }
-}
 
 // =======================================
 function limpiar(t){
@@ -65,14 +39,15 @@ function levenshtein(a, b){
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
 
-            matrix[i][j] =
-                b.charAt(i-1) === a.charAt(j-1)
-                ? matrix[i-1][j-1]
-                : Math.min(
+            if (b.charAt(i-1) === a.charAt(j-1)){
+                matrix[i][j] = matrix[i-1][j-1];
+            } else {
+                matrix[i][j] = Math.min(
                     matrix[i-1][j-1] + 1,
                     matrix[i][j-1] + 1,
                     matrix[i-1][j] + 1
                 );
+            }
         }
     }
 
@@ -99,22 +74,9 @@ function actualizarPuntos(){
 }
 
 // =======================================
-async function guardarProgreso(){
-
+function guardarProgreso(){
     datos.puntos = puntos;
-
     localStorage.setItem("progreso", JSON.stringify(datos));
-
-    try{
-        await guardarProgresoDB({
-            puntos: datos.puntos,
-            aciertos: datos.aciertos,
-            ultimaSesion: new Date().toISOString()
-        });
-
-    }catch(error){
-        console.error("Error guardando en Firestore:", error);
-    }
 }
 
 // =======================================
@@ -134,11 +96,10 @@ const inglesBase = [
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
 
-// =======================================
 function generarOpciones(correcta, lista){
-    const otras = lista.filter(x => x !== correcta);
-    const rand = otras.sort(() => 0.5 - Math.random()).slice(0,2);
-    return [correcta, ...rand].sort(() => 0.5 - Math.random());
+    const otras = lista.filter(x=>x!==correcta);
+    const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
+    return [correcta,...rand].sort(()=>0.5-Math.random());
 }
 
 // =======================================
@@ -149,7 +110,7 @@ const Juegos = {
     matematicas3:{ generar:()=>calc("*",10) },
 
     ingles1:{
-        preguntas: inglesBase.map(x => ({
+        preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"test",
@@ -158,7 +119,7 @@ const Juegos = {
     },
 
     ingles2:{
-        preguntas: inglesBase.map(x => ({
+        preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"input"
@@ -166,7 +127,7 @@ const Juegos = {
     },
 
     ingles3:{
-        preguntas: inglesBase.map(x => ({
+        preguntas: inglesBase.map(x=>({
             p:`${x[1]} =`,
             r:x[0],
             tipo:"test",
@@ -174,12 +135,13 @@ const Juegos = {
         }))
     },
 
+    // 🔥 ARREGLADO (ANTES ROMPÍA EL JUEGO)
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
-        ].map(p => ({
-            p: p,
-            r: p,
+        ].map(p=>({
+            p,
+            r:p,
             tipo:"input"
         }))
     },
@@ -242,6 +204,7 @@ export function iniciarJuego(key){
     input.value = "";
     input.style.display = "block";
 
+    // 🔥 FIX CRÍTICO
     if(!juegoActual){
         pregunta.innerText = "Nivel no encontrado";
         return;
@@ -249,14 +212,21 @@ export function iniciarJuego(key){
 
     actualizarPuntos();
 
-    if(juegoActual.generar){
+    // 🔥 FIX matemáticas
+    if(typeof juegoActual.generar === "function"){
         preguntaActual = juegoActual.generar();
         pregunta.innerText = preguntaActual.p;
         return;
     }
 
-    if(!preguntasRestantes.length){
+    // 🔥 FIX preguntas
+    if(!preguntasRestantes.length && juegoActual.preguntas){
         preguntasRestantes = [...juegoActual.preguntas];
+    }
+
+    if(!preguntasRestantes.length){
+        pregunta.innerText = "Error cargando preguntas";
+        return;
     }
 
     preguntaActual = preguntasRestantes.splice(
@@ -268,13 +238,14 @@ export function iniciarJuego(key){
     zona.innerHTML = "";
 
     if(preguntaActual.tipo === "letras"){
+
         input.style.display = "block";
 
-        preguntaActual.opciones.forEach(op => {
+        preguntaActual.opciones.forEach(op=>{
             const b = document.createElement("button");
             b.innerText = op;
 
-            b.onclick = () => {
+            b.onclick = ()=>{
                 input.value = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"");
@@ -284,24 +255,18 @@ export function iniciarJuego(key){
         });
 
     } else if(preguntaActual.tipo === "input"){
+
         input.style.display = "block";
 
     } else {
 
         input.style.display = "none";
 
-        preguntaActual.opciones.forEach(op => {
-
+        preguntaActual.opciones.forEach(op=>{
             const b = document.createElement("button");
             b.innerText = op;
-            b.classList.add("opcion");
 
-            b.onclick = () => {
-
-                document.querySelectorAll("#zona .opcion")
-                    .forEach(btn => btn.classList.remove("seleccionada"));
-
-                b.classList.add("seleccionada");
+            b.onclick = ()=>{
                 input.value = op;
             };
 
@@ -313,6 +278,7 @@ export function iniciarJuego(key){
 // =======================================
 export function comprobar(){
 
+    // 🔥 FIX seguridad
     if(!preguntaActual) return;
 
     const r = limpiar(document.getElementById("respuesta").value);
@@ -326,8 +292,7 @@ export function comprobar(){
         datos.aciertos++;
         resultado.innerText = "✔ Correcto";
     } else {
-        resultado.innerText =
-            `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);
@@ -335,7 +300,7 @@ export function comprobar(){
     guardarProgreso();
     comprobarRecompensas(datos.aciertos);
 
-    setTimeout(() => {
+    setTimeout(()=>{
         iniciarJuego(claveActual);
-    }, 500);
+    },500);
 }

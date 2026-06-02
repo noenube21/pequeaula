@@ -1,6 +1,6 @@
 import {
-    guardarProgreso,
-    cargarProgreso
+    guardarProgreso as guardarProgresoDB,
+    cargarProgreso as cargarProgresoDB
 } from "./progreso-db.js";
 
 import { comprobarRecompensas } from "./recompensas.js";
@@ -19,6 +19,34 @@ let datos = JSON.parse(localStorage.getItem("progreso")) || {
 };
 
 puntos = datos.puntos;
+export async function cargarDatosUsuario(){
+
+    try{
+
+        const datosFirebase =
+            await cargarProgresoDB();
+
+        if(datosFirebase){
+
+            puntos = datosFirebase.puntos || 0;
+
+            datos.aciertos =
+                datosFirebase.aciertos || 0;
+
+            datos.puntos = puntos;
+
+            actualizarPuntos();
+        }
+
+    }catch(error){
+
+        console.error(
+            "Error cargando datos:",
+            error
+        );
+
+    }
+}
 
 // =======================================
 function limpiar(t){

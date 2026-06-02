@@ -1,46 +1,18 @@
 /* ================================== */
-/* RESET */
-/* ================================== */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-/* ================================== */
-/* BODY */
-/* ================================== */
-
-body{
-    font-family:'Poppins', Arial, sans-serif;
-
-    background-image:url("../assets/img/fondo-escolar.png");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-
-    min-height:100vh;
-
-    text-align:center;
-}
-
-/* ================================== */
 /* CONTENEDOR GENERAL */
 /* ================================== */
 
 .contenedor-principal{
     width:90%;
-    max-width:1000px;
+    max-width:1100px;
 
-    margin:30px auto;
+    margin:50px auto;
 
     background:rgba(255,255,255,0.92);
 
     border-radius:25px;
 
-    padding:30px;
+    padding:40px;
 
     box-shadow:0 0 20px rgba(0,0,0,0.15);
 }
@@ -50,17 +22,41 @@ body{
 /* ================================== */
 
 .titulo-app{
-    font-size:50px;
-    font-weight:bold;
+    font-size:72px;
+    font-weight:900;
 
     color:#ff3b3b;
 
     text-align:center;
 
-    margin-bottom:25px;
+    margin-top:10px;
+    margin-bottom:20px;
 
-    text-shadow:2px 2px 4px rgba(0,0,0,0.15);
+    text-transform:uppercase;
+    letter-spacing:2px;
+
+    text-shadow:
+        3px 3px 0px #ffb3b3,
+        6px 6px 10px rgba(0,0,0,0.15);
 }
+
+/* ================================== */
+/* SUBTITULO MENU */
+/* ================================== */
+
+.subtitulo-menu{
+    margin-top:30px;
+    margin-bottom:40px;
+
+    font-size:42px;
+    font-weight:bold;
+
+    color:#ff6b5a;
+}
+
+/* ================================== */
+/* TITULOS GENERALES */
+/* ================================== */
 
 h1,h2,h3{
     text-align:center;
@@ -69,85 +65,61 @@ h1,h2,h3{
 }
 
 /* ================================== */
-/* BOTON VOLVER */
+/* TITULO NIVELES */
 /* ================================== */
 
-.btn-volver{
-    position:fixed;
+.titulo-niveles{
+    width:80%;
+    max-width:700px;
 
-    top:20px;
-    left:20px;
+    margin:60px auto 40px auto;
 
-    background:#ff6f61;
-    color:white;
+    background:rgba(255,255,255,0.92);
 
-    border:none;
-    border-radius:12px;
+    padding:20px;
 
-    padding:10px 15px;
+    border-radius:20px;
 
-    cursor:pointer;
-
-    z-index:999;
+    color:#ff5a5a;
+    font-size:38px;
+    font-weight:bold;
 }
 
 /* ================================== */
-/* BOTONES GENERALES */
+/* NIVELES */
 /* ================================== */
 
-button,
-.btn{
-    background:#4fc3f7;
-    color:white;
-
-    border:none;
-    border-radius:10px;
-
-    padding:10px 15px;
-
-    cursor:pointer;
-
-    transition:0.2s;
-}
-
-button:hover,
-.btn:hover{
-    background:#0288d1;
-}
-
-/* ================================== */
-/* LOGIN */
-/* ================================== */
-
-.login-container{
+.niveles-container{
     display:flex;
     justify-content:center;
     align-items:center;
 
-    min-height:100vh;
+    flex-wrap:wrap;
+
+    gap:30px;
+
+    margin-top:30px;
 }
 
-.login-box{
-    width:320px;
+.btn-nivel{
+    width:180px;
+    height:120px;
 
-    background:rgba(255,255,255,0.95);
+    font-size:30px;
+    font-weight:bold;
 
-    padding:25px;
+    border-radius:25px;
 
-    border-radius:20px;
+    background:white;
+    color:#ff5a5a;
 
-    border:2px solid #ffcc4d;
+    border:3px solid #ffcc4d;
+
+    transition:0.2s;
 }
 
-.login-box input{
-    width:90%;
-
-    padding:10px;
-
-    margin:10px 0;
-
-    border-radius:10px;
-    border:2px solid #ffcc4d;
+.btn-nivel:hover{
+    transform:scale(1.05);
 }
 
 /* ================================== */
@@ -156,20 +128,19 @@ button:hover,
 
 .card-container{
     display:flex;
-
     justify-content:center;
     flex-wrap:wrap;
 
-    gap:20px;
+    gap:25px;
 
-    margin-top:20px;
+    margin-top:30px;
 }
 
 .card{
     background:white;
 
-    width:180px;
-    min-height:210px;
+    width:190px;
+    min-height:230px;
 
     border-radius:20px;
 
@@ -196,172 +167,13 @@ button:hover,
 .card img{
     width:120px;
     height:auto;
-
-    display:block;
-
-    margin:auto;
 }
 
 .card h3{
     margin-top:15px;
 
-    font-size:28px;
+    font-size:30px;
+    font-weight:bold;
 
     color:#ff5a5a;
-}
-
-/* ================================== */
-/* JUEGO */
-/* ================================== */
-
-.game-box{
-    width:420px;
-
-    background:rgba(255,255,255,0.95);
-
-    margin:20px auto;
-
-    padding:25px;
-
-    border-radius:20px;
-
-    border:2px solid #ffcc4d;
-}
-
-/* ================================== */
-/* TITULO DEL JUEGO */
-/* ================================== */
-
-#tituloJuego{
-    font-size:40px;
-    font-weight:bold;
-}
-
-/* ================================== */
-/* PUNTOS */
-/* ================================== */
-
-#score{
-    font-size:32px;
-    font-weight:bold;
-
-    margin:20px 0;
-
-    color:black;
-}
-
-/* ================================== */
-/* PREGUNTA */
-/* ================================== */
-
-#pregunta{
-    font-size:32px;
-    font-weight:bold;
-
-    margin:25px 0;
-
-    color:black;
-}
-
-/* ================================== */
-/* OPCIONES */
-/* ================================== */
-
-#zona{
-    display:flex;
-    flex-direction:column;
-
-    align-items:center;
-
-    gap:15px;
-
-    margin-bottom:20px;
-}
-
-.opcion{
-    min-width:140px;
-
-    background:white !important;
-    color:black !important;
-
-    border:2px solid #333 !important;
-}
-
-.opcion.seleccionada{
-    background:#4fc3f7 !important;
-    color:white !important;
-
-    border:2px solid #0288d1 !important;
-}
-
-/* ================================== */
-/* INPUT */
-/* ================================== */
-
-#respuesta{
-    display:block;
-
-    width:250px;
-
-    margin:15px auto;
-
-    padding:10px;
-
-    border-radius:10px;
-
-    border:2px solid #ffcc4d;
-}
-
-/* ================================== */
-/* BOTON COMPROBAR */
-/* ================================== */
-
-#btnComprobar{
-    margin-top:10px;
-}
-
-/* ================================== */
-/* RESULTADO */
-/* ================================== */
-
-#resultado{
-    margin-top:20px;
-
-    font-size:22px;
-    font-weight:bold;
-}
-
-/* ================================== */
-/* RESPONSIVE */
-/* ================================== */
-
-@media(max-width:768px){
-
-    .titulo-app{
-        font-size:36px;
-    }
-
-    .card{
-        width:150px;
-    }
-
-    .card img{
-        width:90px;
-    }
-
-    #tituloJuego{
-        font-size:28px;
-    }
-
-    #pregunta{
-        font-size:24px;
-    }
-
-    #score{
-        font-size:24px;
-    }
-
-    .game-box{
-        width:95%;
-    }
 }

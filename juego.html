@@ -1,59 +1,247 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 <meta charset="UTF-8">
 <title>Juego</title>
 
-<!-- ✅ TU CSS -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-body{ text-align:center; }
+body{
+    text-align:center;
+}
 
-#pregunta{ font-size:24px; margin:20px; }
+#pregunta{
+    font-size:24px;
+    margin:20px;
+}
+
+#zona{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+}
+
+#respuesta{
+    display:block;
+    margin:10px auto;
+}
 
 #zona button{
     display:block;
     margin:8px auto;
 }
-
-#respuesta{ margin:10px; }
 </style>
 
 </head>
 
 <body>
 
+<button onclick="history.back()" class="btn-volver">
+⬅ Volver
+</button>
+
 <h2 id="tituloJuego"></h2>
+
 <div id="score">Puntos: 0</div>
 
 <div id="pregunta"></div>
+
 <div id="zona"></div>
 
 <input id="respuesta">
-<button id="btnComprobar">Comprobar</button>
+
+<button id="btnComprobar">
+Comprobar
+</button>
 
 <p id="resultado"></p>
 
 <script type="module">
-import { iniciarJuego, comprobar } from "./js/juegos-master.js";
+
+import {
+    iniciarJuego,
+    comprobar
+} from "./js/juegos-master.js";
 
 const params = new URLSearchParams(window.location.search);
-const materia = params.get("materia") || "matematicas";
-const nivel = params.get("nivel") || "1";
+
+const materia =
+    params.get("materia") || "matematicas";
+
+const nivel =
+    params.get("nivel") || "1";
 
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
 
-iniciarJuego(materia+nivel);
+iniciarJuego(materia + nivel);
 
-document.getElementById("btnComprobar").onclick = comprobar;
+document.getElementById("btnComprobar").onclick =
+    comprobar;
 
-document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter") comprobar();
+document.getElementById("respuesta")
+.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter"){
+        comprobar();
+    }
+
 });
+
 </script>
 
 </body>
 </html>
+
+Para que el juego tenga el mismo aspecto que el menú y quede centrado dentro del recuadro blanco, sustituye tu juego.html por este:
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<title>Peque Aula - Juego</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+#pregunta{
+    font-size:32px;
+    font-weight:bold;
+    margin:25px 0;
+}
+
+#zona{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:15px;
+}
+
+#respuesta{
+    display:block;
+    margin:15px auto;
+}
+
+#zona button{
+    display:block;
+    margin:8px auto;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<button onclick="history.back()" class="btn-volver">
+⬅ Volver
+</button>
+
+<div class="contenedor-principal">
+
+    <h1 class="titulo-app">
+        PEQUE AULA
+    </h1>
+
+    <h2 id="tituloJuego"></h2>
+
+    <div id="score">
+        Puntos: 0
+    </div>
+
+    <div id="pregunta"></div>
+
+    <div id="zona"></div>
+
+    <input id="respuesta">
+
+    <button id="btnComprobar">
+        Comprobar
+    </button>
+
+    <p id="resultado"></p>
+
+</div>
+
+<script type="module">
+
+import {
+    iniciarJuego,
+    comprobar
+} from "./js/juegos-master.js";
+
+const params = new URLSearchParams(window.location.search);
+
+const materia =
+    params.get("materia") || "matematicas";
+
+const nivel =
+    params.get("nivel") || "1";
+
+/* Primera letra mayúscula */
+const materiaBonita =
+    materia.charAt(0).toUpperCase() +
+    materia.slice(1);
+
+document.getElementById("tituloJuego").innerText =
+    materiaBonita + " - Nivel " + nivel;
+
+iniciarJuego(materia + nivel);
+
+document.getElementById("btnComprobar").onclick =
+    comprobar;
+
+document.getElementById("respuesta")
+.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Enter"){
+        comprobar();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
+
+Y para la página donde eliges asignaturas (menu.html), usa arriba:
+
+<h1 class="titulo-app">
+    PEQUE AULA
+</h1>
+
+<h2 class="subtitulo-menu">
+    ¿Qué quieres practicar hoy?
+</h2>
+
+Y para la página de niveles:
+
+<div class="contenedor-principal">
+
+    <h1 class="titulo-app">
+        PEQUE AULA
+    </h1>
+
+    <h2 class="titulo-niveles">
+        Elige un nivel de Ciencias
+    </h2>
+
+    <div class="niveles-container">
+
+        <button class="btn-nivel">Nivel 1</button>
+
+        <button class="btn-nivel">Nivel 2</button>
+
+        <button class="btn-nivel">Nivel 3</button>
+
+    </div>
+
+</div>
+
+Con esto todas las páginas tendrán el mismo diseño: título rojo grande arriba, contenido centrado y sin que los dibujos del fondo se mezclen con los textos.

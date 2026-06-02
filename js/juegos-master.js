@@ -1,4 +1,5 @@
- import { comprobarRecompensas } from "./recompensas.js";
+import { comprobarRecompensas } from "./recompensas.js";
+
 // =======================================
 let preguntasRestantes = [];
 let puntos = 0;
@@ -6,13 +7,12 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// ✅ PROGRESO GLOBAL (AÑADIDO BIEN)
+// ✅ PROGRESO GLOBAL
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
 };
 
-// ✅ IMPORTANTE → después de declarar puntos
 puntos = datos.puntos;
 
 // =======================================
@@ -48,7 +48,6 @@ function levenshtein(a, b){
                     matrix[i-1][j] + 1
                 );
             }
-
         }
     }
 
@@ -74,7 +73,7 @@ function actualizarPuntos(){
     }
 }
 
-// ✅ NUEVO
+// =======================================
 function guardarProgreso(){
     datos.puntos = puntos;
     localStorage.setItem("progreso", JSON.stringify(datos));
@@ -161,11 +160,29 @@ const Juegos = {
         ]
     },
 
+    // ✅ CIENCIAS (AÑADIDO COMPLETO)
     ciencias1:{
         preguntas:[
             {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
+        ]
+    },
+
+    ciencias2:{
+        preguntas:[
+            {p:"¿Forma de la Tierra?",r:"redonda",tipo:"test",opciones:["redonda","plana","cuadrada"]},
+            {p:"¿Dónde viven los peces?",r:"agua",tipo:"test",opciones:["agua","aire","tierra"]},
+            {p:"¿El sol es?",r:"estrella",tipo:"test",opciones:["estrella","planeta","luna"]}
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
+            {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
+            {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
         ]
     }
 };
@@ -186,9 +203,7 @@ export function iniciarJuego(key){
     resultado.innerHTML="";
     input.value="";
 
-    input.focus();
-
-    actualizarPuntos(); // ✅ importante
+    actualizarPuntos();
 
     if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
@@ -217,12 +232,11 @@ export function iniciarJuego(key){
             b.className="btn opcion";
 
             b.onclick=()=>{
-                let palabra = preguntaActual.p
+                input.value = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"")
                     .toLowerCase();
 
-                input.value = palabra;
                 seleccionar(b);
             };
 
@@ -270,7 +284,7 @@ export function comprobar(){
     if(correcto){
         resultado.innerText="✔ Correcto";
         puntos++;
-        datos.aciertos++; // ✅ clave
+        datos.aciertos++;
     }else{
         resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
@@ -278,10 +292,10 @@ export function comprobar(){
     animarResultado(resultado, correcto);
     actualizarPuntos();
 
-    guardarProgreso(); // ✅ guardar
-    comprobarRecompensas(datos.aciertos); // ✅ recompensas
+    guardarProgreso();
+    comprobarRecompensas(datos.aciertos);
 
     setTimeout(()=>{
         iniciarJuego(claveActual);
-    },1000);
+    },500);
 }

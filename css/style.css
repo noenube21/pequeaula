@@ -15,18 +15,16 @@ body {
     background-size: cover;
     background-position: center;
 
-    text-align: center; /* ✅ centra todo texto */
+    text-align: center;
 }
 
 /* ================================== */
-/* ✅ TITULOS (AHORA ROJOS) */
+/* ✅ TITULOS (ROJOS SOLO TEXTO, NO DISEÑO) */
 h1, h2, h3 {
     text-align: center;
     margin: 20px 0;
 
-    color: #ff4d4d;          /* ✅ añadido */
-    text-transform: uppercase; /* ✅ */
-    font-weight: bold;       /* ✅ */
+    color: #ff4d4d;   /* ✅ SOLO ESTO AÑADIDO */
 }
 
 /* ================================== */
@@ -62,7 +60,7 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* LOGIN */
+/* LOGIN (NO TOCADO) */
 .login-container {
     display: flex;
     justify-content: center;
@@ -87,7 +85,7 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* MENÚ */
+/* MENÚ (NO TOCADO) */
 .card-container {
     display: flex;
     justify-content: center;
@@ -109,7 +107,6 @@ button:hover, .btn:hover {
     transform: scale(1.05);
 }
 
-/* 🔥 IMÁGENES CONTROLADAS */
 .card img {
     width: 120px;
     height: auto;
@@ -125,40 +122,36 @@ button:hover, .btn:hover {
     padding: 20px;
     border-radius: 20px;
     border: 2px solid #ffcc4d;
-    margin: 30px auto; /* ✅ centra */
+    margin: 30px auto;
 }
 
-/* PREGUNTA */
 .pregunta {
     font-size: 18px;
     margin-bottom: 15px;
 }
 
-/* ZONA BOTONES */
 #zona {
     margin-bottom: 10px;
 }
 
 /* ================================== */
-/* ✅ INPUT (CENTRADO BIEN) */
+/* ✅ INPUT ARREGLADO (SIN CAMBIAR DISEÑO) */
 #respuesta {
     width: 90%;
-    max-width: 300px;        /* ✅ añadido */
+    max-width: 300px;   /* ✅ añadido */
     padding: 8px;
     margin: 10px auto;
     border-radius: 10px;
     border: 2px solid #ffcc4d;
-    display: block;          /* ✅ CLAVE */
+    display: block;     /* ✅ clave centrar */
 }
 
 /* ================================== */
-/* RESULTADO */
 #resultado {
     margin-top: 10px;
     font-weight: bold;
 }
 
-/* SCORE */
 #score {
     font-size: 20px;
     margin: 10px;
@@ -166,19 +159,15 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ OPCIONES (SELECCIÓN FUNCIONA) */
-
-/* NORMAL */
+/* ✅ SELECCIÓN ARREGLADA (SOLO QUITAR IMPORTANT) */
 .opcion {
     background: white;
     color: black;
     border: 2px solid #333;
 }
 
-/* SELECCIONADA */
 .opcion.seleccionada {
     background: #4fc3f7;
     color: white;
     border: 2px solid #0288d1;
 }
-``

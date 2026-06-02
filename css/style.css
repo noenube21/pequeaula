@@ -19,6 +19,20 @@ body {
 }
 
 /* ================================== */
+/* ✅ TITULO BONITO (AÑADIDO) */
+#tituloJuego {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 32px;
+    color: #ff6f61;
+
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    text-shadow: 2px 2px 0 white,
+                 4px 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ================================== */
 /* TITULOS */
 h1, h2, h3 {
     text-align: center;
@@ -135,7 +149,7 @@ button:hover, .btn:hover {
     margin-bottom: 10px;
 }
 
-/* ✅ ✅ ✅ INPUT ARREGLADO (LO IMPORTANTE) */
+/* ✅ INPUT CORRECTO */
 #respuesta {
     width: 80%;
     max-width: 300px;
@@ -145,6 +159,7 @@ button:hover, .btn:hover {
     border-radius: 10px;
     border: 2px solid #ffcc4d;
     font-size: 16px;
+    display: block;
 }
 
 /* RESULTADO */
@@ -161,16 +176,13 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* OPCIONES */
+/* ✅ OPCIONES (ARREGLADO - SIN IMPORTANT) */
+
 .opcion {
-    background: white !important;
-    color: black !important;
-    border: 2px solid #333 !important;
+    background: #4fc3f7;
+    color: white;
 }
 
-/* OPCIÓN SELECCIONADA */
 .opcion.seleccionada {
-    background: #4fc3f7 !important;
-    color: white !important;
-    border: 2px solid #0288d1 !important;
+    background: #0288d1;
 }

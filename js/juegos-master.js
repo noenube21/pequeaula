@@ -135,7 +135,6 @@ const Juegos = {
         }))
     },
 
-    // 🔥 ARREGLADO (ANTES ROMPÍA EL JUEGO)
     castellano1:{
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
@@ -190,6 +189,11 @@ const Juegos = {
 // =======================================
 export function iniciarJuego(key){
 
+    // ✅ FIX: reset solo si cambia de nivel
+    if(claveActual !== key){
+        preguntasRestantes = [];
+    }
+
     claveActual = key;
     juegoActual = Juegos[key];
 
@@ -204,7 +208,6 @@ export function iniciarJuego(key){
     input.value = "";
     input.style.display = "block";
 
-    // 🔥 FIX CRÍTICO
     if(!juegoActual){
         pregunta.innerText = "Nivel no encontrado";
         return;
@@ -212,14 +215,12 @@ export function iniciarJuego(key){
 
     actualizarPuntos();
 
-    // 🔥 FIX matemáticas
     if(typeof juegoActual.generar === "function"){
         preguntaActual = juegoActual.generar();
         pregunta.innerText = preguntaActual.p;
         return;
     }
 
-    // 🔥 FIX preguntas
     if(!preguntasRestantes.length && juegoActual.preguntas){
         preguntasRestantes = [...juegoActual.preguntas];
     }
@@ -278,7 +279,6 @@ export function iniciarJuego(key){
 // =======================================
 export function comprobar(){
 
-    // 🔥 FIX seguridad
     if(!preguntaActual) return;
 
     const r = limpiar(document.getElementById("respuesta").value);

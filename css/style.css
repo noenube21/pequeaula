@@ -5,7 +5,11 @@
 }
 
 /* ================================== */
-/* BODY */
+/* BODY (✅ FONDO ARREGLADO) */
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
@@ -14,14 +18,24 @@ body {
     background-image: url("../assets/img/fondo-escolar.png");
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;   /* ✅ FIX fondo */
-    min-height: 100vh;              /* ✅ evita cortes */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* ✅ CLAVE */
 
     text-align: center;
 }
 
 /* ================================== */
-/* TITULOS (los tuyos se quedan iguales visualmente) */
+/* ✅ TITULO ROJO BONITO (COMO QUIERES) */
+#tituloJuego {
+    color: #ff4d4d;
+    font-size: 30px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 white;
+}
+
+/* ================================== */
+/* TITULOS */
 h1, h2, h3 {
     text-align: center;
     margin: 20px 0;
@@ -43,7 +57,7 @@ h1, h2, h3 {
 }
 
 /* ================================== */
-/* BOTONES GENERALES */
+/* BOTONES */
 button, .btn {
     background: #4fc3f7;
     color: white;
@@ -60,96 +74,28 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* LOGIN */
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.login-box {
-    background: rgba(255,255,255,0.9);
-    width: 300px;
-    padding: 25px;
-    border-radius: 20px;
-    border: 2px solid #ffcc4d;
-}
-
-.login-box input {
-    width: 90%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 10px;
-    border: 2px solid #ffcc4d;
-}
-
-/* ================================== */
-/* MENÚ */
-.card-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.card {
-    background: white;
-    width: 180px;
-    padding: 15px;
-    border-radius: 20px;
-    border: 2px solid #ffcc4d;
-    text-align: center;
-    cursor: pointer;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-/* IMÁGENES */
-.card img {
-    width: 120px;
-    height: auto;
-    display: block;
-    margin: auto;
-}
-
-/* ================================== */
-/* JUEGO */
-.game-box {
-    background: rgba(255,255,255,0.95);
-    width: 320px;
-    padding: 20px;
-    border-radius: 20px;
-    border: 2px solid #ffcc4d;
-    margin: 30px auto;
-}
-
-/* PREGUNTA */
-.pregunta {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
 /* ZONA BOTONES */
 #zona {
     margin-bottom: 10px;
 }
 
-/* ✅ INPUT BIEN CENTRADO */
+/* ================================== */
+/* ✅ INPUT CENTRADO BIEN (FIX) */
 #respuesta {
     width: 80%;
     max-width: 300px;
     min-width: 150px;
+
     padding: 8px;
     margin: 10px auto;
+
+    display: block;     /* ✅ CLAVE CENTRADO */
+
     border-radius: 10px;
     border: 2px solid #ffcc4d;
-    font-size: 16px;
-    display: block;
 }
 
+/* ================================== */
 /* RESULTADO */
 #resultado {
     margin-top: 10px;
@@ -164,16 +110,14 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ OPCIONES (SELECCIÓN FUNCIONANDO) */
+/* ✅ OPCIONES (SELECCIÓN BIEN) */
 
-/* NORMAL */
 .opcion {
     background: #4fc3f7;
     color: white;
-    border: 2px solid #0288d1;
+    border: 2px solid transparent;
 }
 
-/* SELECCIONADA */
 .opcion.seleccionada {
     background: #0288d1;
 }

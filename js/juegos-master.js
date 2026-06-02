@@ -7,7 +7,7 @@ let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 
-// =======================================
+// ✅ PROGRESO GLOBAL
 let datos = JSON.parse(localStorage.getItem("progreso")) || {
     aciertos: 0,
     puntos: 0
@@ -81,9 +81,8 @@ function guardarProgreso(){
 
 // =======================================
 function calc(op,max){
-
-    let a = Math.floor(Math.random()*max);
-    let b = Math.floor(Math.random()*max);
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
 
     if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
     if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
@@ -114,7 +113,7 @@ const Juegos = {
             p:`${x[0]} =`,
             r:x[1],
             tipo:"test",
-            opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
+            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
         }))
     },
 
@@ -131,7 +130,7 @@ const Juegos = {
             p:`${x[1]} =`,
             r:x[0],
             tipo:"test",
-            opciones: generarOpciones(x[0], inglesBase.map(y=>y[0]))
+            opciones: generarOpciones(x[0],inglesBase.map(y=>y[0]))
         }))
     },
 
@@ -139,9 +138,10 @@ const Juegos = {
         preguntas:[
             "casa","mesa","mango","plato","huevo","lago"
         ].map(p=>({
-            p,
+            p:`${p[0]}__${p.slice(2)}`,
             r:p,
-            tipo:"input"
+            tipo:"test",
+            opciones: generarOpciones(p,["casa","mesa","mango","pato","taza","mano"])
         }))
     },
 
@@ -162,7 +162,7 @@ const Juegos = {
 
     ciencias1:{
         preguntas:[
-            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxigeno","agua","fuego"]},
+            {p:"¿Gas que respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","fuego"]},
             {p:"¿Planeta rojo?",r:"marte",tipo:"test",opciones:["marte","tierra","jupiter"]},
             {p:"¿Animal acuático?",r:"pez",tipo:"test",opciones:["pez","perro","gato"]}
         ]
@@ -178,9 +178,9 @@ const Juegos = {
 
     ciencias3:{
         preguntas:[
-            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazon","ojo","mano"]},
+            {p:"¿Órgano que late?",r:"corazon",tipo:"test",opciones:["corazón","ojo","mano"]},
             {p:"¿Órgano para ver?",r:"ojo",tipo:"test",opciones:["ojo","pierna","brazo"]},
-            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxigeno","agua","humo"]},
+            {p:"¿Qué respiramos?",r:"oxigeno",tipo:"test",opciones:["oxígeno","agua","humo"]},
             {p:"¿Planeta donde vivimos?",r:"tierra",tipo:"test",opciones:["tierra","marte","saturno"]}
         ]
     }
@@ -189,64 +189,61 @@ const Juegos = {
 // =======================================
 export function iniciarJuego(key){
 
-    // ✅ FIX: reset solo si cambia de nivel
-    if(claveActual !== key){
-        preguntasRestantes = [];
-    }
-
     claveActual = key;
     juegoActual = Juegos[key];
 
-    const pregunta = document.getElementById("pregunta");
-    const zona = document.getElementById("zona");
-    const input = document.getElementById("respuesta");
-    const resultado = document.getElementById("resultado");
+    const pregunta=document.getElementById("pregunta");
+    const zona=document.getElementById("zona");
+    const input=document.getElementById("respuesta");
+    const resultado=document.getElementById("resultado");
 
-    pregunta.innerHTML = "";
-    zona.innerHTML = "";
-    resultado.innerHTML = "";
-    input.value = "";
-    input.style.display = "block";
+    pregunta.innerHTML="";
+    zona.innerHTML="";
+    resultado.innerHTML="";
+    input.value="";
 
     if(!juegoActual){
-        pregunta.innerText = "Nivel no encontrado";
+        pregunta.innerText="Nivel no encontrado";
         return;
     }
 
     actualizarPuntos();
 
-    if(typeof juegoActual.generar === "function"){
+    // ✅ FIX DEFINITIVO (SIEMPRE RECARGA PREGUNTAS CUANDO SE VACÍAN)
+    if(!preguntasRestantes.length){
+        preguntasRestantes = [...juegoActual.preguntas];
+    }
+
+    // ✅ matemáticas
+    if(juegoActual.generar){
         preguntaActual = juegoActual.generar();
+        input.style.display="block";
         pregunta.innerText = preguntaActual.p;
         return;
     }
 
-    if(!preguntasRestantes.length && juegoActual.preguntas){
-        preguntasRestantes = [...juegoActual.preguntas];
-    }
-
     if(!preguntasRestantes.length){
-        pregunta.innerText = "Error cargando preguntas";
+        pregunta.innerText="Error cargando preguntas";
         return;
     }
 
     preguntaActual = preguntasRestantes.splice(
-        Math.floor(Math.random()*preguntasRestantes.length),
-        1
+        Math.floor(Math.random()*preguntasRestantes.length),1
     )[0];
 
     pregunta.innerText = preguntaActual.p;
-    zona.innerHTML = "";
 
-    if(preguntaActual.tipo === "letras"){
+    zona.innerHTML="";
+    input.style.display="none";
 
-        input.style.display = "block";
+    if(preguntaActual.tipo==="letras"){
+        input.style.display="block";
 
         preguntaActual.opciones.forEach(op=>{
-            const b = document.createElement("button");
-            b.innerText = op;
+            const b=document.createElement("button");
+            b.innerText=op;
 
-            b.onclick = ()=>{
+            b.onclick=()=>{
                 input.value = preguntaActual.p
                     .replace("_", op)
                     .replace(/ /g,"");
@@ -254,20 +251,18 @@ export function iniciarJuego(key){
 
             zona.appendChild(b);
         });
+    }
 
-    } else if(preguntaActual.tipo === "input"){
+    else if(preguntaActual.tipo==="input"){
+        input.style.display="block";
+    }
 
-        input.style.display = "block";
-
-    } else {
-
-        input.style.display = "none";
-
+    else{
         preguntaActual.opciones.forEach(op=>{
-            const b = document.createElement("button");
-            b.innerText = op;
+            const b=document.createElement("button");
+            b.innerText=op;
 
-            b.onclick = ()=>{
+            b.onclick=()=>{
                 input.value = op;
             };
 
@@ -279,20 +274,18 @@ export function iniciarJuego(key){
 // =======================================
 export function comprobar(){
 
-    if(!preguntaActual) return;
-
-    const r = limpiar(document.getElementById("respuesta").value);
-    const ok = limpiar(preguntaActual.r);
-    const resultado = document.getElementById("resultado");
+    const r=limpiar(document.getElementById("respuesta").value);
+    const ok=limpiar(preguntaActual.r);
+    const resultado=document.getElementById("resultado");
 
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
         puntos++;
         datos.aciertos++;
-        resultado.innerText = "✔ Correcto";
-    } else {
-        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText="✔ Correcto";
+    }else{
+        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     animarResultado(resultado, correcto);

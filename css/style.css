@@ -225,3 +225,14 @@ button:hover,
     color:white !important;
     border:2px solid #0288d1 !important;
 }
+.opcion{
+    background:white !important;
+    color:black !important;
+    border:2px solid #333 !important;
+}
+
+.opcion.seleccionada{
+    background:#4fc3f7 !important;
+    color:white !important;
+    border:2px solid #0288d1 !important;
+}

@@ -8,19 +8,19 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO POR NIVEL
+// 🔥 PROGRESO GLOBAL PERSISTENTE
 let datos = {
     aciertos: 0,
     puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 CARGA CORRECTA POR NIVEL
+// 🔥 CARGA SEGURA (LOCAL + FIREBASE SIN PISAR)
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
-    let remoto = null;
 
+    let remoto = null;
     try {
         remoto = await cargarProgreso();
     } catch (e) {
@@ -28,10 +28,16 @@ export async function cargarDatosUsuario(){
     }
 
     datos = {
-        aciertos: local.aciertos || 0,
-        puntosPorNivel: local.puntosPorNivel || {},
+        aciertos: 0,
+        puntosPorNivel: {},
+
+        ...local,
         ...(remoto || {})
     };
+
+    if(!datos.puntosPorNivel){
+        datos.puntosPorNivel = {};
+    }
 
     actualizarPuntos();
 }
@@ -71,7 +77,7 @@ function levenshtein(a, b){
 }
 
 // =======================================
-// 🔥 PUNTOS SOLO DEL NIVEL ACTUAL
+// 🔥 PUNTOS POR NIVEL (NO GLOBAL)
 function obtenerPuntosNivel(){
     if(!datos.puntosPorNivel[claveActual]){
         datos.puntosPorNivel[claveActual] = 0;
@@ -80,7 +86,8 @@ function obtenerPuntosNivel(){
 }
 
 function sumarPunto(){
-    datos.puntosPorNivel[claveActual] = obtenerPuntosNivel() + 1;
+    datos.puntosPorNivel[claveActual] =
+        obtenerPuntosNivel() + 1;
 }
 
 // =======================================
@@ -88,12 +95,12 @@ function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
         score.innerText =
-            "Puntos: " + obtenerPuntosNivel() +
-            " | Nivel: " + claveActual;
+            `Puntos: ${obtenerPuntosNivel()} | ${claveActual}`;
     }
 }
 
 // =======================================
+// 💾 GUARDADO SEGURO
 async function guardarTodo(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
@@ -118,32 +125,27 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES (igual que antes)
+// 📚 BASES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
-["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
-["friend","amigo"],["happy","feliz"],["sad","triste"]
+["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
 
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
-["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
-["niño","nino"],["mañana","manana"],["león","leon"]
+["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"]
 ];
 
 const cienciasBase = [
-["¿Planeta más cercano al Sol?","mercurio"],
+["¿Planeta cercano al Sol?","mercurio"],
 ["¿Gas que respiramos?","oxigeno"],
 ["¿Satélite de la Tierra?","luna"],
 ["¿Estado sólido del agua?","hielo"],
 ["¿Estrella principal?","sol"],
 ["¿Planeta rojo?","marte"],
-["¿Planeta más grande?","jupiter"],
-["¿Órgano que bombea sangre?","corazon"],
-["¿Órgano del pensamiento?","cerebro"],
-["¿Planeta donde vivimos?","tierra"]
+["¿Planeta grande?","jupiter"],
+["¿Órgano sangre?","corazon"]
 ];
 
 // =======================================
@@ -181,15 +183,17 @@ const Juegos = {
     ciencias3:{
         preguntas:[
             { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
-            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+            { p:"¿Qué nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
+            { p:"¿Planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
         ]
     }
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO
-export function iniciarJuego(key){
+// 🚀 INICIAR JUEGO (OBLIGA CARGA SIEMPRE)
+export async function iniciarJuego(key){
+
+    await cargarDatosUsuario(); // 🔥 CLAVE PARA EVITAR RESET
 
     claveActual = key;
     juegoActual = Juegos[key];
@@ -264,7 +268,7 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR
+// ✅ COMPROBAR RESPUESTA
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);

@@ -1,38 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 <meta charset="UTF-8">
 <title>Juego</title>
 
-<!-- ✅ TU CSS -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-body{ text-align:center; }
+body{
+    text-align:center;
+}
 
-#pregunta{ font-size:24px; margin:20px; }
+#pregunta{
+    font-size:24px;
+    margin:20px;
+}
 
 #zona button{
     display:block;
     margin:8px auto;
 }
 
-#respuesta{ margin:10px; }
+/* INPUT CENTRADO */
+#respuesta{
+    display:block;
+    width:250px;
+    margin:15px auto;
+}
+
+/* BOTÓN CENTRADO */
+#btnComprobar{
+    display:block;
+    margin:10px auto;
+}
 </style>
 
 </head>
 
 <body>
 
+<button onclick="history.back()" class="btn-volver">
+    ⬅ Volver
+</button>
+
 <h2 id="tituloJuego"></h2>
-<div id="score">Puntos: 0</div>
+
+<div id="score">
+    Puntos: 0
+</div>
 
 <div id="pregunta"></div>
+
 <div id="zona"></div>
 
 <input id="respuesta">
-<button id="btnComprobar">Comprobar</button>
+
+<button id="btnComprobar">
+    Comprobar
+</button>
 
 <p id="resultado"></p>
 
@@ -40,18 +65,21 @@ body{ text-align:center; }
 import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
 const params = new URLSearchParams(window.location.search);
+
 const materia = params.get("materia") || "matematicas";
 const nivel = params.get("nivel") || "1";
 
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
 
-iniciarJuego(materia+nivel);
+iniciarJuego(materia + nivel);
 
 document.getElementById("btnComprobar").onclick = comprobar;
 
 document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter") comprobar();
+    if(e.key==="Enter"){
+        comprobar();
+    }
 });
 </script>
 

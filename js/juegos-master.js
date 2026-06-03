@@ -105,6 +105,17 @@ async function guardarTodo(){
 }
 
 // =======================================
+function calc(op,max){
+
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+
+    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
+    return {p:`${a} × ${b}`,r:(a*b).toString()};
+}
+
+// =======================================
 // 📚 BASES
 
 const inglesBase = [
@@ -115,52 +126,49 @@ const inglesBase = [
 ["run","correr"],["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
 ];
 
-// 🔥 CASTELLANO (NUEVO FORMATO FRASES SIN ACENTOS)
+// 🔥 CASTELLANO (3 NIVELES BIEN DEFINIDOS)
+
 const castellanoBase = [
 ["El ___ es verde","arbol"],
-["El ___ escribe en el cuaderno","nino"],
-["El ___ es un medio de transporte","avion"],
 ["El ___ ladra","perro"],
-["La ___ es redonda","tierra"],
-["El ___ tiene ruedas","coche"],
-["El ___ brilla de noche","sol"],
-["La ___ es dulce","manzana"],
-["El ___ nada en el agua","pez"],
-["El ___ vuela en el cielo","pajaro"],
-["El ___ sirve para escribir","lapiz"],
-["El ___ es rojo y caliente","fuego"],
-["El ___ vive en el mar","pez"],
+["El ___ vuela","pajaro"],
+["El ___ es rojo","fuego"],
 ["El ___ es frio","hielo"],
-["El ___ es un animal domestico","gato"],
 ["El ___ da leche","vaca"],
+["El ___ es un animal","gato"],
+["El ___ ilumina","sol"],
+["El ___ sirve para escribir","lapiz"],
+["El ___ es grande","elefante"],
+["El ___ nada en el mar","pez"],
+["El ___ es rapido","coche"],
 ["El ___ crece en el campo","arbol"],
-["El ___ es el rey de la selva","leon"],
-["El ___ ilumina la casa","foco"],
-["El ___ es un instrumento musical","guitarra"]
+["El ___ es rey de la selva","leon"],
+["El ___ toca musica","guitarra"]
 ];
 
-// 🔥 CIENCIAS (+15)
+// 🔥 CIENCIAS (REDACCION PERFECTA)
+
 const cienciasBase = [
-["planeta cercano al sol","mercurio"],
-["gas que respiramos","oxigeno"],
-["satelite de la tierra","luna"],
-["agua solida","hielo"],
-["estrella principal","sol"],
-["planeta rojo","marte"],
-["planeta grande","jupiter"],
-["planeta con anillos","saturno"],
-["organo que bombea sangre","corazon"],
-["organo del pensamiento","cerebro"],
-["gas de las plantas","co2"],
-["proceso de plantas","fotosintesis"],
-["unidad de vida","celula"],
-["fuerza que nos atrae","gravedad"],
-["animal que da leche","vaca"],
-["planeta donde vivimos","tierra"],
-["respiracion","pulmones"],
-["digestivo","estomago"],
-["hueso largo","femur"],
-["capa protectora","ozono"]
+["¿Cuál es el planeta más cercano al Sol?","mercurio"],
+["¿Cuál es el gas que respiramos?","oxigeno"],
+["¿Cuál es el satélite de la Tierra?","luna"],
+["¿Cuál es el estado sólido del agua?","hielo"],
+["¿Cuál es la estrella principal del sistema solar?","sol"],
+["¿Cuál es el planeta rojo?","marte"],
+["¿Cuál es el planeta más grande?","jupiter"],
+["¿Cuál es el planeta con anillos?","saturno"],
+["¿Qué órgano bombea la sangre?","corazon"],
+["¿Qué órgano se encarga del pensamiento?","cerebro"],
+["¿Qué gas usan las plantas?","co2"],
+["¿Cómo se llama el proceso de las plantas?","fotosintesis"],
+["¿Cuál es la unidad básica de vida?","celula"],
+["¿Qué fuerza nos mantiene en la Tierra?","gravedad"],
+["¿Qué animal da leche?","vaca"],
+["¿En qué planeta vivimos?","tierra"],
+["¿Qué órgano permite respirar?","pulmones"],
+["¿Qué órgano digiere la comida?","estomago"],
+["¿Cuál es el hueso más largo?","femur"],
+["¿Qué capa protege la Tierra?","ozono"]
 ];
 
 // =======================================
@@ -171,13 +179,13 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS
+// 🎮 JUEGOS COMPLETOS
 
 const Juegos = {
 
     matematicas1:{ generar:()=>({p:"2 + 2",r:"4"}) },
     matematicas2:{ generar:()=>({p:"5 - 3",r:"2"}) },
-    matematicas3:{ generar:()=>({p:"3 x 3",r:"9"}) },
+    matematicas3:{ generar:()=>({p:"3 × 3",r:"9"}) },
 
     ingles1:{
         preguntas: inglesBase.map(x=>({
@@ -214,12 +222,13 @@ const Juegos = {
     },
 
     castellano2:{
-        preguntas: castellanoBase.map(x=>({
-            p:`¿Qué palabra completa? "${x[0]}"`,
-            r:x[1],
-            tipo:"test",
-            opciones: generarOpciones(x[1], castellanoBase.map(y=>y[1]))
-        }))
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","azul"] },
+            { p:"¿Cuál es un adjetivo?", r:"rojo", tipo:"test", opciones:["rojo","mesa","correr"] },
+            { p:"¿Qué palabra es sustantivo?", r:"perro", tipo:"test", opciones:["perro","leer","rapido"] },
+            { p:"¿Qué palabra es verbo?", r:"leer", tipo:"test", opciones:["leer","mesa","azul"] }
+        ]
     },
 
     castellano3:{
@@ -236,7 +245,7 @@ const Juegos = {
 
     ciencias1:{
         preguntas: cienciasBase.slice(0,10).map(x=>({
-            p:`${x[0]}?`,
+            p:x[0],
             r:x[1],
             tipo:"input"
         }))
@@ -244,7 +253,7 @@ const Juegos = {
 
     ciencias2:{
         preguntas: cienciasBase.slice(10,15).map(x=>({
-            p:`${x[0]}?`,
+            p:x[0],
             r:x[1],
             tipo:"test",
             opciones: generarOpciones(x[1], cienciasBase.map(y=>y[1]))
@@ -253,7 +262,7 @@ const Juegos = {
 
     ciencias3:{
         preguntas: cienciasBase.slice(5,20).map(x=>({
-            p:`${x[0]}?`,
+            p:x[0],
             r:x[1],
             tipo:"test",
             opciones: generarOpciones(x[1], cienciasBase.map(y=>y[1]))

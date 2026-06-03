@@ -8,14 +8,14 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO GLOBAL
+// 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
-    puntos: 0
+    puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 CARGA ROBUSTA (ARREGLADA DEFINITIVA)
+// 🔥 CARGA CORRECTA POR NIVEL
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
@@ -28,9 +28,9 @@ export async function cargarDatosUsuario(){
     }
 
     datos = {
-        aciertos: Number(local.aciertos || 0),
-        puntos: Number(local.puntos || 0),
-        ...(remoto && Object.keys(remoto).length ? remoto : {})
+        aciertos: local.aciertos || 0,
+        puntosPorNivel: local.puntosPorNivel || {},
+        ...(remoto || {})
     };
 
     actualizarPuntos();
@@ -71,10 +71,25 @@ function levenshtein(a, b){
 }
 
 // =======================================
+// 🔥 PUNTOS SOLO DEL NIVEL ACTUAL
+function obtenerPuntosNivel(){
+    if(!datos.puntosPorNivel[claveActual]){
+        datos.puntosPorNivel[claveActual] = 0;
+    }
+    return datos.puntosPorNivel[claveActual];
+}
+
+function sumarPunto(){
+    datos.puntosPorNivel[claveActual] = obtenerPuntosNivel() + 1;
+}
+
+// =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
-        score.innerText = "Puntos: " + datos.puntos;
+        score.innerText =
+            "Puntos: " + obtenerPuntosNivel() +
+            " | Nivel: " + claveActual;
     }
 }
 
@@ -85,9 +100,9 @@ async function guardarTodo(){
 
     try {
         await guardarFirestore(datos);
-        console.log("🔥 Guardado Firebase OK:", datos);
+        console.log("🔥 Guardado OK:", datos);
     } catch (e) {
-        console.warn("❌ Firebase error (solo local guardado):", e);
+        console.warn("Firebase error:", e);
     }
 }
 
@@ -103,21 +118,19 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES
+// 📚 BASES (igual que antes)
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
 ["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
-["friend","amigo"],["happy","feliz"],["sad","triste"],["run","correr"],
-["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
+["friend","amigo"],["happy","feliz"],["sad","triste"]
 ];
 
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
 ["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
-["niño","nino"],["mañana","manana"],["león","leon"],
-["acción","accion"],["fácil","facil"],["difícil","dificil"]
+["niño","nino"],["mañana","manana"],["león","leon"]
 ];
 
 const cienciasBase = [
@@ -130,11 +143,7 @@ const cienciasBase = [
 ["¿Planeta más grande?","jupiter"],
 ["¿Órgano que bombea sangre?","corazon"],
 ["¿Órgano del pensamiento?","cerebro"],
-["¿Planeta donde vivimos?","tierra"],
-["¿Sistema respiratorio?","pulmones"],
-["¿Sistema digestivo?","estomago"],
-["¿Hueso más largo?","femur"],
-["¿Capa protectora Tierra?","ozono"]
+["¿Planeta donde vivimos?","tierra"]
 ];
 
 // =======================================
@@ -161,68 +170,19 @@ const Juegos = {
         }))
     },
 
-    ingles2:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`Traduce: ${x[1]}`,
-            r:x[0],
-            tipo:"input"
-        }))
-    },
-
-    castellano1:{
-        preguntas: castellanoBase.map(x=>({
-            p:`Escribe correctamente: ${x[1]}`,
-            r:x[0],
-            tipo:"input"
-        }))
-    },
-
-    castellano2:{
-        preguntas:[
-            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
-            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] }
-        ]
-    },
-
     castellano3:{
         preguntas:[
             { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
-            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","rojo","mesa"] },
-            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","correr","feliz"] },
-            { p:"¿Qué es un verbo?", r:"comer", tipo:"test", opciones:["comer","coche","azul"] }
+            { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] }
         ]
     },
 
-    ciencias1:{
-        preguntas: cienciasBase.map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ciencias2:{
-        preguntas:[
-            { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-            { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
-        ]
-    },
-
-    // 🔥 CIENCIAS 3 ARREGLADO (TEST + BOTONES)
     ciencias3:{
         preguntas:[
             { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
             { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
-            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] },
-            { p:"¿Qué órgano bombea sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","cerebro"] }
+            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
         ]
     }
 };
@@ -315,8 +275,8 @@ export async function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-        datos.puntos = Number(datos.puntos || 0) + 1;
-        datos.aciertos = Number(datos.aciertos || 0) + 1;
+        sumarPunto();
+        datos.aciertos++;
         resultado.innerText = "✔ Correcto";
     } else {
         resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;

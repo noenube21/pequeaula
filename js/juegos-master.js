@@ -14,7 +14,7 @@ let datos = {
 };
 
 // =======================================
-
+// 🔥 CARGA SEGURA (LOCAL + FIREBASE)
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
@@ -56,6 +56,7 @@ function levenshtein(a, b){
 
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
+
             if (b.charAt(i-1) === a.charAt(j-1)){
                 matrix[i][j] = matrix[i-1][j-1];
             } else {
@@ -86,16 +87,15 @@ function sumarPunto(){
 }
 
 // =======================================
-
 function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
-        score.innerText = `Puntos: ${obtenerPuntosNivel()} | ${claveActual}`;
+        score.innerText =
+            `Puntos: ${obtenerPuntosNivel()} | ${claveActual}`;
     }
 }
 
 // =======================================
-
 async function guardarTodo(){
     localStorage.setItem("progreso", JSON.stringify(datos));
 
@@ -105,29 +105,41 @@ async function guardarTodo(){
 }
 
 // =======================================
-// 📚 BASES MEJORADAS (+15 CADA UNA)
+// 📚 BASES
 
-// 🔥 INGLES (20+)
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
-["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
-["friend","amigo"],["happy","feliz"],["sad","triste"],["run","correr"],
-["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
+["house","casa"],["tree","arbol"],["food","comida"],["school","escuela"],
+["friend","amigo"],["happy","feliz"],["sad","triste"],
+["run","correr"],["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
 ];
 
-// 🔥 CASTELLANO (20+ SIN TRUCOS DE ACENTOS RAROS)
+// 🔥 CASTELLANO (NUEVO FORMATO FRASES SIN ACENTOS)
 const castellanoBase = [
-["árbol","arbol"],["camion","camion"],["corazon","corazon"],
-["lapiz","lapiz"],["telefono","telefono"],["cancion","cancion"],
-["niño","nino"],["manana","manana"],["leon","leon"],
-["accion","accion"],["facil","facil"],["dificil","dificil"],
-["pais","pais"],["avion","avion"],["raton","raton"],
-["campeon","campeon"],["nacion","nacion"],["organizacion","organizacion"],
-["educacion","educacion"],["informacion","informacion"]
+["El ___ es verde","arbol"],
+["El ___ escribe en el cuaderno","nino"],
+["El ___ es un medio de transporte","avion"],
+["El ___ ladra","perro"],
+["La ___ es redonda","tierra"],
+["El ___ tiene ruedas","coche"],
+["El ___ brilla de noche","sol"],
+["La ___ es dulce","manzana"],
+["El ___ nada en el agua","pez"],
+["El ___ vuela en el cielo","pajaro"],
+["El ___ sirve para escribir","lapiz"],
+["El ___ es rojo y caliente","fuego"],
+["El ___ vive en el mar","pez"],
+["El ___ es frio","hielo"],
+["El ___ es un animal domestico","gato"],
+["El ___ da leche","vaca"],
+["El ___ crece en el campo","arbol"],
+["El ___ es el rey de la selva","leon"],
+["El ___ ilumina la casa","foco"],
+["El ___ es un instrumento musical","guitarra"]
 ];
 
-// 🔥 CIENCIAS (20+)
+// 🔥 CIENCIAS (+15)
 const cienciasBase = [
 ["planeta cercano al sol","mercurio"],
 ["gas que respiramos","oxigeno"],
@@ -137,22 +149,21 @@ const cienciasBase = [
 ["planeta rojo","marte"],
 ["planeta grande","jupiter"],
 ["planeta con anillos","saturno"],
-["organo sangre","corazon"],
-["organo pensar","cerebro"],
-["gas plantas","co2"],
-["proceso plantas","fotosintesis"],
-["unidad vida","celula"],
-["fuerza gravedad","gravedad"],
-["animal leche","vaca"],
-["planeta hogar","tierra"],
+["organo que bombea sangre","corazon"],
+["organo del pensamiento","cerebro"],
+["gas de las plantas","co2"],
+["proceso de plantas","fotosintesis"],
+["unidad de vida","celula"],
+["fuerza que nos atrae","gravedad"],
+["animal que da leche","vaca"],
+["planeta donde vivimos","tierra"],
 ["respiracion","pulmones"],
 ["digestivo","estomago"],
 ["hueso largo","femur"],
-["capa ozono","ozono"]
+["capa protectora","ozono"]
 ];
 
 // =======================================
-
 function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
@@ -160,13 +171,13 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (MATEMATICAS SIN TOCAR)
+// 🎮 JUEGOS
 
 const Juegos = {
 
-    matematicas1:{ generar:()=>({p:"1+1",r:"2"}) },
-    matematicas2:{ generar:()=>({p:"2+2",r:"4"}) },
-    matematicas3:{ generar:()=>({p:"3x3",r:"9"}) },
+    matematicas1:{ generar:()=>({p:"2 + 2",r:"4"}) },
+    matematicas2:{ generar:()=>({p:"5 - 3",r:"2"}) },
+    matematicas3:{ generar:()=>({p:"3 x 3",r:"9"}) },
 
     ingles1:{
         preguntas: inglesBase.map(x=>({
@@ -195,28 +206,32 @@ const Juegos = {
 
     castellano1:{
         preguntas: castellanoBase.map(x=>({
-            p:`Escribe correctamente: ${x[1]}`,
-            r:x[0],
-            tipo:"input"
+            p:`Completa: ${x[0]}`,
+            r:x[1],
+            tipo:"test",
+            opciones: generarOpciones(x[1], castellanoBase.map(y=>y[1]))
         }))
     },
 
     castellano2:{
-        preguntas: castellanoBase.slice(0,10).map(x=>({
-            p:`Selecciona correcto: ${x[1]}`,
-            r:x[0],
+        preguntas: castellanoBase.map(x=>({
+            p:`¿Qué palabra completa? "${x[0]}"`,
+            r:x[1],
             tipo:"test",
-            opciones: generarOpciones(x[0], castellanoBase.map(y=>y[0]))
+            opciones: generarOpciones(x[1], castellanoBase.map(y=>y[1]))
         }))
     },
 
     castellano3:{
-        preguntas: castellanoBase.slice(10,20).map(x=>({
-            p:`Selecciona correcto: ${x[1]}`,
-            r:x[0],
-            tipo:"test",
-            opciones: generarOpciones(x[0], castellanoBase.map(y=>y[0]))
-        }))
+        preguntas: castellanoBase
+            .sort(()=>Math.random()-0.5)
+            .slice(0,15)
+            .map(x=>({
+                p:`Completa: ${x[0]}`,
+                r:x[1],
+                tipo:"test",
+                opciones: generarOpciones(x[1], castellanoBase.map(y=>y[1]))
+            }))
     },
 
     ciencias1:{
@@ -247,7 +262,7 @@ const Juegos = {
 };
 
 // =======================================
-// 🚀 INICIO (SIN CAMBIOS IMPORTANTES)
+// 🚀 INICIO
 
 export async function iniciarJuego(key){
 
@@ -326,6 +341,7 @@ export async function iniciarJuego(key){
 }
 
 // =======================================
+// ✅ COMPROBAR
 
 export async function comprobar(){
 
@@ -341,7 +357,7 @@ export async function comprobar(){
         datos.aciertos++;
         resultado.innerText = "✔ Correcto";
     } else {
-        resultado.innerText = `✘ Incorrecto`;
+        resultado.innerText = "✘ Incorrecto";
     }
 
     actualizarPuntos();

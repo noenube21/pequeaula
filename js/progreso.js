@@ -1,63 +1,54 @@
-import { auth, db } from "./firebase-config.js";
-import {
-    doc,
-    setDoc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+// =======================================
+// PROGRESO ÚNICO Y ESTABLE
+// =======================================
 
-// =======================================
-// 🔥 GUARDAR PROGRESO (LOCAL + FIREBASE)
-// =======================================
+// 🔥 GUARDAR
 export async function guardarProgreso(datos){
 
-    // LOCAL (SIEMPRE)
-    localStorage.setItem("progreso", JSON.stringify(datos));
-
-    // FIREBASE (OPCIONAL)
-    const user = auth.currentUser;
-    if(!user) return;
-
     try {
-        await setDoc(
-            doc(db, "usuarios", user.uid),
-            datos,
-            { merge: true }
+        localStorage.setItem(
+            "progreso",
+            JSON.stringify(datos)
         );
     } catch (e) {
-        console.warn("Firebase error:", e);
+        console.warn("Error guardando progreso", e);
     }
+
+    console.log("✅ Progreso guardado");
 }
 
 // =======================================
-// 🔥 CARGAR PROGRESO (LOCAL PRIMERO)
+// 🔥 CARGAR
 // =======================================
 export async function cargarProgreso(){
 
-    // 1. LOCAL SIEMPRE FUNCIONA
-    const local = JSON.parse(localStorage.getItem("progreso"));
-
-    // 2. FIREBASE OPCIONAL
-    const user = auth.currentUser;
-
-    if(!user){
-        return local;
-    }
-
     try {
-        const ref = doc(db, "usuarios", user.uid);
-        const snap = await getDoc(ref);
+        const data = localStorage.getItem("progreso");
 
-        if(snap.exists()){
+        if(!data){
             return {
-                ...local,
-                ...snap.data()
+                aciertos: 0,
+                puntosPorNivel: {},
+                historial: []
             };
         }
 
-        return local;
+        const parsed = JSON.parse(data);
+
+        return {
+            aciertos: 0,
+            puntosPorNivel: {},
+            historial: [],
+            ...parsed
+        };
 
     } catch (e) {
-        console.warn("Firebase error:", e);
-        return local;
+        console.warn("Error cargando progreso", e);
+
+        return {
+            aciertos: 0,
+            puntosPorNivel: {},
+            historial: []
+        };
     }
 }

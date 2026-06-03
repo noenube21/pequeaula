@@ -1,14 +1,21 @@
 import { cargarDatosUsuario } from "./juegosmaster.js";
 
-let datos = null;
+let datos = {};
 
 // =======================================
 export async function iniciarFamilia(){
 
-    await cargarDatosUsuario();
+    try {
+        await cargarDatosUsuario();
+    } catch (e) {
+        console.warn("Error cargando usuario:", e);
+    }
 
-    // 🔥 AHORA LEER DIRECTO DE LOCALSTORAGE (más seguro)
-    datos = JSON.parse(localStorage.getItem("progreso")) || {};
+    // 🔥 fallback seguro
+    datos = JSON.parse(localStorage.getItem("progreso")) || {
+        aciertos: 0,
+        puntosPorNivel: {}
+    };
 
     renderFamilia();
 }
@@ -25,12 +32,16 @@ function renderFamilia(){
     const cont = document.getElementById("familia");
 
     if(!cont){
-        console.warn("No existe #familia en HTML");
+        console.error("❌ No existe #familia en el HTML");
         return;
     }
 
+    console.log("📊 datos cargados:", datos);
+
     cont.innerHTML = `
-        <h2>👨‍👩‍👧 Panel familiar</h2>
+        <div class="card">
+            <h2>👨‍👩‍👧 Panel familiar</h2>
+        </div>
 
         <div class="card">
             <h3>📊 Progreso global</h3>
@@ -42,7 +53,7 @@ function renderFamilia(){
             <h3>📚 Por asignatura</h3>
             ${Object.entries(datos.puntosPorNivel || {})
                 .map(([k,v]) => `<p>${k}: <b>${v}</b></p>`)
-                .join("")}
+                .join("") || "<p>No hay datos aún</p>"}
         </div>
     `;
 }

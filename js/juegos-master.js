@@ -138,54 +138,82 @@ const Juegos = {
 // =======================================
 export function iniciarJuego(key){
 
-    // ✅ RESET SIEMPRE (IMPORTANTE)
     preguntasRestantes = [];
 
     claveActual = key;
     juegoActual = Juegos[key];
 
-    const pregunta=document.getElementById("pregunta");
-    const zona=document.getElementById("zona");
-    const input=document.getElementById("respuesta");
-    const resultado=document.getElementById("resultado");
+    const pregunta = document.getElementById("pregunta");
+    const zona = document.getElementById("zona");
+    const input = document.getElementById("respuesta");
+    const resultado = document.getElementById("resultado");
 
-    pregunta.innerHTML="";
-    zona.innerHTML="";
-    resultado.innerHTML="";
-    input.value="";
+    pregunta.innerHTML = "";
+    zona.innerHTML = "";
+    resultado.innerHTML = "";
+    input.value = "";
 
     if(!juegoActual){
-        pregunta.innerText="Nivel no encontrado";
+
+        pregunta.innerText = `Nivel no encontrado: ${key}`;
+
+        console.error(
+            "Nivel inexistente:",
+            key,
+            "Disponibles:",
+            Object.keys(Juegos)
+        );
+
         return;
     }
 
     actualizarPuntos();
 
     if(juegoActual.generar){
+
         preguntaActual = juegoActual.generar();
-        input.style.display="block";
+
+        input.style.display = "block";
+
         pregunta.innerText = preguntaActual.p;
+
         return;
     }
 
     preguntasRestantes = [...juegoActual.preguntas];
 
-    preguntaActual = preguntasRestantes[Math.floor(Math.random()*preguntasRestantes.length)];
+    preguntaActual =
+        preguntasRestantes[
+            Math.floor(Math.random() * preguntasRestantes.length)
+        ];
 
     pregunta.innerText = preguntaActual.p;
 
-    input.style.display="none";
+    input.style.display = "none";
 
-    if(preguntaActual.tipo==="input"){
-        input.style.display="block";
-    }
+    if(preguntaActual.tipo === "input"){
 
-    else{
-        preguntaActual.opciones.forEach(op=>{
-            const b=document.createElement("button");
-            b.innerText=op;
+        input.style.display = "block";
 
-            b.onclick=()=>{
+    }else{
+
+        preguntaActual.opciones.forEach(op => {
+
+            const b = document.createElement("button");
+
+            b.innerText = op;
+            b.classList.add("opcion");
+
+            b.onclick = () => {
+
+                document
+                    .querySelectorAll("#zona .opcion")
+                    .forEach(btn =>
+                        btn.classList.remove("seleccionada")
+                    );
+
+                b.classList.add("seleccionada");
+
                 input.value = op;
             };
 

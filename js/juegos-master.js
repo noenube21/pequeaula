@@ -112,17 +112,37 @@ function generarOpciones(correcta, lista){
 
 // =======================================
 const Juegos = {
+const castellanoBase = [
+["árbol","arbol"],
+["camión","camion"],
+["corazón","corazon"],
+["lápiz","lapiz"],
+["teléfono","telefono"],
+["canción","cancion"]
+];
 
+const cienciasBase = [
+["¿Planeta más cercano al Sol?","mercurio"],
+["¿Gas que respiramos?","oxigeno"],
+["¿Satélite de la Tierra?","luna"],
+["¿Estado sólido del agua?","hielo"],
+["¿Estrella principal?","sol"]
+];
+
+const Juegos = {
+
+    // ================= MATEMÁTICAS =================
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
+    // ================= INGLÉS =================
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
             r:x[1],
             tipo:"test",
-            opciones: generarOpciones(x[1],inglesBase.map(y=>y[1]))
+            opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
         }))
     },
 
@@ -132,6 +152,96 @@ const Juegos = {
             r:x[1],
             tipo:"input"
         }))
+    },
+
+    ingles3:{
+        preguntas: inglesBase.map(x=>({
+            p:`Traduce: ${x[1]}`,
+            r:x[0],
+            tipo:"input"
+        }))
+    },
+
+    // ================= CASTELLANO =================
+    castellano1:{
+        preguntas: castellanoBase.map(x=>({
+            p:`Escribe correctamente: ${x[1]}`,
+            r:x[0],
+            tipo:"input"
+        }))
+    },
+
+    castellano2:{
+        preguntas:[
+            {
+                p:"¿Cuál es un sustantivo?",
+                r:"mesa",
+                tipo:"test",
+                opciones:["mesa","correr","rojo"]
+            },
+            {
+                p:"¿Cuál es un verbo?",
+                r:"correr",
+                tipo:"test",
+                opciones:["correr","mesa","rápido"]
+            }
+        ]
+    },
+
+    castellano3:{
+        preguntas:[
+            {
+                p:"Completa: El perro ___ en el parque",
+                r:"corre",
+                tipo:"input"
+            },
+            {
+                p:"Completa: La niña ___ un libro",
+                r:"lee",
+                tipo:"input"
+            }
+        ]
+    },
+
+    // ================= CIENCIAS =================
+    ciencias1:{
+        preguntas: cienciasBase.map(x=>({
+            p:x[0],
+            r:x[1],
+            tipo:"input"
+        }))
+    },
+
+    ciencias2:{
+        preguntas:[
+            {
+                p:"¿Qué planeta es rojo?",
+                r:"marte",
+                tipo:"test",
+                opciones:["marte","venus","jupiter"]
+            },
+            {
+                p:"¿Órgano que bombea sangre?",
+                r:"corazon",
+                tipo:"test",
+                opciones:["corazon","pulmon","higado"]
+            }
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            {
+                p:"Fórmula del agua",
+                r:"h2o",
+                tipo:"input"
+            },
+            {
+                p:"Fuerza de gravedad",
+                r:"gravedad",
+                tipo:"input"
+            }
+        ]
     }
 };
 
@@ -197,8 +307,7 @@ export function iniciarJuego(key){
 
     }else{
 
-        preguntaActual.opciones.forEach(op => {
-
+(preguntaActual.opciones || []).forEach(op => {
             const b = document.createElement("button");
 
             b.innerText = op;

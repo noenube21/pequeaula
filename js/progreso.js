@@ -1,54 +1,43 @@
-// =======================================
-// PROGRESO ÚNICO Y ESTABLE
-// =======================================
+import { auth, db } from "./firebase-config.js";
 
-// 🔥 GUARDAR
+import {
+    doc,
+    setDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// ================================
+// ✅ GUARDAR PROGRESO
+// ================================
 export async function guardarProgreso(datos){
 
-    try {
-        localStorage.setItem(
-            "progreso",
-            JSON.stringify(datos)
-        );
-    } catch (e) {
-        console.warn("Error guardando progreso", e);
-    }
+    const usuario = auth.currentUser;
 
-    console.log("✅ Progreso guardado");
+    if(!usuario) return;
+
+    await setDoc(
+        doc(db, "usuarios", usuario.uid),
+        datos,
+        { merge: true }
+    );
 }
 
-// =======================================
-// 🔥 CARGAR
-// =======================================
+// ================================
+// ✅ CARGAR PROGRESO
+// ================================
 export async function cargarProgreso(){
 
-    try {
-        const data = localStorage.getItem("progreso");
+    const usuario = auth.currentUser;
 
-        if(!data){
-            return {
-                aciertos: 0,
-                puntosPorNivel: {},
-                historial: []
-            };
-        }
+    if(!usuario) return null;
 
-        const parsed = JSON.parse(data);
+    const ref = doc(db, "usuarios", usuario.uid);
 
-        return {
-            aciertos: 0,
-            puntosPorNivel: {},
-            historial: [],
-            ...parsed
-        };
+    const snap = await getDoc(ref);
 
-    } catch (e) {
-        console.warn("Error cargando progreso", e);
-
-        return {
-            aciertos: 0,
-            puntosPorNivel: {},
-            historial: []
-        };
+    if(snap.exists()){
+        return snap.data();
     }
+
+    return null;
 }

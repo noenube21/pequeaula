@@ -15,15 +15,22 @@ let datos = {
 };
 
 // =======================================
+// 🔥 CARGA ROBUSTA (ARREGLADA DEFINITIVA)
 export async function cargarDatosUsuario(){
 
-    const remoto = await cargarProgreso().catch(()=>null);
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
+    let remoto = null;
+
+    try {
+        remoto = await cargarProgreso();
+    } catch (e) {
+        console.warn("Firebase no disponible:", e);
+    }
 
     datos = {
-        aciertos: Number(local.aciertos ?? 0),
-        puntos: Number(local.puntos ?? 0),
-        ...(remoto || {})
+        aciertos: Number(local.aciertos || 0),
+        puntos: Number(local.puntos || 0),
+        ...(remoto && Object.keys(remoto).length ? remoto : {})
     };
 
     actualizarPuntos();
@@ -78,8 +85,9 @@ async function guardarTodo(){
 
     try {
         await guardarFirestore(datos);
+        console.log("🔥 Guardado Firebase OK:", datos);
     } catch (e) {
-        console.warn(e);
+        console.warn("❌ Firebase error (solo local guardado):", e);
     }
 }
 
@@ -193,16 +201,6 @@ const Juegos = {
         ]
     },
 
-    // 🔥 CIENCIAS 3 AHORA ES TEST CON BOTONES
-    ciencias3:{
-        preguntas:[
-            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
-            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] },
-            { p:"¿Qué órgano bombea sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","cerebro"] }
-        ]
-    },
-
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
             p:x[0],
@@ -215,6 +213,16 @@ const Juegos = {
         preguntas:[
             { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
             { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
+        ]
+    },
+
+    // 🔥 CIENCIAS 3 ARREGLADO (TEST + BOTONES)
+    ciencias3:{
+        preguntas:[
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
+            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
+            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] },
+            { p:"¿Qué órgano bombea sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","cerebro"] }
         ]
     }
 };
@@ -283,7 +291,6 @@ export function iniciarJuego(key){
             b.classList.add("opcion");
 
             b.onclick = ()=>{
-
                 document.querySelectorAll("#zona .opcion")
                     .forEach(btn => btn.classList.remove("seleccionada"));
 
@@ -308,8 +315,8 @@ export async function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-        datos.puntos++;
-        datos.aciertos++;
+        datos.puntos = Number(datos.puntos || 0) + 1;
+        datos.aciertos = Number(datos.aciertos || 0) + 1;
         resultado.innerText = "✔ Correcto";
     } else {
         resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;

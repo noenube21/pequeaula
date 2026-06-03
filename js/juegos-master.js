@@ -15,19 +15,18 @@ let datos = {
 };
 
 // =======================================
-// 🔥 CARGAR PROGRESO
+// 🔥 CARGAR PROGRESO (FIX REAL GLOBAL)
 export async function cargarDatosUsuario(){
 
     const remoto = await cargarProgreso();
+    const local = JSON.parse(localStorage.getItem("progreso"));
 
-    if(remoto){
-        datos = remoto;
-    }else{
-        datos = JSON.parse(localStorage.getItem("progreso")) || {
-            aciertos: 0,
-            puntos: 0
-        };
-    }
+    datos = {
+        aciertos: 0,
+        puntos: 0,
+        ...(local || {}),
+        ...(remoto || {})
+    };
 
     actualizarPuntos();
 }
@@ -80,17 +79,20 @@ function actualizarPuntos(){
 
 // =======================================
 async function guardarTodo(){
+
     localStorage.setItem("progreso", JSON.stringify(datos));
 
     try {
         await guardarFirestore(datos);
     } catch (e) {
-        console.warn("Error guardando en Firestore:", e);
+        console.warn("Firestore error:", e);
     }
 }
 
 // =======================================
+// 📊 MATEMÁTICAS (SIN CAMBIOS)
 function calc(op,max){
+
     let a=Math.floor(Math.random()*max);
     let b=Math.floor(Math.random()*max);
 
@@ -101,19 +103,35 @@ function calc(op,max){
 
 // =======================================
 // 📚 BASES AMPLIADAS
+
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
 ["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
 ["friend","amigo"],["happy","feliz"],["sad","triste"],["run","correr"],
-["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
+["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"],
+["work","trabajar"],["study","estudiar"],["teacher","profesor"],
+["student","estudiante"],["city","ciudad"],["country","país"],
+["big","grande"],["small","pequeño"],["fast","rápido"],["slow","lento"],
+["hot","caliente"],["cold","frío"],["new","nuevo"],["old","viejo"],
+["day","día"],["night","noche"],["time","tiempo"],["hand","mano"],
+["foot","pie"],["head","cabeza"],["eye","ojo"],["mouth","boca"],
+["love","amor"],["family","familia"],["name","nombre"],["light","luz"]
 ];
 
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
 ["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
 ["ratón","raton"],["avión","avion"],["campeón","campeon"],
-["niño","nino"],["mañana","manana"],["león","leon"]
+["niño","nino"],["mañana","manana"],["león","leon"],
+["acción","accion"],["fácil","facil"],["difícil","dificil"],
+["país","pais"],["jamón","jamon"],["colchón","colchon"],
+["educación","educacion"],["información","informacion"],
+["computación","computacion"],["dirección","direccion"],
+["situación","situacion"],["expresión","expresion"],
+["organización","organizacion"],["televisión","television"],
+["corrección","correccion"],["solución","solucion"],
+["reacción","reaccion"],["nación","nacion"]
 ];
 
 const cienciasBase = [
@@ -124,10 +142,20 @@ const cienciasBase = [
 ["¿Estrella principal?","sol"],
 ["¿Planeta rojo?","marte"],
 ["¿Planeta más grande?","jupiter"],
+["¿Planeta con anillos?","saturno"],
 ["¿Órgano que bombea sangre?","corazon"],
-["¿Parte del cuerpo que piensa?","cerebro"],
-["¿Líquido vital?","agua"],
-["¿Capa que protege la Tierra?","ozono"]
+["¿Órgano del pensamiento?","cerebro"],
+["¿Gas de las plantas?","co2"],
+["¿Proceso de plantas?","fotosintesis"],
+["¿Unidad de vida?","celula"],
+["¿Fuerza gravedad?","gravedad"],
+["¿Animal que da leche?","vaca"],
+["¿Estado del agua a vapor?","evaporacion"],
+["¿Estado del agua a líquido?","condensacion"],
+["¿Capa protectora Tierra?","ozono"],
+["¿Planeta donde vivimos?","tierra"],
+["¿Sistema sanguíneo?","circulatorio"],
+["¿Órgano respiración?","pulmones"]
 ];
 
 // =======================================
@@ -239,25 +267,17 @@ export function iniciarJuego(key){
 
     actualizarPuntos();
 
-    // MATEMÁTICAS
     if(juegoActual.generar){
 
         const gen = juegoActual.generar();
-
-        if(!gen){
-            console.error("Error generando matemáticas");
-            return;
-        }
 
         preguntaActual = {
             p: gen.p,
             r: String(gen.r),
             tipo: "input"
         };
-    }
 
-    // OTROS JUEGOS
-    else{
+    } else {
 
         if(!usadas[key]) usadas[key] = [];
 
@@ -279,7 +299,6 @@ export function iniciarJuego(key){
         usadas[key].push(preguntaActual);
     }
 
-    // MOSTRAR
     pregunta.innerText = preguntaActual.p;
 
     input.style.display = "none";

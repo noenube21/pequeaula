@@ -81,7 +81,12 @@ function actualizarPuntos(){
 // =======================================
 async function guardarTodo(){
     localStorage.setItem("progreso", JSON.stringify(datos));
-    await guardarFirestore(datos);
+
+    try {
+        await guardarFirestore(datos);
+    } catch (e) {
+        console.warn("Error guardando en Firestore:", e);
+    }
 }
 
 // =======================================
@@ -95,18 +100,20 @@ function calc(op,max){
 }
 
 // =======================================
+// 📚 BASES AMPLIADAS
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
+["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
+["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
+["friend","amigo"],["happy","feliz"],["sad","triste"],["run","correr"],
+["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
 ];
 
 const castellanoBase = [
-["árbol","arbol"],
-["camión","camion"],
-["corazón","corazon"],
-["lápiz","lapiz"],
-["teléfono","telefono"],
-["canción","cancion"]
+["árbol","arbol"],["camión","camion"],["corazón","corazon"],
+["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
+["ratón","raton"],["avión","avion"],["campeón","campeon"],
+["niño","nino"],["mañana","manana"],["león","leon"]
 ];
 
 const cienciasBase = [
@@ -114,9 +121,16 @@ const cienciasBase = [
 ["¿Gas que respiramos?","oxigeno"],
 ["¿Satélite de la Tierra?","luna"],
 ["¿Estado sólido del agua?","hielo"],
-["¿Estrella principal?","sol"]
+["¿Estrella principal?","sol"],
+["¿Planeta rojo?","marte"],
+["¿Planeta más grande?","jupiter"],
+["¿Órgano que bombea sangre?","corazon"],
+["¿Parte del cuerpo que piensa?","cerebro"],
+["¿Líquido vital?","agua"],
+["¿Capa que protege la Tierra?","ozono"]
 ];
 
+// =======================================
 function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
@@ -225,19 +239,24 @@ export function iniciarJuego(key){
 
     actualizarPuntos();
 
-    // 🔥 MATEMÁTICAS (GENERADOR DINÁMICO)
+    // MATEMÁTICAS
     if(juegoActual.generar){
 
         const gen = juegoActual.generar();
 
+        if(!gen){
+            console.error("Error generando matemáticas");
+            return;
+        }
+
         preguntaActual = {
             p: gen.p,
-            r: gen.r,
+            r: String(gen.r),
             tipo: "input"
         };
     }
 
-    // 📚 OTROS JUEGOS (CON LISTA)
+    // OTROS JUEGOS
     else{
 
         if(!usadas[key]) usadas[key] = [];
@@ -260,7 +279,7 @@ export function iniciarJuego(key){
         usadas[key].push(preguntaActual);
     }
 
-    // Mostrar pregunta
+    // MOSTRAR
     pregunta.innerText = preguntaActual.p;
 
     input.style.display = "none";
@@ -288,7 +307,7 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR RESPUESTA
+// ✅ COMPROBAR
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
@@ -298,7 +317,7 @@ export async function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-        datos.puntos++; // ⭐ GLOBAL
+        datos.puntos++;
         datos.aciertos++;
         resultado.innerText = "✔ Correcto";
     } else {

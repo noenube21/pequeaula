@@ -1,6 +1,5 @@
 import { comprobarRecompensas } from "./recompensas.js";
 import { guardarProgreso, cargarProgreso } from "./progreso.js";
-
 // =======================================
 
 let preguntaActual = null;

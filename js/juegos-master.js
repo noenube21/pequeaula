@@ -3,16 +3,14 @@ import { guardarProgreso as guardarFirestore, cargarProgreso } from "./progreso.
 
 // =======================================
 let preguntasRestantes = [];
-let puntos = 0;
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
-let usadas = [];
 
 // ✅ PROGRESO GLOBAL
 let datos = {
     aciertos: 0,
-    puntos: 0
+    puntos: {}
 };
 
 // =======================================
@@ -26,11 +24,10 @@ export async function cargarDatosUsuario(){
     }else{
         datos = JSON.parse(localStorage.getItem("progreso")) || {
             aciertos: 0,
-            puntos: 0
+            puntos: {}
         };
     }
 
-    puntos = datos.puntos || 0;
     actualizarPuntos();
 }
 
@@ -44,7 +41,6 @@ function limpiar(t){
 
 // =======================================
 function levenshtein(a, b){
-
     const matrix = [];
 
     for (let i = 0; i <= b.length; i++){
@@ -77,16 +73,14 @@ function levenshtein(a, b){
 function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
-        score.innerText = "Puntos: " + puntos;
+        const actuales = datos.puntos[claveActual] || 0;
+        score.innerText = "Puntos: " + actuales;
     }
 }
 
 // =======================================
 async function guardarTodo(){
-    datos.puntos = puntos;
-
     localStorage.setItem("progreso", JSON.stringify(datos));
-
     await guardarFirestore(datos);
 }
 
@@ -208,6 +202,10 @@ const Juegos = {
 };
 
 // =======================================
+// 🧠 USADAS POR NIVEL
+let usadas = {};
+
+// =======================================
 export function iniciarJuego(key){
 
     claveActual = key;
@@ -228,28 +226,27 @@ export function iniciarJuego(key){
         return;
     }
 
+    if(!datos.puntos[key]) datos.puntos[key] = 0;
+    if(!usadas[key]) usadas[key] = [];
+
     actualizarPuntos();
 
-    // ✅ RESET cuando se acaban
-    if(usadas.length >= (juegoActual.preguntas || []).length){
-        usadas = [];
+    const lista = juegoActual.preguntas || [];
+
+    if(usadas[key].length >= lista.length){
+        usadas[key] = [];
     }
 
-    preguntasRestantes = (juegoActual.preguntas || []).filter(p => !usadas.includes(p));
+    let disponibles = lista.filter(p => !usadas[key].includes(p));
 
-    if(preguntasRestantes.length === 0){
-        usadas = [];
-        preguntasRestantes = [...juegoActual.preguntas];
+    if(disponibles.length === 0){
+        usadas[key] = [];
+        disponibles = [...lista];
     }
 
-    preguntaActual = preguntasRestantes[Math.floor(Math.random() * preguntasRestantes.length)];
+    preguntaActual = disponibles[Math.floor(Math.random() * disponibles.length)];
 
-    if(!preguntaActual){
-        pregunta.innerText = "Error cargando pregunta";
-        return;
-    }
-
-    usadas.push(preguntaActual);
+    usadas[key].push(preguntaActual);
 
     pregunta.innerText = preguntaActual.p;
 
@@ -279,18 +276,20 @@ export function iniciarJuego(key){
 // =======================================
 export async function comprobar(){
 
-    const r=limpiar(document.getElementById("respuesta").value);
-    const ok=limpiar(preguntaActual.r);
-    const resultado=document.getElementById("resultado");
+    const r = limpiar(document.getElementById("respuesta").value);
+    const ok = limpiar(preguntaActual.r);
+    const resultado = document.getElementById("resultado");
 
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-        puntos++;
+        if(!datos.puntos[claveActual]) datos.puntos[claveActual] = 0;
+        datos.puntos[claveActual]++;
+
         datos.aciertos++;
-        resultado.innerText="✔ Correcto";
+        resultado.innerText = "✔ Correcto";
     }else{
-        resultado.innerText=`✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     actualizarPuntos();
@@ -301,4 +300,3 @@ export async function comprobar(){
         iniciarJuego(claveActual);
     },500);
 }
-``

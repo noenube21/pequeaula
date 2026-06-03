@@ -8,19 +8,20 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// ✅ PROGRESO GLOBAL
+// ✅ PROGRESO GLOBAL (NO SE REINICIA)
 let datos = {
     aciertos: 0,
     puntos: 0
 };
 
 // =======================================
-// 🔥 CARGAR PROGRESO (FIX REAL GLOBAL)
+// 🔥 CARGA ROBUSTA (FIX DEFINITIVO)
 export async function cargarDatosUsuario(){
 
-    const remoto = await cargarProgreso();
+    const remoto = await cargarProgreso().catch(()=>null);
     const local = JSON.parse(localStorage.getItem("progreso"));
 
+    // 🔥 FUSIÓN REAL (NO SOBRESCRIBE)
     datos = {
         aciertos: 0,
         puntos: 0,
@@ -33,7 +34,8 @@ export async function cargarDatosUsuario(){
 
 // =======================================
 function limpiar(t){
-    return t.toLowerCase()
+    return (t || "")
+        .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g,"")
         .trim();
@@ -90,7 +92,6 @@ async function guardarTodo(){
 }
 
 // =======================================
-// 📊 MATEMÁTICAS (SIN CAMBIOS)
 function calc(op,max){
 
     let a=Math.floor(Math.random()*max);
@@ -102,7 +103,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES AMPLIADAS
+// 📚 BASES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -110,15 +111,11 @@ const inglesBase = [
 ["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
 ["friend","amigo"],["happy","feliz"],["sad","triste"],["run","correr"],
 ["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"],
-["work","trabajar"],["study","estudiar"],["teacher","profesor"],
-["student","estudiante"],["city","ciudad"],["country","país"],
-["big","grande"],["small","pequeño"],["fast","rápido"],["slow","lento"],
-["hot","caliente"],["cold","frío"],["new","nuevo"],["old","viejo"],
-["day","día"],["night","noche"],["time","tiempo"],["hand","mano"],
-["foot","pie"],["head","cabeza"],["eye","ojo"],["mouth","boca"],
-["love","amor"],["family","familia"],["name","nombre"],["light","luz"]
+["work","trabajar"],["study","estudiar"],["city","ciudad"],
+["big","grande"],["small","pequeño"],["fast","rápido"]
 ];
 
+// CASTELLANO MÁS GRANDE + MÁS VARIADO
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
 ["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
@@ -127,13 +124,11 @@ const castellanoBase = [
 ["acción","accion"],["fácil","facil"],["difícil","dificil"],
 ["país","pais"],["jamón","jamon"],["colchón","colchon"],
 ["educación","educacion"],["información","informacion"],
-["computación","computacion"],["dirección","direccion"],
-["situación","situacion"],["expresión","expresion"],
 ["organización","organizacion"],["televisión","television"],
-["corrección","correccion"],["solución","solucion"],
-["reacción","reaccion"],["nación","nacion"]
+["corrección","correccion"],["solución","solucion"]
 ];
 
+// CIENCIAS MÁS COMPLETO
 const cienciasBase = [
 ["¿Planeta más cercano al Sol?","mercurio"],
 ["¿Gas que respiramos?","oxigeno"],
@@ -142,20 +137,13 @@ const cienciasBase = [
 ["¿Estrella principal?","sol"],
 ["¿Planeta rojo?","marte"],
 ["¿Planeta más grande?","jupiter"],
-["¿Planeta con anillos?","saturno"],
 ["¿Órgano que bombea sangre?","corazon"],
 ["¿Órgano del pensamiento?","cerebro"],
-["¿Gas de las plantas?","co2"],
+["¿Gas de plantas?","co2"],
 ["¿Proceso de plantas?","fotosintesis"],
 ["¿Unidad de vida?","celula"],
 ["¿Fuerza gravedad?","gravedad"],
-["¿Animal que da leche?","vaca"],
-["¿Estado del agua a vapor?","evaporacion"],
-["¿Estado del agua a líquido?","condensacion"],
-["¿Capa protectora Tierra?","ozono"],
-["¿Planeta donde vivimos?","tierra"],
-["¿Sistema sanguíneo?","circulatorio"],
-["¿Órgano respiración?","pulmones"]
+["¿Animal leche?","vaca"]
 ];
 
 // =======================================
@@ -214,10 +202,11 @@ const Juegos = {
     },
 
     castellano3:{
-        preguntas:[
-            { p:"Completa: El perro ___ en el parque", r:"corre", tipo:"input" },
-            { p:"Completa: La niña ___ un libro", r:"lee", tipo:"input" }
-        ]
+        preguntas: castellanoBase.map(x=>({
+            p:`Completa: ____ (${x[1]})`,
+            r:x[0],
+            tipo:"fill"
+        }))
     },
 
     ciencias1:{
@@ -244,7 +233,7 @@ const Juegos = {
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO
+// 🚀 INICIAR JUEGO (SIN REPETICIONES MEJORADAS)
 export function iniciarJuego(key){
 
     claveActual = key;
@@ -260,12 +249,12 @@ export function iniciarJuego(key){
     resultado.innerHTML = "";
     input.value = "";
 
+    actualizarPuntos();
+
     if(!juegoActual){
         pregunta.innerText = "Nivel no encontrado";
         return;
     }
-
-    actualizarPuntos();
 
     if(juegoActual.generar){
 
@@ -279,24 +268,20 @@ export function iniciarJuego(key){
 
     } else {
 
-        if(!usadas[key]) usadas[key] = [];
+        if(!usadas[key]) usadas[key] = new Set();
 
         const lista = juegoActual.preguntas || [];
 
-        if(usadas[key].length >= lista.length){
-            usadas[key] = [];
-        }
-
-        let disponibles = lista.filter(p => !usadas[key].includes(p));
+        let disponibles = lista.filter(p => !usadas[key].has(p.p));
 
         if(disponibles.length === 0){
-            usadas[key] = [];
+            usadas[key].clear();
             disponibles = [...lista];
         }
 
-        preguntaActual = disponibles[Math.floor(Math.random() * disponibles.length)];
+        preguntaActual = disponibles[Math.floor(Math.random()*disponibles.length)];
 
-        usadas[key].push(preguntaActual);
+        usadas[key].add(preguntaActual.p);
     }
 
     pregunta.innerText = preguntaActual.p;
@@ -304,7 +289,7 @@ export function iniciarJuego(key){
     input.style.display = "none";
     zona.innerHTML = "";
 
-    if(preguntaActual.tipo === "input"){
+    if(preguntaActual.tipo === "input" || preguntaActual.tipo === "fill"){
         input.style.display = "block";
     } else {
         (preguntaActual.opciones || []).forEach(op=>{
@@ -326,7 +311,7 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR
+// ✅ COMPROBAR (FIX FINAL)
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);

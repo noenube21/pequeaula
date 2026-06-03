@@ -15,14 +15,7 @@ let datos = {
 };
 
 // =======================================
-// 🔥 GLOBAL (NUEVO, NO TOCA NADA TUYO)
-function obtenerGlobal(){
-    return Object.values(datos.puntosPorNivel || {})
-        .reduce((a,b)=>a + (Number(b) || 0), 0);
-}
-
-// =======================================
-// 🔥 CARGA SEGURA
+// 🔥 CARGA SEGURA (NO RESETEA NADA)
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
@@ -115,7 +108,10 @@ function actualizarPuntos(){
 
     if(score){
         score.innerHTML =
-            `Puntos: ${obtenerPuntosNivel()} | Global: ${obtenerGlobal()}`;
+            `Puntos: ${obtenerPuntosNivel()} | Global: ${
+                Object.values(datos.puntosPorNivel || {})
+                    .reduce((a,b)=>a + (Number(b) || 0), 0)
+            }`;
     }
 }
 
@@ -132,7 +128,6 @@ async function guardarTodo(){
 }
 
 // =======================================
-// 🧮 MATEMÁTICAS (100% INTACTAS, NO TOCADO)
 function calc(op,max){
 
     let a=Math.floor(Math.random()*max);
@@ -144,7 +139,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES (CASTELLANO NO TOCADO)
+// 📚 BASES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -159,16 +154,15 @@ const castellanoBase = [
 ["niño","nino"],["mañana","manana"],["león","leon"]
 ];
 
-// 🌍 SOLO MEJORA DE REDACCIÓN CIENCIAS (SIN CAMBIAR MECÁNICA)
 const cienciasBase = [
-["¿Cuál es el planeta más cercano al Sol?","mercurio"],
+["¿Cuál es el planeta cercano al Sol?","mercurio"],
 ["¿Cuál es el planeta más grande del sistema solar?","jupiter"],
-["¿Cuál es el planeta conocido como planeta rojo?","marte"],
-["¿Cuál es el gas que respiramos los seres humanos?","oxigeno"],
-["¿Cuál es el satélite natural de la Tierra?","luna"],
-["¿Cuál es la estrella principal del sistema solar?","sol"],
-["¿Cuál es el líquido esencial para la vida?","agua"],
-["¿Qué órgano bombea la sangre en el cuerpo humano?","corazon"]
+["¿Cuál es el planeta rojo?","marte"],
+["¿Qué gas respiramos?","oxigeno"],
+["¿Satélite de la Tierra?","luna"],
+["¿Estrella principal del sistema solar?","sol"],
+["¿Líquido esencial para la vida?","agua"],
+["¿Órgano que bombea la sangre?","corazon"]
 ];
 
 // =======================================
@@ -179,7 +173,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (CASTELLANO NO TOCADO)
+// 🎮 JUEGOS
 
 const Juegos = {
 
@@ -212,12 +206,34 @@ const Juegos = {
         }))
     },
 
+    // 🔥 CASTELLANO 1 ARREGLADO (SELECCIÓN)
     castellano1:{
-        preguntas: castellanoBase.map(x=>({
-            p:`Escribe correctamente: ${x[1]}`,
-            r:x[0],
-            tipo:"input"
-        }))
+        preguntas:[
+            {
+                p:"¿Cuál de estas palabras es un sustantivo?",
+                r:"mesa",
+                tipo:"test",
+                opciones:["mesa","correr","rápido"]
+            },
+            {
+                p:"¿Cuál de estas palabras es un verbo?",
+                r:"correr",
+                tipo:"test",
+                opciones:["correr","mesa","azul"]
+            },
+            {
+                p:"¿Cuál es un adjetivo?",
+                r:"rápido",
+                tipo:"test",
+                opciones:["rápido","mesa","correr"]
+            },
+            {
+                p:"¿Qué palabra es un objeto?",
+                r:"silla",
+                tipo:"test",
+                opciones:["silla","feliz","cantar"]
+            }
+        ]
     },
 
     castellano2:{

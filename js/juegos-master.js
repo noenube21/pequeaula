@@ -8,31 +8,38 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO GLOBAL
+// 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
-    puntosPorNivel: {},
-    historial: []
+    puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 CARGAR PROGRESO
+// 🔥 CARGA SEGURA (NO RESETEA NADA)
 export async function cargarDatosUsuario(){
 
-    const remoto = await cargarProgreso();
+    const local = JSON.parse(localStorage.getItem("progreso")) || {};
+    let remoto = null;
 
-    if(remoto){
-        datos = remoto;
-    } else {
-        datos = JSON.parse(localStorage.getItem("progreso")) || {
-            aciertos: 0,
-            puntosPorNivel: {},
-            historial: []
-        };
+    try {
+        remoto = await cargarProgreso();
+    } catch (e) {
+        console.warn("Firebase no disponible:", e);
+    }
+
+    datos = {
+        aciertos: 0,
+        puntosPorNivel: {},
+
+        ...local,
+        ...(remoto || {})
+    };
+
+    if(!datos.puntosPorNivel){
+        datos.puntosPorNivel = {};
     }
 
     actualizarPuntos();
-    window.datos = datos; // 👈 clave para familia
 }
 
 // =======================================
@@ -70,39 +77,25 @@ function levenshtein(a, b){
 }
 
 // =======================================
-// 🔥 PUNTOS POR NIVEL + HISTORIAL
-function sumarPunto(){
-
-    const nivel = claveActual;
-
-    if(!datos.puntosPorNivel[nivel]){
-        datos.puntosPorNivel[nivel] = 0;
+// 🔥 PUNTOS POR NIVEL
+function obtenerPuntosNivel(){
+    if(!datos.puntosPorNivel[claveActual]){
+        datos.puntosPorNivel[claveActual] = 0;
     }
-
-    datos.puntosPorNivel[nivel] += 1;
-
-    // 🔥 HISTORIAL GLOBAL
-    datos.historial.push({
-        nivel: nivel,
-        fecha: Date.now()
-    });
+    return datos.puntosPorNivel[claveActual];
 }
 
-// =======================================
-function obtenerGlobal(){
-    return Object.values(datos.puntosPorNivel || {})
-        .reduce((a,b)=>a + (Number(b)||0), 0);
+function sumarPunto(){
+    datos.puntosPorNivel[claveActual] =
+        obtenerPuntosNivel() + 1;
 }
 
 // =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
-
     if(score){
-        score.innerHTML = `
-            <div>Puntos nivel: ${datos.puntosPorNivel[claveActual] || 0}</div>
-            <div>Total global: ${obtenerGlobal()}</div>
-        `;
+        score.innerText =
+            `Puntos: ${obtenerPuntosNivel()} | ${claveActual}`;
     }
 }
 
@@ -113,28 +106,47 @@ async function guardarTodo(){
 
     try {
         await guardarFirestore(datos);
-    } catch {}
+    } catch (e) {
+        console.warn(e);
+    }
 }
 
 // =======================================
-// 📚 BASES (las tuyas se mantienen)
+function calc(op,max){
+
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+
+    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
+    return {p:`${a} × ${b}`,r:(a*b).toString()};
+}
+
+// =======================================
+// 📚 BASES (COMO LAS TENÍAS)
+
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
+["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
+["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
+["friend","amigo"],["happy","feliz"],["sad","triste"]
 ];
 
 const castellanoBase = [
-["El ___ es verde","arbol"],
-["El ___ ladra","perro"],
-["El ___ vuela","pajaro"],
-["El ___ es rojo","fuego"]
+["árbol","arbol"],["camión","camion"],["corazón","corazon"],
+["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
+["niño","nino"],["mañana","manana"],["león","leon"]
 ];
 
 const cienciasBase = [
-["¿Cuál es el planeta más cercano al Sol?","mercurio"],
-["¿Cuál es el gas que respiramos?","oxigeno"],
-["¿Cuál es el satélite de la Tierra?","luna"],
-["¿Qué órgano bombea la sangre?","corazon"]
+["¿Planeta cercano al Sol?","mercurio"],
+["¿Gas que respiramos?","oxigeno"],
+["¿Satélite de la Tierra?","luna"],
+["¿Estado sólido del agua?","hielo"],
+["¿Estrella principal?","sol"],
+["¿Planeta rojo?","marte"],
+["¿Planeta grande?","jupiter"],
+["¿Órgano sangre?","corazon"]
 ];
 
 // =======================================
@@ -145,11 +157,13 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS
+// 🎮 JUEGOS (RESTAURADOS COMPLETOS)
 
 const Juegos = {
 
-    matematicas1:{ generar:()=>({p:"2 + 2",r:"4"}) },
+    matematicas1:{ generar:()=>calc("+",10) },
+    matematicas2:{ generar:()=>calc("-",20) },
+    matematicas3:{ generar:()=>calc("*",10) },
 
     ingles1:{
         preguntas: inglesBase.map(x=>({
@@ -160,34 +174,78 @@ const Juegos = {
         }))
     },
 
+    ingles2:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"input"
+        }))
+    },
+
+    ingles3:{
+        preguntas: inglesBase.map(x=>({
+            p:`Traduce: ${x[1]}`,
+            r:x[0],
+            tipo:"input"
+        }))
+    },
+
     castellano1:{
         preguntas: castellanoBase.map(x=>({
-            p:`Completa: ${x[0]}`,
-            r:x[1],
-            tipo:"test",
-            opciones: generarOpciones(x[1], castellanoBase.map(y=>y[1]))
+            p:`Escribe correctamente: ${x[1]}`,
+            r:x[0],
+            tipo:"input"
         }))
+    },
+
+    castellano2:{
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] }
+        ]
+    },
+
+    castellano3:{
+        preguntas:[
+            { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
+            { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] }
+        ]
     },
 
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
             p:x[0],
             r:x[1],
-            tipo:"test",
-            opciones: generarOpciones(x[1], cienciasBase.map(y=>y[1]))
+            tipo:"input"
         }))
+    },
+
+    ciencias2:{
+        preguntas:[
+            { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
+            { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
+            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
+            { p:"¿Planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+        ]
     }
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO
+// 🚀 INICIAR JUEGO (IMPORTANTE: cargar antes)
 
 export async function iniciarJuego(key){
 
+    await cargarDatosUsuario();
+
     claveActual = key;
     juegoActual = Juegos[key];
-
-    await cargarDatosUsuario();
 
     const pregunta = document.getElementById("pregunta");
     const zona = document.getElementById("zona");
@@ -212,15 +270,15 @@ export async function iniciarJuego(key){
 
         preguntaActual = {
             p: gen.p,
-            r: gen.r,
+            r: String(gen.r),
             tipo: "input"
         };
 
     } else {
 
-        const lista = juegoActual.preguntas;
-
         if(!usadas[key]) usadas[key] = new Set();
+
+        const lista = juegoActual.preguntas || [];
 
         let disponibles = lista.filter(p => !usadas[key].has(p.p));
 
@@ -247,7 +305,7 @@ export async function iniciarJuego(key){
 
             b.onclick = ()=>{
                 document.querySelectorAll("#zona .opcion")
-                    .forEach(x=>x.classList.remove("seleccionada"));
+                    .forEach(btn => btn.classList.remove("seleccionada"));
 
                 b.classList.add("seleccionada");
                 input.value = op;
@@ -275,12 +333,11 @@ export async function comprobar(){
         datos.aciertos++;
         resultado.innerText = "✔ Correcto";
     } else {
-        resultado.innerText = "✘ Incorrecto";
+        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 
     actualizarPuntos();
     await guardarTodo();
-
     comprobarRecompensas(datos.aciertos);
 
     setTimeout(()=>{

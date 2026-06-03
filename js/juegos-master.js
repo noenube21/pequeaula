@@ -8,19 +8,19 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO GLOBAL PERSISTENTE
+// 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
     puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 CARGA SEGURA (LOCAL + FIREBASE SIN PISAR)
+// 🔥 CARGA SEGURA (NO RESETEA NADA)
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
-
     let remoto = null;
+
     try {
         remoto = await cargarProgreso();
     } catch (e) {
@@ -77,7 +77,7 @@ function levenshtein(a, b){
 }
 
 // =======================================
-// 🔥 PUNTOS POR NIVEL (NO GLOBAL)
+// 🔥 PUNTOS POR NIVEL
 function obtenerPuntosNivel(){
     if(!datos.puntosPorNivel[claveActual]){
         datos.puntosPorNivel[claveActual] = 0;
@@ -100,16 +100,14 @@ function actualizarPuntos(){
 }
 
 // =======================================
-// 💾 GUARDADO SEGURO
 async function guardarTodo(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
     try {
         await guardarFirestore(datos);
-        console.log("🔥 Guardado OK:", datos);
     } catch (e) {
-        console.warn("Firebase error:", e);
+        console.warn(e);
     }
 }
 
@@ -125,16 +123,19 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES
+// 📚 BASES (COMO LAS TENÍAS)
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
+["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
+["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
+["friend","amigo"],["happy","feliz"],["sad","triste"]
 ];
 
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
-["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"]
+["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
+["niño","nino"],["mañana","manana"],["león","leon"]
 ];
 
 const cienciasBase = [
@@ -156,7 +157,8 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS
+// 🎮 JUEGOS (RESTAURADOS COMPLETOS)
+
 const Juegos = {
 
     matematicas1:{ generar:()=>calc("+",10) },
@@ -172,6 +174,37 @@ const Juegos = {
         }))
     },
 
+    ingles2:{
+        preguntas: inglesBase.map(x=>({
+            p:`${x[0]} =`,
+            r:x[1],
+            tipo:"input"
+        }))
+    },
+
+    ingles3:{
+        preguntas: inglesBase.map(x=>({
+            p:`Traduce: ${x[1]}`,
+            r:x[0],
+            tipo:"input"
+        }))
+    },
+
+    castellano1:{
+        preguntas: castellanoBase.map(x=>({
+            p:`Escribe correctamente: ${x[1]}`,
+            r:x[0],
+            tipo:"input"
+        }))
+    },
+
+    castellano2:{
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] }
+        ]
+    },
+
     castellano3:{
         preguntas:[
             { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
@@ -180,20 +213,36 @@ const Juegos = {
         ]
     },
 
+    ciencias1:{
+        preguntas: cienciasBase.map(x=>({
+            p:x[0],
+            r:x[1],
+            tipo:"input"
+        }))
+    },
+
+    ciencias2:{
+        preguntas:[
+            { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
+            { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
+        ]
+    },
+
     ciencias3:{
         preguntas:[
             { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
+            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
             { p:"¿Planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
         ]
     }
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO (OBLIGA CARGA SIEMPRE)
+// 🚀 INICIAR JUEGO (IMPORTANTE: cargar antes)
+
 export async function iniciarJuego(key){
 
-    await cargarDatosUsuario(); // 🔥 CLAVE PARA EVITAR RESET
+    await cargarDatosUsuario();
 
     claveActual = key;
     juegoActual = Juegos[key];
@@ -268,7 +317,8 @@ export async function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR RESPUESTA
+// ✅ COMPROBAR
+
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);

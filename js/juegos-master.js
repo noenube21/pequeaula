@@ -111,7 +111,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-const Juegos = {
+
 const castellanoBase = [
 ["árbol","arbol"],
 ["camión","camion"],

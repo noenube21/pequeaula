@@ -8,22 +8,22 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO GLOBAL (ESTABLE)
+// 🔥 PROGRESO GLOBAL (ESTABLE REAL)
 let datos = {
     aciertos: 0,
     puntos: 0
 };
 
 // =======================================
-// 🔥 CARGA 100% SEGURA (NO RESETEA NUNCA)
+// 🔥 CARGA DEFINITIVA (NO RESETEA NUNCA)
 export async function cargarDatosUsuario(){
 
     const remoto = await cargarProgreso().catch(()=>null);
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
 
     datos = {
-        aciertos: local.aciertos ?? 0,
-        puntos: local.puntos ?? 0,
+        aciertos: Number(local.aciertos ?? 0),
+        puntos: Number(local.puntos ?? 0),
         ...(remoto || {})
     };
 
@@ -43,13 +43,8 @@ function limpiar(t){
 function levenshtein(a, b){
     const matrix = [];
 
-    for (let i = 0; i <= b.length; i++){
-        matrix[i] = [i];
-    }
-
-    for (let j = 0; j <= a.length; j++){
-        matrix[0][j] = j;
-    }
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
@@ -85,7 +80,7 @@ async function guardarTodo(){
     try {
         await guardarFirestore(datos);
     } catch (e) {
-        console.warn(e);
+        console.warn("Firestore error:", e);
     }
 }
 
@@ -101,7 +96,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES
+// 📚 BASES MÁS GRANDES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -121,11 +116,10 @@ const castellanoBase = [
 ["acción","accion"],["fácil","facil"],["difícil","dificil"],
 ["país","pais"],["jamón","jamon"],["colchón","colchon"],
 ["educación","educacion"],["información","informacion"],
-["organización","organizacion"],["televisión","television"],
-["corrección","correccion"],["solución","solucion"],
-["reacción","reaccion"],["nación","nacion"]
+["organización","organizacion"],["televisión","television"]
 ];
 
+// 🔥 CIENCIAS MÁS COMPLETO (ARREGLADO)
 const cienciasBase = [
 ["¿Planeta más cercano al Sol?","mercurio"],
 ["¿Gas que respiramos?","oxigeno"],
@@ -134,13 +128,20 @@ const cienciasBase = [
 ["¿Estrella principal?","sol"],
 ["¿Planeta rojo?","marte"],
 ["¿Planeta más grande?","jupiter"],
+["¿Planeta con anillos?","saturno"],
 ["¿Órgano que bombea sangre?","corazon"],
 ["¿Órgano del pensamiento?","cerebro"],
 ["¿Gas de plantas?","co2"],
 ["¿Proceso de plantas?","fotosintesis"],
 ["¿Unidad de vida?","celula"],
 ["¿Fuerza gravedad?","gravedad"],
-["¿Animal leche?","vaca"]
+["¿Animal leche?","vaca"],
+["¿Planeta donde vivimos?","tierra"],
+["¿Sistema respiratorio?","pulmones"],
+["¿Sistema digestivo?","estomago"],
+["¿Hueso más largo?","femur"],
+["¿Estado del agua gas?","evaporacion"],
+["¿Capa Tierra?","ozono"]
 ];
 
 // =======================================
@@ -198,13 +199,15 @@ const Juegos = {
         ]
     },
 
-    // 🔥 ARREGLADO: ahora usa base REAL + fill correcto
+    // 🔥 ARREGLADO: ahora es tipo TEST como castellano2
     castellano3:{
-        preguntas: castellanoBase.map(x=>({
-            p:`Completa: ____ (${x[1]})`,
-            r:x[0],
-            tipo:"fill"
-        }))
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"coche", tipo:"test", opciones:["coche","comer","rápido"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rojo"] },
+            { p:"¿Cuál es un adjetivo?", r:"grande", tipo:"test", opciones:["grande","casa","leer"] },
+            { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
+            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","rojo","mesa"] }
+        ]
     },
 
     ciencias1:{
@@ -217,15 +220,15 @@ const Juegos = {
 
     ciencias2:{
         preguntas:[
-            { p:"¿Qué planeta es rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-            { p:"¿Órgano que bombea sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
+            { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
+            { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
         ]
     },
 
     ciencias3:{
         preguntas:[
             { p:"Fórmula del agua", r:"h2o", tipo:"input" },
-            { p:"Fuerza de gravedad", r:"gravedad", tipo:"input" }
+            { p:"Fuerza gravedad", r:"gravedad", tipo:"input" }
         ]
     }
 };
@@ -284,22 +287,16 @@ export function iniciarJuego(key){
 
     pregunta.innerText = preguntaActual.p;
 
-    input.style.display = "none";
+    input.style.display = (preguntaActual.tipo === "input") ? "block" : "none";
     zona.innerHTML = "";
 
-    if(preguntaActual.tipo === "input" || preguntaActual.tipo === "fill"){
-        input.style.display = "block";
-    } else {
-        (preguntaActual.opciones || []).forEach(op=>{
+    if(preguntaActual.tipo === "test"){
+        preguntaActual.opciones.forEach(op=>{
             const b = document.createElement("button");
             b.innerText = op;
             b.classList.add("opcion");
 
             b.onclick = ()=>{
-                document.querySelectorAll("#zona .opcion")
-                    .forEach(btn => btn.classList.remove("seleccionada"));
-
-                b.classList.add("seleccionada");
                 input.value = op;
             };
 

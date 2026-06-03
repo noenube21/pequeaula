@@ -7,6 +7,8 @@ let puntos = 0;
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
+let usadas = [];
+
 
 // ✅ PROGRESO GLOBAL
 let datos = {
@@ -30,6 +32,7 @@ export async function cargarDatosUsuario(){
     }
 
     puntos = datos.puntos || 0;
+    actualizarPuntos(); // 🔥 IMPORTANTE
 }
 
 // =======================================
@@ -118,6 +121,7 @@ pregunta.innerText = preguntaActual.p;
 // =======================================
 async function guardarTodo(){
     datos.puntos = puntos;
+    datos.aciertos = datos.aciertos || 0;
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
@@ -285,7 +289,6 @@ const Juegos = {
 export function iniciarJuego(key){
 
     preguntasRestantes = [];
-
     claveActual = key;
     juegoActual = Juegos[key];
 
@@ -326,13 +329,17 @@ export function iniciarJuego(key){
         return;
     }
 
- preguntasRestantes = juegoActual.preguntas ? [...juegoActual.preguntas] : [];
-
+preguntasRestantes = (juegoActual.preguntas || []).filter(p => !usadas.includes(p));
     preguntaActual =
         preguntasRestantes[
             Math.floor(Math.random() * preguntasRestantes.length)
         ];
-
+    usadas.push(preguntaActual);
+usadas.push(preguntaActual);
+    if(!preguntaActual){
+    pregunta.innerText = "No hay preguntas disponibles";
+    return;
+}
     pregunta.innerText = preguntaActual.p;
 
     input.style.display = "none";

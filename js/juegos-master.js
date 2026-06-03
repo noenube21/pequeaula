@@ -8,11 +8,18 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO POR NIVEL
+// 🔥 PROGRESO POR NIVEL (NO TOCADO)
 let datos = {
     aciertos: 0,
     puntosPorNivel: {}
 };
+
+// =======================================
+// 🔥 GLOBAL (NUEVO)
+function obtenerGlobal(){
+    return Object.values(datos.puntosPorNivel || {})
+        .reduce((a,b)=>a + (Number(b) || 0), 0);
+}
 
 // =======================================
 // 🔥 CARGA SEGURA (NO RESETEA NADA)
@@ -30,6 +37,7 @@ export async function cargarDatosUsuario(){
     datos = {
         aciertos: 0,
         puntosPorNivel: {},
+        historial: [],
 
         ...local,
         ...(remoto || {})
@@ -38,6 +46,12 @@ export async function cargarDatosUsuario(){
     if(!datos.puntosPorNivel){
         datos.puntosPorNivel = {};
     }
+
+    if(!datos.historial){
+        datos.historial = [];
+    }
+
+    window.datos = datos; // 👈 NECESARIO PARA FAMILIA
 
     actualizarPuntos();
 }
@@ -77,7 +91,7 @@ function levenshtein(a, b){
 }
 
 // =======================================
-// 🔥 PUNTOS POR NIVEL
+// 🔥 PUNTOS NIVEL
 function obtenerPuntosNivel(){
     if(!datos.puntosPorNivel[claveActual]){
         datos.puntosPorNivel[claveActual] = 0;
@@ -88,14 +102,21 @@ function obtenerPuntosNivel(){
 function sumarPunto(){
     datos.puntosPorNivel[claveActual] =
         obtenerPuntosNivel() + 1;
+
+    // 🔥 HISTORIAL (FAMILIA)
+    datos.historial.push({
+        nivel: claveActual,
+        fecha: Date.now()
+    });
 }
 
 // =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
+
     if(score){
-        score.innerText =
-            `Puntos: ${obtenerPuntosNivel()} | ${claveActual}`;
+        score.innerHTML =
+            `Puntos: ${obtenerPuntosNivel()} | Global: ${obtenerGlobal()}`;
     }
 }
 
@@ -112,19 +133,7 @@ async function guardarTodo(){
 }
 
 // =======================================
-function calc(op,max){
-
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
-
-    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
-    return {p:`${a} × ${b}`,r:(a*b).toString()};
-}
-
-// =======================================
-// 📚 BASES (COMO LAS TENÍAS)
-
+// 📚 BASES (IGUAL QUE LAS TUYAS)
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
@@ -157,7 +166,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (RESTAURADOS COMPLETOS)
+// 🎮 JUEGOS (NO TOCADOS)
 
 const Juegos = {
 
@@ -238,7 +247,7 @@ const Juegos = {
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO (IMPORTANTE: cargar antes)
+// 🚀 INICIAR JUEGO (IGUAL)
 
 export async function iniciarJuego(key){
 
@@ -317,7 +326,7 @@ export async function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR
+// ✅ COMPROBAR (CON GLOBAL + HISTORIAL)
 
 export async function comprobar(){
 
@@ -329,15 +338,19 @@ export async function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
+
         sumarPunto();
         datos.aciertos++;
+
         resultado.innerText = "✔ Correcto";
+
     } else {
-        resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
+        resultado.innerText = "✘ Incorrecto. Respuesta correcta: " + preguntaActual.r;
     }
 
     actualizarPuntos();
     await guardarTodo();
+
     comprobarRecompensas(datos.aciertos);
 
     setTimeout(()=>{

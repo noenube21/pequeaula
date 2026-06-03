@@ -1,5 +1,6 @@
 import { comprobarRecompensas } from "./recompensas.js";
 import { guardarProgreso, cargarProgreso } from "./progreso.js";
+import { syncProgreso } from "./sync-progreso.js";
 // =======================================
 
 let preguntaActual = null;
@@ -124,8 +125,12 @@ async function guardarTodo(){
     } catch (e) {
         console.warn(e);
     }
+try {
+        await syncProgreso(datos);
+    } catch (e) {
+        console.warn(e);
+    }
 }
-
 // =======================================
 function calc(op,max){
 

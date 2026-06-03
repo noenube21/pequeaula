@@ -9,7 +9,6 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = [];
 
-
 // ✅ PROGRESO GLOBAL
 let datos = {
     aciertos: 0,
@@ -32,7 +31,7 @@ export async function cargarDatosUsuario(){
     }
 
     puntos = datos.puntos || 0;
-    actualizarPuntos(); // 🔥 IMPORTANTE
+    actualizarPuntos();
 }
 
 // =======================================
@@ -75,9 +74,16 @@ function levenshtein(a, b){
 }
 
 // =======================================
+function actualizarPuntos(){
+    const score = document.getElementById("score");
+    if(score){
+        score.innerText = "Puntos: " + puntos;
+    }
+}
+
+// =======================================
 async function guardarTodo(){
     datos.puntos = puntos;
-    datos.aciertos = datos.aciertos || 0;
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
@@ -107,7 +113,6 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-
 const castellanoBase = [
 ["árbol","arbol"],
 ["camión","camion"],
@@ -125,14 +130,13 @@ const cienciasBase = [
 ["¿Estrella principal?","sol"]
 ];
 
+// =======================================
 const Juegos = {
 
-    // ================= MATEMÁTICAS =================
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
 
-    // ================= INGLÉS =================
     ingles1:{
         preguntas: inglesBase.map(x=>({
             p:`${x[0]} =`,
@@ -158,7 +162,6 @@ const Juegos = {
         }))
     },
 
-    // ================= CASTELLANO =================
     castellano1:{
         preguntas: castellanoBase.map(x=>({
             p:`Escribe correctamente: ${x[1]}`,
@@ -169,37 +172,18 @@ const Juegos = {
 
     castellano2:{
         preguntas:[
-            {
-                p:"¿Cuál es un sustantivo?",
-                r:"mesa",
-                tipo:"test",
-                opciones:["mesa","correr","rojo"]
-            },
-            {
-                p:"¿Cuál es un verbo?",
-                r:"correr",
-                tipo:"test",
-                opciones:["correr","mesa","rápido"]
-            }
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] }
         ]
     },
 
     castellano3:{
         preguntas:[
-            {
-                p:"Completa: El perro ___ en el parque",
-                r:"corre",
-                tipo:"input"
-            },
-            {
-                p:"Completa: La niña ___ un libro",
-                r:"lee",
-                tipo:"input"
-            }
+            { p:"Completa: El perro ___ en el parque", r:"corre", tipo:"input" },
+            { p:"Completa: La niña ___ un libro", r:"lee", tipo:"input" }
         ]
     },
 
-    // ================= CIENCIAS =================
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
             p:x[0],
@@ -210,33 +194,15 @@ const Juegos = {
 
     ciencias2:{
         preguntas:[
-            {
-                p:"¿Qué planeta es rojo?",
-                r:"marte",
-                tipo:"test",
-                opciones:["marte","venus","jupiter"]
-            },
-            {
-                p:"¿Órgano que bombea sangre?",
-                r:"corazon",
-                tipo:"test",
-                opciones:["corazon","pulmon","higado"]
-            }
+            { p:"¿Qué planeta es rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
+            { p:"¿Órgano que bombea sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
         ]
     },
 
     ciencias3:{
         preguntas:[
-            {
-                p:"Fórmula del agua",
-                r:"h2o",
-                tipo:"input"
-            },
-            {
-                p:"Fuerza de gravedad",
-                r:"gravedad",
-                tipo:"input"
-            }
+            { p:"Fórmula del agua", r:"h2o", tipo:"input" },
+            { p:"Fuerza de gravedad", r:"gravedad", tipo:"input" }
         ]
     }
 };
@@ -244,7 +210,6 @@ const Juegos = {
 // =======================================
 export function iniciarJuego(key){
 
-    preguntasRestantes = [];
     claveActual = key;
     juegoActual = Juegos[key];
 
@@ -259,69 +224,50 @@ export function iniciarJuego(key){
     input.value = "";
 
     if(!juegoActual){
-
         pregunta.innerText = `Nivel no encontrado: ${key}`;
-
-        console.error(
-            "Nivel inexistente:",
-            key,
-            "Disponibles:",
-            Object.keys(Juegos)
-        );
-
         return;
     }
 
     actualizarPuntos();
 
-    if(juegoActual.generar){
+    // ✅ RESET cuando se acaban
+    if(usadas.length >= (juegoActual.preguntas || []).length){
+        usadas = [];
+    }
 
-        preguntaActual = juegoActual.generar();
+    preguntasRestantes = (juegoActual.preguntas || []).filter(p => !usadas.includes(p));
 
-        input.style.display = "block";
+    if(preguntasRestantes.length === 0){
+        usadas = [];
+        preguntasRestantes = [...juegoActual.preguntas];
+    }
 
-        pregunta.innerText = preguntaActual.p;
+    preguntaActual = preguntasRestantes[Math.floor(Math.random() * preguntasRestantes.length)];
 
+    if(!preguntaActual){
+        pregunta.innerText = "Error cargando pregunta";
         return;
     }
 
-preguntasRestantes = (juegoActual.preguntas || []).filter(p => !usadas.includes(p));
-    preguntaActual =
-        preguntasRestantes[
-            Math.floor(Math.random() * preguntasRestantes.length)
-        ];
-   
-usadas.push(preguntaActual);
-    if(!preguntaActual){
-    pregunta.innerText = "No hay preguntas disponibles";
-    return;
-}
+    usadas.push(preguntaActual);
+
     pregunta.innerText = preguntaActual.p;
 
     input.style.display = "none";
 
     if(preguntaActual.tipo === "input"){
-
         input.style.display = "block";
-
-    }else{
-
-(preguntaActual.opciones || []).forEach(op => {
+    } else {
+        (preguntaActual.opciones || []).forEach(op=>{
             const b = document.createElement("button");
-
             b.innerText = op;
             b.classList.add("opcion");
 
-            b.onclick = () => {
-
-                document
-                    .querySelectorAll("#zona .opcion")
-                    .forEach(btn =>
-                        btn.classList.remove("seleccionada")
-                    );
+            b.onclick = ()=>{
+                document.querySelectorAll("#zona .opcion")
+                    .forEach(btn => btn.classList.remove("seleccionada"));
 
                 b.classList.add("seleccionada");
-
                 input.value = op;
             };
 
@@ -355,3 +301,4 @@ export async function comprobar(){
         iniciarJuego(claveActual);
     },500);
 }
+``

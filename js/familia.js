@@ -19,6 +19,22 @@ function obtenerGlobal(){
 }
 
 // =======================================
+function limpiarDatos(obj){
+
+    const limpio = {};
+
+    for(const [k,v] of Object.entries(obj || {})){
+
+        if(!k || k.trim() === "") continue; // ❌ elimina claves vacías
+        if(isNaN(v)) continue;
+
+        limpio[k] = Number(v);
+    }
+
+    return limpio;
+}
+
+// =======================================
 function renderGrafico(){
 
     const canvas = document.getElementById("grafico");
@@ -26,27 +42,38 @@ function renderGrafico(){
 
     const ctx = canvas.getContext("2d");
 
-    const niveles = Object.keys(datos.puntosPorNivel || {});
-    const valores = Object.values(datos.puntosPorNivel || {});
+    const data = limpiarDatos(datos.puntosPorNivel);
 
-    const max = Math.max(...valores, 1);
+    const keys = Object.keys(data);
+    const values = Object.values(data);
+
+    const max = Math.max(...values, 1);
+
+    // 🔥 limpiar y ESCALAR bien
+    canvas.width = 700;
+    canvas.height = 350;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    const barWidth = 50;
-    const gap = 30;
+    const barWidth = 60;
+    const gap = 40;
 
-    niveles.forEach((nivel, i)=>{
+    keys.forEach((nivel, i)=>{
 
-        const x = i * (barWidth + gap) + 40;
-        const h = (valores[i] / max) * 200;
+        const x = 60 + i * (barWidth + gap);
+        const h = (values[i] / max) * 250;
 
-        ctx.fillStyle = "#4CAF50";
-        ctx.fillRect(x, 250 - h, barWidth, h);
+        // barra
+        ctx.fillStyle = "#4fc3f7";
+        ctx.fillRect(x, 300 - h, barWidth, h);
 
+        // texto nivel
         ctx.fillStyle = "#000";
-        ctx.fillText(nivel, x, 270);
-        ctx.fillText(valores[i], x, 240 - h);
+        ctx.font = "14px Arial";
+        ctx.fillText(nivel, x, 320);
+
+        // valor encima
+        ctx.fillText(values[i], x + 20, 290 - h);
     });
 }
 
@@ -57,31 +84,37 @@ function renderFamilia(){
 
     if(!cont) return;
 
+    const data = limpiarDatos(datos.puntosPorNivel);
+
     cont.innerHTML = `
         <h2>👨‍👩‍👧 Panel Familiar</h2>
 
         <div class="panel-grid">
 
-            <div class="card">
+            <div class="panel-card">
                 <h3>📊 Global</h3>
                 <p><b>Total puntos:</b> ${obtenerGlobal()}</p>
                 <p><b>Aciertos:</b> ${datos.aciertos || 0}</p>
             </div>
 
-            <div class="card">
+            <div class="panel-card">
                 <h3>📚 Por asignatura</h3>
-                ${Object.entries(datos.puntosPorNivel || {})
-                    .map(([k,v])=>`<p>${k}: <b>${v}</b></p>`)
-                    .join("") || "<p>No hay datos</p>"}
+                ${
+                    Object.keys(data).length
+                    ? Object.entries(data)
+                        .map(([k,v])=>`<p>${k}: <b>${v}</b></p>`)
+                        .join("")
+                    : "<p>No hay datos</p>"
+                }
             </div>
 
         </div>
 
-        <div class="card">
+        <div class="panel-card">
             <h3>📈 Progreso</h3>
-            <canvas id="grafico" width="600" height="300"></canvas>
+            <canvas id="grafico"></canvas>
         </div>
     `;
 
-    renderGrafico();
+    setTimeout(renderGrafico, 50);
 }

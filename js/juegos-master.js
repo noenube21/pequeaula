@@ -2,19 +2,20 @@ import { comprobarRecompensas } from "./recompensas.js";
 import { guardarProgreso as guardarFirestore, cargarProgreso } from "./progreso.js";
 
 // =======================================
-let preguntasRestantes = [];
+
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
+let usadas = {};
 
 // ✅ PROGRESO GLOBAL
 let datos = {
     aciertos: 0,
-    puntos: {}
+    puntos: 0
 };
 
 // =======================================
-// 🔥 FIREBASE: CARGAR USUARIO
+// 🔥 CARGAR PROGRESO
 export async function cargarDatosUsuario(){
 
     const remoto = await cargarProgreso();
@@ -24,7 +25,7 @@ export async function cargarDatosUsuario(){
     }else{
         datos = JSON.parse(localStorage.getItem("progreso")) || {
             aciertos: 0,
-            puntos: {}
+            puntos: 0
         };
     }
 
@@ -73,8 +74,7 @@ function levenshtein(a, b){
 function actualizarPuntos(){
     const score = document.getElementById("score");
     if(score){
-        const actuales = datos.puntos[claveActual] || 0;
-        score.innerText = "Puntos: " + actuales;
+        score.innerText = "Puntos: " + datos.puntos;
     }
 }
 
@@ -100,13 +100,6 @@ const inglesBase = [
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
 
-function generarOpciones(correcta, lista){
-    const otras = lista.filter(x=>x!==correcta);
-    const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
-    return [correcta,...rand].sort(()=>0.5-Math.random());
-}
-
-// =======================================
 const castellanoBase = [
 ["árbol","arbol"],
 ["camión","camion"],
@@ -124,7 +117,14 @@ const cienciasBase = [
 ["¿Estrella principal?","sol"]
 ];
 
+function generarOpciones(correcta, lista){
+    const otras = lista.filter(x=>x!==correcta);
+    const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
+    return [correcta,...rand].sort(()=>0.5-Math.random());
+}
+
 // =======================================
+// 🎮 JUEGOS
 const Juegos = {
 
     matematicas1:{ generar:()=>calc("+",10) },
@@ -202,10 +202,7 @@ const Juegos = {
 };
 
 // =======================================
-// 🧠 USADAS POR NIVEL
-let usadas = {};
-
-// =======================================
+// 🚀 INICIAR JUEGO
 export function iniciarJuego(key){
 
     claveActual = key;
@@ -222,35 +219,52 @@ export function iniciarJuego(key){
     input.value = "";
 
     if(!juegoActual){
-        pregunta.innerText = `Nivel no encontrado: ${key}`;
+        pregunta.innerText = "Nivel no encontrado";
         return;
     }
 
-    if(!datos.puntos[key]) datos.puntos[key] = 0;
-    if(!usadas[key]) usadas[key] = [];
-
     actualizarPuntos();
 
-    const lista = juegoActual.preguntas || [];
+    // 🔥 MATEMÁTICAS (GENERADOR DINÁMICO)
+    if(juegoActual.generar){
 
-    if(usadas[key].length >= lista.length){
-        usadas[key] = [];
+        const gen = juegoActual.generar();
+
+        preguntaActual = {
+            p: gen.p,
+            r: gen.r,
+            tipo: "input"
+        };
     }
 
-    let disponibles = lista.filter(p => !usadas[key].includes(p));
+    // 📚 OTROS JUEGOS (CON LISTA)
+    else{
 
-    if(disponibles.length === 0){
-        usadas[key] = [];
-        disponibles = [...lista];
+        if(!usadas[key]) usadas[key] = [];
+
+        const lista = juegoActual.preguntas || [];
+
+        if(usadas[key].length >= lista.length){
+            usadas[key] = [];
+        }
+
+        let disponibles = lista.filter(p => !usadas[key].includes(p));
+
+        if(disponibles.length === 0){
+            usadas[key] = [];
+            disponibles = [...lista];
+        }
+
+        preguntaActual = disponibles[Math.floor(Math.random() * disponibles.length)];
+
+        usadas[key].push(preguntaActual);
     }
 
-    preguntaActual = disponibles[Math.floor(Math.random() * disponibles.length)];
-
-    usadas[key].push(preguntaActual);
-
+    // Mostrar pregunta
     pregunta.innerText = preguntaActual.p;
 
     input.style.display = "none";
+    zona.innerHTML = "";
 
     if(preguntaActual.tipo === "input"){
         input.style.display = "block";
@@ -274,6 +288,7 @@ export function iniciarJuego(key){
 }
 
 // =======================================
+// ✅ COMPROBAR RESPUESTA
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
@@ -283,12 +298,10 @@ export async function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-        if(!datos.puntos[claveActual]) datos.puntos[claveActual] = 0;
-        datos.puntos[claveActual]++;
-
+        datos.puntos++; // ⭐ GLOBAL
         datos.aciertos++;
         resultado.innerText = "✔ Correcto";
-    }else{
+    } else {
         resultado.innerText = `✘ Incorrecto. Respuesta correcta: ${preguntaActual.r}`;
     }
 

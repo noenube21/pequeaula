@@ -15,16 +15,14 @@ body {
     background-size: cover;
     background-position: center;
 
-    text-align: center;
+    text-align: center; /* ✅ centra todo texto */
 }
 
 /* ================================== */
-/* ✅ TITULOS (ROJOS SOLO TEXTO, NO DISEÑO) */
+/* TITULOS */
 h1, h2, h3 {
     text-align: center;
     margin: 20px 0;
-
-    color: #ff4d4d;   /* ✅ SOLO ESTO AÑADIDO */
 }
 
 /* ================================== */
@@ -60,7 +58,7 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* LOGIN (NO TOCADO) */
+/* LOGIN */
 .login-container {
     display: flex;
     justify-content: center;
@@ -85,7 +83,7 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* MENÚ (NO TOCADO) */
+/* MENÚ */
 .card-container {
     display: flex;
     justify-content: center;
@@ -107,6 +105,7 @@ button:hover, .btn:hover {
     transform: scale(1.05);
 }
 
+/* 🔥 IMÁGENES CONTROLADAS */
 .card img {
     width: 120px;
     height: auto;
@@ -122,36 +121,36 @@ button:hover, .btn:hover {
     padding: 20px;
     border-radius: 20px;
     border: 2px solid #ffcc4d;
-    margin: 30px auto;
+    margin: 30px auto; /* ✅ centra */
 }
 
+/* PREGUNTA */
 .pregunta {
     font-size: 18px;
     margin-bottom: 15px;
 }
 
+/* ZONA BOTONES */
 #zona {
     margin-bottom: 10px;
 }
 
-/* ================================== */
-/* ✅ INPUT ARREGLADO (SIN CAMBIAR DISEÑO) */
+/* INPUT */
 #respuesta {
     width: 90%;
-    max-width: 300px;   /* ✅ añadido */
     padding: 8px;
     margin: 10px auto;
     border-radius: 10px;
     border: 2px solid #ffcc4d;
-    display: block;     /* ✅ clave centrar */
 }
 
-/* ================================== */
+/* RESULTADO */
 #resultado {
     margin-top: 10px;
     font-weight: bold;
 }
 
+/* SCORE */
 #score {
     font-size: 20px;
     margin: 10px;
@@ -159,15 +158,18 @@ button:hover, .btn:hover {
 }
 
 /* ================================== */
-/* ✅ SELECCIÓN ARREGLADA (SOLO QUITAR IMPORTANT) */
+/* ✅ AQUI ESTA EL FIX (LO ÚNICO NUEVO) */
+
+/* OPCIONES NORMALES */
 .opcion {
-    background: white;
-    color: black;
-    border: 2px solid #333;
+    background: white !important;
+    color: black !important;
+    border: 2px solid #333 !important;
 }
 
+/* OPCIÓN SELECCIONADA */
 .opcion.seleccionada {
-    background: #4fc3f7;
-    color: white;
-    border: 2px solid #0288d1;
+    background: #4fc3f7 !important;
+    color: white !important;
+    border: 2px solid #0288d1 !important;
 }

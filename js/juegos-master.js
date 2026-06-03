@@ -290,7 +290,7 @@ preguntasRestantes = (juegoActual.preguntas || []).filter(p => !usadas.includes(
         preguntasRestantes[
             Math.floor(Math.random() * preguntasRestantes.length)
         ];
-    usadas.push(preguntaActual);
+   
 usadas.push(preguntaActual);
     if(!preguntaActual){
     pregunta.innerText = "No hay preguntas disponibles";

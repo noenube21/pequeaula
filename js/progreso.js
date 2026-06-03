@@ -28,8 +28,6 @@ export async function guardarProgreso(datos) {
             { merge: true }
         );
 
-        console.log("✅ Progreso guardado en Firebase");
-
     } catch (error) {
         console.error("❌ Error guardando progreso:", error);
     }
@@ -53,7 +51,7 @@ export async function cargarProgreso() {
         if (snap.exists()) {
             const data = snap.data();
 
-            // IMPORTANTE: devolvemos SOLO progreso
+            // SOLO devolvemos el progreso real
             return data.progreso || null;
         }
 

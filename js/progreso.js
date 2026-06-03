@@ -1,133 +1,66 @@
+import { auth, db } from "./firebase-config.js";
+
+import {
+    doc,
+    setDoc,
+    getDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+
 // =======================================
-// GUARDAR PROGRESO
+// 💾 GUARDAR PROGRESO (FIREBASE)
 // =======================================
 
 export async function guardarProgreso(datos) {
 
-    localStorage.setItem(
-        "progreso",
-        JSON.stringify(datos)
-    );
+    const usuario = auth.currentUser;
 
-    console.log("✅ Progreso guardado");
+    if (!usuario) return;
+
+    try {
+        await setDoc(
+            doc(db, "usuarios", usuario.uid),
+            {
+                progreso: datos,
+                actualizado: serverTimestamp()
+            },
+            { merge: true }
+        );
+
+        console.log("✅ Progreso guardado en Firebase");
+
+    } catch (error) {
+        console.error("❌ Error guardando progreso:", error);
+    }
 }
 
 
 // =======================================
-// CARGAR PROGRESO
+// 📥 CARGAR PROGRESO (FIREBASE)
 // =======================================
 
 export async function cargarProgreso() {
 
-    return JSON.parse(
-        localStorage.getItem("progreso")
-    );
-}
+    const usuario = auth.currentUser;
 
+    if (!usuario) return null;
 
-// =======================================
-// REGISTRAR RESULTADO
-// =======================================
+    try {
+        const ref = doc(db, "usuarios", usuario.uid);
+        const snap = await getDoc(ref);
 
-window.registrarResultado = function (asignaturaNivel, acierto, error) {
+        if (snap.exists()) {
+            const data = snap.data();
 
-    let datos = JSON.parse(localStorage.getItem("progreso")) || {
-        partidas: 0,
-        aciertos: 0,
-        errores: 0,
-        puntos: 0,
-        niveles: {}
-    };
+            // IMPORTANTE: devolvemos SOLO progreso
+            return data.progreso || null;
+        }
 
-    // Global
-    datos.partidas += 1;
-    datos.aciertos += acierto;
-    datos.errores += error;
+        return null;
 
-    // Por nivel
-    if (!datos.niveles[asignaturaNivel]) {
-        datos.niveles[asignaturaNivel] = {
-            aciertos: 0,
-            errores: 0
-        };
-    }
-
-    datos.niveles[asignaturaNivel].aciertos += acierto;
-    datos.niveles[asignaturaNivel].errores += error;
-
-    localStorage.setItem(
-        "progreso",
-        JSON.stringify(datos)
-    );
-
-    console.log("✅ GUARDADO LOCAL:", asignaturaNivel);
-};
-
-
-// =======================================
-// MOSTRAR ESTADÍSTICAS
-// =======================================
-
-function mostrarEstadisticas() {
-
-    const datos = JSON.parse(
-        localStorage.getItem("progreso")
-    );
-
-    if (!datos) return;
-
-    const partidas = datos.partidas || 0;
-    const aciertos = datos.aciertos || 0;
-    const errores = datos.errores || 0;
-
-    const total = aciertos + errores;
-
-    const porcentaje =
-        total > 0
-            ? Math.round((aciertos / total) * 100)
-            : 0;
-
-    const partidasEl = document.getElementById("partidas");
-    const aciertosEl = document.getElementById("aciertos");
-    const erroresEl = document.getElementById("errores");
-    const porcentajeEl = document.getElementById("porcentaje");
-
-    if (partidasEl) {
-        partidasEl.textContent = partidas;
-    }
-
-    if (aciertosEl) {
-        aciertosEl.textContent = aciertos;
-    }
-
-    if (erroresEl) {
-        erroresEl.textContent = errores;
-    }
-
-    if (porcentajeEl) {
-        porcentajeEl.textContent = porcentaje + "%";
+    } catch (error) {
+        console.error("❌ Error cargando progreso:", error);
+        return null;
     }
 }
-
-
-// =======================================
-// CARGAR ESTADÍSTICAS SI EXISTEN
-// =======================================
-
-document.addEventListener("DOMContentLoaded", () => {
-    mostrarEstadisticas();
-});
-
-
-// =======================================
-// RESETEAR PROGRESO
-// =======================================
-
-window.resetearProgreso = function () {
-
-    localStorage.removeItem("progreso");
-
-    alert("Progreso reiniciado");
-
-    location.reload();
-};

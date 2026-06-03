@@ -294,7 +294,7 @@ button:hover,
 }
 
 /* ================================== */
-/* INPUT */
+/* INPUT RESPUESTA */
 /* ================================== */
 
 #respuesta{
@@ -309,6 +309,10 @@ button:hover,
     border-radius:10px;
 
     border:2px solid #ffcc4d;
+
+    text-align:center;
+
+    font-size:18px;
 }
 
 /* ================================== */
@@ -316,7 +320,9 @@ button:hover,
 /* ================================== */
 
 #btnComprobar{
-    margin-top:10px;
+    display:block;
+
+    margin:10px auto;
 }
 
 /* ================================== */
@@ -362,5 +368,9 @@ button:hover,
 
     .game-box{
         width:95%;
+    }
+
+    #respuesta{
+        width:220px;
     }
 }

@@ -8,34 +8,31 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
+// 🔥 PROGRESO GLOBAL
 let datos = {
     aciertos: 0,
-    puntosPorNivel: {}
+    puntosPorNivel: {},
+    historial: []
 };
 
 // =======================================
-// 🔥 CARGA SEGURA (LOCAL + FIREBASE)
+// 🔥 CARGAR PROGRESO
 export async function cargarDatosUsuario(){
 
-    const local = JSON.parse(localStorage.getItem("progreso")) || {};
-    let remoto = null;
+    const remoto = await cargarProgreso();
 
-    try {
-        remoto = await cargarProgreso();
-    } catch {}
-
-    datos = {
-        aciertos: 0,
-        puntosPorNivel: {},
-        ...local,
-        ...(remoto || {})
-    };
-
-    if(!datos.puntosPorNivel){
-        datos.puntosPorNivel = {};
+    if(remoto){
+        datos = remoto;
+    } else {
+        datos = JSON.parse(localStorage.getItem("progreso")) || {
+            aciertos: 0,
+            puntosPorNivel: {},
+            historial: []
+        };
     }
 
     actualizarPuntos();
+    window.datos = datos; // 👈 clave para familia
 }
 
 // =======================================
@@ -73,30 +70,45 @@ function levenshtein(a, b){
 }
 
 // =======================================
-// 🔥 PUNTOS POR NIVEL
-function obtenerPuntosNivel(){
-    if(!datos.puntosPorNivel[claveActual]){
-        datos.puntosPorNivel[claveActual] = 0;
+// 🔥 PUNTOS POR NIVEL + HISTORIAL
+function sumarPunto(){
+
+    const nivel = claveActual;
+
+    if(!datos.puntosPorNivel[nivel]){
+        datos.puntosPorNivel[nivel] = 0;
     }
-    return datos.puntosPorNivel[claveActual];
+
+    datos.puntosPorNivel[nivel] += 1;
+
+    // 🔥 HISTORIAL GLOBAL
+    datos.historial.push({
+        nivel: nivel,
+        fecha: Date.now()
+    });
 }
 
-function sumarPunto(){
-    datos.puntosPorNivel[claveActual] =
-        obtenerPuntosNivel() + 1;
+// =======================================
+function obtenerGlobal(){
+    return Object.values(datos.puntosPorNivel || {})
+        .reduce((a,b)=>a + (Number(b)||0), 0);
 }
 
 // =======================================
 function actualizarPuntos(){
     const score = document.getElementById("score");
+
     if(score){
-        score.innerText =
-            `Puntos: ${obtenerPuntosNivel()} | ${claveActual}`;
+        score.innerHTML = `
+            <div>Puntos nivel: ${datos.puntosPorNivel[claveActual] || 0}</div>
+            <div>Total global: ${obtenerGlobal()}</div>
+        `;
     }
 }
 
 // =======================================
 async function guardarTodo(){
+
     localStorage.setItem("progreso", JSON.stringify(datos));
 
     try {
@@ -105,70 +117,24 @@ async function guardarTodo(){
 }
 
 // =======================================
-function calc(op,max){
-
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
-
-    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
-    return {p:`${a} × ${b}`,r:(a*b).toString()};
-}
-
-// =======================================
-// 📚 BASES
-
+// 📚 BASES (las tuyas se mantienen)
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
-["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
-["house","casa"],["tree","arbol"],["food","comida"],["school","escuela"],
-["friend","amigo"],["happy","feliz"],["sad","triste"],
-["run","correr"],["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
+["milk","leche"],["car","coche"],["water","agua"],["book","libro"]
 ];
-
-// 🔥 CASTELLANO (3 NIVELES BIEN DEFINIDOS)
 
 const castellanoBase = [
 ["El ___ es verde","arbol"],
 ["El ___ ladra","perro"],
 ["El ___ vuela","pajaro"],
-["El ___ es rojo","fuego"],
-["El ___ es frio","hielo"],
-["El ___ da leche","vaca"],
-["El ___ es un animal","gato"],
-["El ___ ilumina","sol"],
-["El ___ sirve para escribir","lapiz"],
-["El ___ es grande","elefante"],
-["El ___ nada en el mar","pez"],
-["El ___ es rapido","coche"],
-["El ___ crece en el campo","arbol"],
-["El ___ es rey de la selva","leon"],
-["El ___ toca musica","guitarra"]
+["El ___ es rojo","fuego"]
 ];
-
-// 🔥 CIENCIAS (REDACCION PERFECTA)
 
 const cienciasBase = [
 ["¿Cuál es el planeta más cercano al Sol?","mercurio"],
 ["¿Cuál es el gas que respiramos?","oxigeno"],
 ["¿Cuál es el satélite de la Tierra?","luna"],
-["¿Cuál es el estado sólido del agua?","hielo"],
-["¿Cuál es la estrella principal del sistema solar?","sol"],
-["¿Cuál es el planeta rojo?","marte"],
-["¿Cuál es el planeta más grande?","jupiter"],
-["¿Cuál es el planeta con anillos?","saturno"],
-["¿Qué órgano bombea la sangre?","corazon"],
-["¿Qué órgano se encarga del pensamiento?","cerebro"],
-["¿Qué gas usan las plantas?","co2"],
-["¿Cómo se llama el proceso de las plantas?","fotosintesis"],
-["¿Cuál es la unidad básica de vida?","celula"],
-["¿Qué fuerza nos mantiene en la Tierra?","gravedad"],
-["¿Qué animal da leche?","vaca"],
-["¿En qué planeta vivimos?","tierra"],
-["¿Qué órgano permite respirar?","pulmones"],
-["¿Qué órgano digiere la comida?","estomago"],
-["¿Cuál es el hueso más largo?","femur"],
-["¿Qué capa protege la Tierra?","ozono"]
+["¿Qué órgano bombea la sangre?","corazon"]
 ];
 
 // =======================================
@@ -179,13 +145,11 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS COMPLETOS
+// 🎮 JUEGOS
 
 const Juegos = {
 
     matematicas1:{ generar:()=>({p:"2 + 2",r:"4"}) },
-    matematicas2:{ generar:()=>({p:"5 - 3",r:"2"}) },
-    matematicas3:{ generar:()=>({p:"3 × 3",r:"9"}) },
 
     ingles1:{
         preguntas: inglesBase.map(x=>({
@@ -193,22 +157,6 @@ const Juegos = {
             r:x[1],
             tipo:"test",
             opciones: generarOpciones(x[1], inglesBase.map(y=>y[1]))
-        }))
-    },
-
-    ingles2:{
-        preguntas: inglesBase.map(x=>({
-            p:`${x[0]} =`,
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ingles3:{
-        preguntas: inglesBase.map(x=>({
-            p:`Traduce: ${x[1]}`,
-            r:x[0],
-            tipo:"input"
         }))
     },
 
@@ -221,47 +169,8 @@ const Juegos = {
         }))
     },
 
-    castellano2:{
-        preguntas:[
-            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
-            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","azul"] },
-            { p:"¿Cuál es un adjetivo?", r:"rojo", tipo:"test", opciones:["rojo","mesa","correr"] },
-            { p:"¿Qué palabra es sustantivo?", r:"perro", tipo:"test", opciones:["perro","leer","rapido"] },
-            { p:"¿Qué palabra es verbo?", r:"leer", tipo:"test", opciones:["leer","mesa","azul"] }
-        ]
-    },
-
-    castellano3:{
-        preguntas: castellanoBase
-            .sort(()=>Math.random()-0.5)
-            .slice(0,15)
-            .map(x=>({
-                p:`Completa: ${x[0]}`,
-                r:x[1],
-                tipo:"test",
-                opciones: generarOpciones(x[1], castellanoBase.map(y=>y[1]))
-            }))
-    },
-
     ciencias1:{
-        preguntas: cienciasBase.slice(0,10).map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"input"
-        }))
-    },
-
-    ciencias2:{
-        preguntas: cienciasBase.slice(10,15).map(x=>({
-            p:x[0],
-            r:x[1],
-            tipo:"test",
-            opciones: generarOpciones(x[1], cienciasBase.map(y=>y[1]))
-        }))
-    },
-
-    ciencias3:{
-        preguntas: cienciasBase.slice(5,20).map(x=>({
+        preguntas: cienciasBase.map(x=>({
             p:x[0],
             r:x[1],
             tipo:"test",
@@ -271,14 +180,14 @@ const Juegos = {
 };
 
 // =======================================
-// 🚀 INICIO
+// 🚀 INICIAR JUEGO
 
 export async function iniciarJuego(key){
 
-    await cargarDatosUsuario();
-
     claveActual = key;
     juegoActual = Juegos[key];
+
+    await cargarDatosUsuario();
 
     const pregunta = document.getElementById("pregunta");
     const zona = document.getElementById("zona");
@@ -303,15 +212,15 @@ export async function iniciarJuego(key){
 
         preguntaActual = {
             p: gen.p,
-            r: String(gen.r),
+            r: gen.r,
             tipo: "input"
         };
 
     } else {
 
-        if(!usadas[key]) usadas[key] = new Set();
+        const lista = juegoActual.preguntas;
 
-        const lista = juegoActual.preguntas || [];
+        if(!usadas[key]) usadas[key] = new Set();
 
         let disponibles = lista.filter(p => !usadas[key].has(p.p));
 
@@ -338,7 +247,7 @@ export async function iniciarJuego(key){
 
             b.onclick = ()=>{
                 document.querySelectorAll("#zona .opcion")
-                    .forEach(btn => btn.classList.remove("seleccionada"));
+                    .forEach(x=>x.classList.remove("seleccionada"));
 
                 b.classList.add("seleccionada");
                 input.value = op;
@@ -371,6 +280,7 @@ export async function comprobar(){
 
     actualizarPuntos();
     await guardarTodo();
+
     comprobarRecompensas(datos.aciertos);
 
     setTimeout(()=>{

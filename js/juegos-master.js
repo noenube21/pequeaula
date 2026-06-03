@@ -8,14 +8,13 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO GLOBAL (ESTABLE REAL)
+// 🔥 PROGRESO GLOBAL
 let datos = {
     aciertos: 0,
     puntos: 0
 };
 
 // =======================================
-// 🔥 CARGA DEFINITIVA (NO RESETEA NUNCA)
 export async function cargarDatosUsuario(){
 
     const remoto = await cargarProgreso().catch(()=>null);
@@ -80,7 +79,7 @@ async function guardarTodo(){
     try {
         await guardarFirestore(datos);
     } catch (e) {
-        console.warn("Firestore error:", e);
+        console.warn(e);
     }
 }
 
@@ -96,30 +95,23 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES MÁS GRANDES
+// 📚 BASES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
 ["house","casa"],["tree","árbol"],["food","comida"],["school","escuela"],
 ["friend","amigo"],["happy","feliz"],["sad","triste"],["run","correr"],
-["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"],
-["work","trabajar"],["study","estudiar"],["city","ciudad"],
-["big","grande"],["small","pequeño"],["fast","rápido"]
+["eat","comer"],["drink","beber"],["sleep","dormir"],["play","jugar"]
 ];
 
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
 ["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
-["ratón","raton"],["avión","avion"],["campeón","campeon"],
 ["niño","nino"],["mañana","manana"],["león","leon"],
-["acción","accion"],["fácil","facil"],["difícil","dificil"],
-["país","pais"],["jamón","jamon"],["colchón","colchon"],
-["educación","educacion"],["información","informacion"],
-["organización","organizacion"],["televisión","television"]
+["acción","accion"],["fácil","facil"],["difícil","dificil"]
 ];
 
-// 🔥 CIENCIAS MÁS COMPLETO (ARREGLADO)
 const cienciasBase = [
 ["¿Planeta más cercano al Sol?","mercurio"],
 ["¿Gas que respiramos?","oxigeno"],
@@ -128,20 +120,13 @@ const cienciasBase = [
 ["¿Estrella principal?","sol"],
 ["¿Planeta rojo?","marte"],
 ["¿Planeta más grande?","jupiter"],
-["¿Planeta con anillos?","saturno"],
 ["¿Órgano que bombea sangre?","corazon"],
 ["¿Órgano del pensamiento?","cerebro"],
-["¿Gas de plantas?","co2"],
-["¿Proceso de plantas?","fotosintesis"],
-["¿Unidad de vida?","celula"],
-["¿Fuerza gravedad?","gravedad"],
-["¿Animal leche?","vaca"],
 ["¿Planeta donde vivimos?","tierra"],
 ["¿Sistema respiratorio?","pulmones"],
 ["¿Sistema digestivo?","estomago"],
 ["¿Hueso más largo?","femur"],
-["¿Estado del agua gas?","evaporacion"],
-["¿Capa Tierra?","ozono"]
+["¿Capa protectora Tierra?","ozono"]
 ];
 
 // =======================================
@@ -199,14 +184,22 @@ const Juegos = {
         ]
     },
 
-    // 🔥 ARREGLADO: ahora es tipo TEST como castellano2
     castellano3:{
         preguntas:[
-            { p:"¿Cuál es un sustantivo?", r:"coche", tipo:"test", opciones:["coche","comer","rápido"] },
-            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rojo"] },
-            { p:"¿Cuál es un adjetivo?", r:"grande", tipo:"test", opciones:["grande","casa","leer"] },
             { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
-            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","rojo","mesa"] }
+            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","rojo","mesa"] },
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","correr","feliz"] },
+            { p:"¿Qué es un verbo?", r:"comer", tipo:"test", opciones:["comer","coche","azul"] }
+        ]
+    },
+
+    // 🔥 CIENCIAS 3 AHORA ES TEST CON BOTONES
+    ciencias3:{
+        preguntas:[
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
+            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
+            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] },
+            { p:"¿Qué órgano bombea sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","cerebro"] }
         ]
     },
 
@@ -222,13 +215,6 @@ const Juegos = {
         preguntas:[
             { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
             { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            { p:"Fórmula del agua", r:"h2o", tipo:"input" },
-            { p:"Fuerza gravedad", r:"gravedad", tipo:"input" }
         ]
     }
 };
@@ -297,6 +283,11 @@ export function iniciarJuego(key){
             b.classList.add("opcion");
 
             b.onclick = ()=>{
+
+                document.querySelectorAll("#zona .opcion")
+                    .forEach(btn => btn.classList.remove("seleccionada"));
+
+                b.classList.add("seleccionada");
                 input.value = op;
             };
 

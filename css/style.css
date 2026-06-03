@@ -1,4 +1,4 @@
-/* RESET */
+/* RESET */ 
 /* ================================== */
 
 *{
@@ -373,4 +373,41 @@ button:hover,
     #respuesta{
         width:220px;
     }
+}
+
+/* ================================== */
+/* 👨‍👩‍👧 PANEL FAMILIAR (NUEVO) */
+/* ================================== */
+
+#familia{
+    max-width:900px;
+    margin:30px auto;
+    padding:20px;
+}
+
+/* grid de tarjetas */
+.panel-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:20px;
+    margin-top:20px;
+}
+
+/* tarjetas del panel */
+.panel-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* canvas gráfico */
+#grafico{
+    width:100%;
+    max-width:600px;
+    height:auto;
+    margin:20px auto;
+    display:block;
+    background:white;
+    border-radius:15px;
 }

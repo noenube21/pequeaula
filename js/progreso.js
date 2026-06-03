@@ -6,9 +6,9 @@ import {
     getDoc
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// ================================
+// ==================================
 // ✅ GUARDAR PROGRESO
-// ================================
+// ==================================
 export async function guardarProgreso(datos){
 
     const usuario = auth.currentUser;
@@ -22,9 +22,9 @@ export async function guardarProgreso(datos){
     );
 }
 
-// ================================
+// ==================================
 // ✅ CARGAR PROGRESO
-// ================================
+// ==================================
 export async function cargarProgreso(){
 
     const usuario = auth.currentUser;
@@ -41,3 +41,4 @@ export async function cargarProgreso(){
 
     return null;
 }
+``

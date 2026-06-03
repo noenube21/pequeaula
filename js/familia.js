@@ -1,4 +1,4 @@
-import { cargarDatosUsuario } from "./js/juegos-master.js";
+import { cargarDatosUsuario } from "./juegos-master.js";
 
 let datos = {};
 

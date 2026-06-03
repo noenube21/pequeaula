@@ -75,50 +75,6 @@ function levenshtein(a, b){
 }
 
 // =======================================
-actualizarPuntos();
-
-input.style.display = "none";
-zona.innerHTML = "";
-
-if(!juegoActual){
-    pregunta.innerText = `Nivel no encontrado: ${key}`;
-    return;
-}
-
-if(juegoActual.generar){
-
-    preguntaActual = juegoActual.generar();
-
-    if(!preguntaActual){
-        pregunta.innerText = "Error generando pregunta";
-        return;
-    }
-
-    input.style.display = "block";
-    pregunta.innerText = preguntaActual.p;
-
-    return;
-}
-
-preguntasRestantes = juegoActual.preguntas ? [...juegoActual.preguntas] : [];
-
-if(preguntasRestantes.length === 0){
-    pregunta.innerText = "No hay preguntas en este nivel";
-    return;
-}
-
-preguntaActual =
-    preguntasRestantes[
-        Math.floor(Math.random() * preguntasRestantes.length)
-    ];
-
-if(!preguntaActual){
-    pregunta.innerText = "Error seleccionando pregunta";
-    return;
-}
-
-pregunta.innerText = preguntaActual.p;
-// =======================================
 async function guardarTodo(){
     datos.puntos = puntos;
     datos.aciertos = datos.aciertos || 0;

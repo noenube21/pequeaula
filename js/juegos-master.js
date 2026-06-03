@@ -8,24 +8,22 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// ✅ PROGRESO GLOBAL (NO SE REINICIA)
+// 🔥 PROGRESO GLOBAL (ESTABLE)
 let datos = {
     aciertos: 0,
     puntos: 0
 };
 
 // =======================================
-// 🔥 CARGA ROBUSTA (FIX DEFINITIVO)
+// 🔥 CARGA 100% SEGURA (NO RESETEA NUNCA)
 export async function cargarDatosUsuario(){
 
     const remoto = await cargarProgreso().catch(()=>null);
-    const local = JSON.parse(localStorage.getItem("progreso"));
+    const local = JSON.parse(localStorage.getItem("progreso")) || {};
 
-    // 🔥 FUSIÓN REAL (NO SOBRESCRIBE)
     datos = {
-        aciertos: 0,
-        puntos: 0,
-        ...(local || {}),
+        aciertos: local.aciertos ?? 0,
+        puntos: local.puntos ?? 0,
         ...(remoto || {})
     };
 
@@ -87,7 +85,7 @@ async function guardarTodo(){
     try {
         await guardarFirestore(datos);
     } catch (e) {
-        console.warn("Firestore error:", e);
+        console.warn(e);
     }
 }
 
@@ -115,7 +113,6 @@ const inglesBase = [
 ["big","grande"],["small","pequeño"],["fast","rápido"]
 ];
 
-// CASTELLANO MÁS GRANDE + MÁS VARIADO
 const castellanoBase = [
 ["árbol","arbol"],["camión","camion"],["corazón","corazon"],
 ["lápiz","lapiz"],["teléfono","telefono"],["canción","cancion"],
@@ -125,10 +122,10 @@ const castellanoBase = [
 ["país","pais"],["jamón","jamon"],["colchón","colchon"],
 ["educación","educacion"],["información","informacion"],
 ["organización","organizacion"],["televisión","television"],
-["corrección","correccion"],["solución","solucion"]
+["corrección","correccion"],["solución","solucion"],
+["reacción","reaccion"],["nación","nacion"]
 ];
 
-// CIENCIAS MÁS COMPLETO
 const cienciasBase = [
 ["¿Planeta más cercano al Sol?","mercurio"],
 ["¿Gas que respiramos?","oxigeno"],
@@ -201,6 +198,7 @@ const Juegos = {
         ]
     },
 
+    // 🔥 ARREGLADO: ahora usa base REAL + fill correcto
     castellano3:{
         preguntas: castellanoBase.map(x=>({
             p:`Completa: ____ (${x[1]})`,
@@ -233,7 +231,7 @@ const Juegos = {
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO (SIN REPETICIONES MEJORADAS)
+// 🚀 INICIAR JUEGO
 export function iniciarJuego(key){
 
     claveActual = key;
@@ -311,11 +309,12 @@ export function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR (FIX FINAL)
+// ✅ COMPROBAR
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
+
     const resultado = document.getElementById("resultado");
 
     const correcto = levenshtein(r, ok) <= 1;

@@ -1,5 +1,4 @@
-import { cargarDatosUsuario } from "./tuArchivoDelJuego.js"; // ajusta nombre real
-
+import { cargarDatosUsuario } from "./juegosmaster.js";
 let datos = null;
 
 // =======================================

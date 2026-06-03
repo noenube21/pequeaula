@@ -1,22 +1,50 @@
 // =======================================
-// GUARDAR RESULTADOS
+// GUARDAR PROGRESO
 // =======================================
+
+export async function guardarProgreso(datos) {
+
+    localStorage.setItem(
+        "progreso",
+        JSON.stringify(datos)
+    );
+
+    console.log("✅ Progreso guardado");
+}
+
+
+// =======================================
+// CARGAR PROGRESO
+// =======================================
+
+export async function cargarProgreso() {
+
+    return JSON.parse(
+        localStorage.getItem("progreso")
+    );
+}
+
+
+// =======================================
+// REGISTRAR RESULTADO
+// =======================================
+
 window.registrarResultado = function (asignaturaNivel, acierto, error) {
 
-    // cargar datos
     let datos = JSON.parse(localStorage.getItem("progreso")) || {
         partidas: 0,
         aciertos: 0,
         errores: 0,
+        puntos: 0,
         niveles: {}
     };
 
-    // GLOBAL
+    // Global
     datos.partidas += 1;
     datos.aciertos += acierto;
     datos.errores += error;
 
-    // POR NIVEL
+    // Por nivel
     if (!datos.niveles[asignaturaNivel]) {
         datos.niveles[asignaturaNivel] = {
             aciertos: 0,
@@ -27,19 +55,24 @@ window.registrarResultado = function (asignaturaNivel, acierto, error) {
     datos.niveles[asignaturaNivel].aciertos += acierto;
     datos.niveles[asignaturaNivel].errores += error;
 
-    // guardar
-    localStorage.setItem("progreso", JSON.stringify(datos));
+    localStorage.setItem(
+        "progreso",
+        JSON.stringify(datos)
+    );
 
     console.log("✅ GUARDADO LOCAL:", asignaturaNivel);
 };
 
 
 // =======================================
-// CARGAR PROGRESO
+// MOSTRAR ESTADÍSTICAS
 // =======================================
-function cargarProgreso() {
 
-    let datos = JSON.parse(localStorage.getItem("progreso"));
+function mostrarEstadisticas() {
+
+    const datos = JSON.parse(
+        localStorage.getItem("progreso")
+    );
 
     if (!datos) return;
 
@@ -48,24 +81,53 @@ function cargarProgreso() {
     const errores = datos.errores || 0;
 
     const total = aciertos + errores;
-    const porcentaje = total ? Math.round(aciertos / total * 100) : 0;
 
-    document.getElementById("partidas").textContent = partidas;
-    document.getElementById("aciertos").textContent = aciertos;
-    document.getElementById("errores").textContent = errores;
-    document.getElementById("porcentaje").textContent = porcentaje + "%";
+    const porcentaje =
+        total > 0
+            ? Math.round((aciertos / total) * 100)
+            : 0;
+
+    const partidasEl = document.getElementById("partidas");
+    const aciertosEl = document.getElementById("aciertos");
+    const erroresEl = document.getElementById("errores");
+    const porcentajeEl = document.getElementById("porcentaje");
+
+    if (partidasEl) {
+        partidasEl.textContent = partidas;
+    }
+
+    if (aciertosEl) {
+        aciertosEl.textContent = aciertos;
+    }
+
+    if (erroresEl) {
+        erroresEl.textContent = errores;
+    }
+
+    if (porcentajeEl) {
+        porcentajeEl.textContent = porcentaje + "%";
+    }
 }
 
-cargarProgreso();
+
+// =======================================
+// CARGAR ESTADÍSTICAS SI EXISTEN
+// =======================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    mostrarEstadisticas();
+});
 
 
 // =======================================
-// RESET
+// RESETEAR PROGRESO
 // =======================================
+
 window.resetearProgreso = function () {
 
     localStorage.removeItem("progreso");
 
     alert("Progreso reiniciado");
+
     location.reload();
 };

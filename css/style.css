@@ -376,38 +376,47 @@ button:hover,
 }
 
 /* ================================== */
-/* 👨‍👩‍👧 PANEL FAMILIAR (NUEVO) */
+/* 👨‍👩‍👧 PANEL FAMILIAR (MEJORADO PRO) */
 /* ================================== */
 
 #familia{
-    max-width:900px;
+    max-width:1100px;
     margin:30px auto;
     padding:20px;
 }
 
-/* grid de tarjetas */
+/* grid mejorado */
 .panel-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
-    gap:20px;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:25px;
     margin-top:20px;
 }
 
-/* tarjetas del panel */
+/* tarjetas mejoradas */
 .panel-card{
     background:white;
     border-radius:20px;
-    padding:20px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    padding:25px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    transition:0.2s;
 }
 
-/* canvas gráfico */
+.panel-card:hover{
+    transform:scale(1.02);
+}
+
+/* GRÁFICO MEJORADO */
 #grafico{
-    width:100%;
-    max-width:600px;
-    height:auto;
+    width:100% !important;
+    max-width:900px !important;
+    height:420px !important;
+
     margin:20px auto;
     display:block;
+
     background:white;
     border-radius:15px;
+
+    padding:10px;
 }

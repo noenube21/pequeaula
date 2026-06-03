@@ -1,5 +1,5 @@
 import { comprobarRecompensas } from "./recompensas.js";
-import { guardarProgreso as guardarFirestore, cargarProgreso } from "./progreso.js";
+import { guardarProgreso as guardarFirestore, cargarProgreso } from "./js/progreso.js";
 
 // =======================================
 

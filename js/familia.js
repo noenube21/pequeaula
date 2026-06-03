@@ -1,21 +1,13 @@
-import { cargarDatosUsuario } from "./juegos-master.js";
+import { cargarDatosUsuario } from "./js/juegos-master.js";
 
 let datos = {};
 
 // =======================================
 export async function iniciarFamilia(){
 
-    try {
-        await cargarDatosUsuario();
-    } catch (e) {
-        console.warn("Error cargando usuario:", e);
-    }
+    await cargarDatosUsuario();
 
-    // 🔥 fallback seguro
-    datos = JSON.parse(localStorage.getItem("progreso")) || {
-        aciertos: 0,
-        puntosPorNivel: {}
-    };
+    datos = JSON.parse(localStorage.getItem("progreso")) || {};
 
     renderFamilia();
 }
@@ -27,33 +19,69 @@ function obtenerGlobal(){
 }
 
 // =======================================
+function renderGrafico(){
+
+    const canvas = document.getElementById("grafico");
+    if(!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    const niveles = Object.keys(datos.puntosPorNivel || {});
+    const valores = Object.values(datos.puntosPorNivel || {});
+
+    const max = Math.max(...valores, 1);
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const barWidth = 50;
+    const gap = 30;
+
+    niveles.forEach((nivel, i)=>{
+
+        const x = i * (barWidth + gap) + 40;
+        const h = (valores[i] / max) * 200;
+
+        ctx.fillStyle = "#4CAF50";
+        ctx.fillRect(x, 250 - h, barWidth, h);
+
+        ctx.fillStyle = "#000";
+        ctx.fillText(nivel, x, 270);
+        ctx.fillText(valores[i], x, 240 - h);
+    });
+}
+
+// =======================================
 function renderFamilia(){
 
     const cont = document.getElementById("familia");
 
-    if(!cont){
-        console.error("❌ No existe #familia en el HTML");
-        return;
-    }
-
-    console.log("📊 datos cargados:", datos);
+    if(!cont) return;
 
     cont.innerHTML = `
-        <div class="card">
-            <h2>👨‍👩‍👧 Panel familiar</h2>
+        <h2>👨‍👩‍👧 Panel Familiar</h2>
+
+        <div class="panel-grid">
+
+            <div class="card">
+                <h3>📊 Global</h3>
+                <p><b>Total puntos:</b> ${obtenerGlobal()}</p>
+                <p><b>Aciertos:</b> ${datos.aciertos || 0}</p>
+            </div>
+
+            <div class="card">
+                <h3>📚 Por asignatura</h3>
+                ${Object.entries(datos.puntosPorNivel || {})
+                    .map(([k,v])=>`<p>${k}: <b>${v}</b></p>`)
+                    .join("") || "<p>No hay datos</p>"}
+            </div>
+
         </div>
 
         <div class="card">
-            <h3>📊 Progreso global</h3>
-            <p><b>Total puntos:</b> ${obtenerGlobal()}</p>
-            <p><b>Aciertos:</b> ${datos.aciertos || 0}</p>
-        </div>
-
-        <div class="card">
-            <h3>📚 Por asignatura</h3>
-            ${Object.entries(datos.puntosPorNivel || {})
-                .map(([k,v]) => `<p>${k}: <b>${v}</b></p>`)
-                .join("") || "<p>No hay datos aún</p>"}
+            <h3>📈 Progreso</h3>
+            <canvas id="grafico" width="600" height="300"></canvas>
         </div>
     `;
+
+    renderGrafico();
 }

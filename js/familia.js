@@ -1,20 +1,21 @@
 import { cargarDatosUsuario } from "./juegosmaster.js";
+
 let datos = null;
 
 // =======================================
-// 🔥 CARGAR DATOS DEL USUARIO
+// 🔥 INICIAR PANEL FAMILIA
 export async function iniciarFamilia(){
 
     await cargarDatosUsuario();
 
-    // aquí asumimos que datos es global accesible o lo exportas
-    datos = window.datos; // si no quieres window, te explico alternativa abajo
+    // puente desde el juego principal
+    datos = window.datos;
 
     renderFamilia();
 }
 
 // =======================================
-// 🔥 CALCULAR TOTAL GLOBAL
+// 📊 TOTAL GLOBAL
 function obtenerGlobal(){
 
     if(!datos?.puntosPorNivel) return 0;
@@ -24,12 +25,15 @@ function obtenerGlobal(){
 }
 
 // =======================================
-// 📊 RENDER PANEL FAMILIA
+// 📊 RENDER
 function renderFamilia(){
 
     const cont = document.getElementById("familia");
 
-    if(!cont) return;
+    if(!cont){
+        console.error("No existe el contenedor #familia");
+        return;
+    }
 
     cont.innerHTML = `
         <h2>👨‍👩‍👧 Panel de familia</h2>
@@ -37,14 +41,33 @@ function renderFamilia(){
         <div class="card">
             <h3>📊 Progreso global</h3>
             <p><b>Total puntos:</b> ${obtenerGlobal()}</p>
-            <p><b>Aciertos:</b> ${datos.aciertos}</p>
+            <p><b>Aciertos:</b> ${datos?.aciertos || 0}</p>
         </div>
 
         <div class="card">
             <h3>📚 Por asignatura</h3>
-            ${Object.entries(datos.puntosPorNivel || {}).map(([k,v])=>{
-                return `<p>${k}: <b>${v}</b></p>`;
-            }).join("")}
+            ${
+                Object.entries(datos?.puntosPorNivel || {}).length > 0
+                ? Object.entries(datos.puntosPorNivel)
+                    .map(([k,v])=>{
+                        return `<p>${k}: <b>${v}</b></p>`;
+                    }).join("")
+                : "<p>No hay datos aún</p>"
+            }
+        </div>
+
+        <!-- 👇 IMAGEN ABAJO DE TODO -->
+        <div style="text-align:center; margin-top:20px;">
+            <img 
+                src="./imagenes/familia.png" 
+                alt="familia"
+                style="
+                    max-width:260px;
+                    width:100%;
+                    border-radius:12px;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+                "
+            >
         </div>
     `;
 }

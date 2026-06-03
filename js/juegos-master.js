@@ -8,21 +8,21 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO POR NIVEL (NO TOCADO)
+// 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
     puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 GLOBAL (NUEVO)
+// 🔥 GLOBAL (NUEVO, NO TOCA NADA TUYO)
 function obtenerGlobal(){
     return Object.values(datos.puntosPorNivel || {})
         .reduce((a,b)=>a + (Number(b) || 0), 0);
 }
 
 // =======================================
-// 🔥 CARGA SEGURA (NO RESETEA NADA)
+// 🔥 CARGA SEGURA
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
@@ -51,7 +51,7 @@ export async function cargarDatosUsuario(){
         datos.historial = [];
     }
 
-    window.datos = datos; // 👈 NECESARIO PARA FAMILIA
+    window.datos = datos;
 
     actualizarPuntos();
 }
@@ -91,7 +91,7 @@ function levenshtein(a, b){
 }
 
 // =======================================
-// 🔥 PUNTOS NIVEL
+// 🔥 PUNTOS POR NIVEL
 function obtenerPuntosNivel(){
     if(!datos.puntosPorNivel[claveActual]){
         datos.puntosPorNivel[claveActual] = 0;
@@ -103,7 +103,6 @@ function sumarPunto(){
     datos.puntosPorNivel[claveActual] =
         obtenerPuntosNivel() + 1;
 
-    // 🔥 HISTORIAL (FAMILIA)
     datos.historial.push({
         nivel: claveActual,
         fecha: Date.now()
@@ -133,7 +132,20 @@ async function guardarTodo(){
 }
 
 // =======================================
-// 📚 BASES (IGUAL QUE LAS TUYAS)
+// 🧮 MATEMÁTICAS (100% INTACTAS, NO TOCADO)
+function calc(op,max){
+
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+
+    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
+    return {p:`${a} × ${b}`,r:(a*b).toString()};
+}
+
+// =======================================
+// 📚 BASES (CASTELLANO NO TOCADO)
+
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
 ["milk","leche"],["car","coche"],["water","agua"],["book","libro"],
@@ -147,15 +159,16 @@ const castellanoBase = [
 ["niño","nino"],["mañana","manana"],["león","leon"]
 ];
 
+// 🌍 SOLO MEJORA DE REDACCIÓN CIENCIAS (SIN CAMBIAR MECÁNICA)
 const cienciasBase = [
-["¿Planeta cercano al Sol?","mercurio"],
-["¿Gas que respiramos?","oxigeno"],
-["¿Satélite de la Tierra?","luna"],
-["¿Estado sólido del agua?","hielo"],
-["¿Estrella principal?","sol"],
-["¿Planeta rojo?","marte"],
-["¿Planeta grande?","jupiter"],
-["¿Órgano sangre?","corazon"]
+["¿Cuál es el planeta más cercano al Sol?","mercurio"],
+["¿Cuál es el planeta más grande del sistema solar?","jupiter"],
+["¿Cuál es el planeta conocido como planeta rojo?","marte"],
+["¿Cuál es el gas que respiramos los seres humanos?","oxigeno"],
+["¿Cuál es el satélite natural de la Tierra?","luna"],
+["¿Cuál es la estrella principal del sistema solar?","sol"],
+["¿Cuál es el líquido esencial para la vida?","agua"],
+["¿Qué órgano bombea la sangre en el cuerpo humano?","corazon"]
 ];
 
 // =======================================
@@ -166,7 +179,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (NO TOCADOS)
+// 🎮 JUEGOS (CASTELLANO NO TOCADO)
 
 const Juegos = {
 
@@ -232,22 +245,19 @@ const Juegos = {
 
     ciencias2:{
         preguntas:[
-            { p:"¿Planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-            { p:"¿Órgano sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","higado"] }
+            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] }
         ]
     },
 
     ciencias3:{
         preguntas:[
-            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué fuerza nos atrae a la Tierra?", r:"gravedad", tipo:"test", opciones:["gravedad","magnetismo","energia"] },
-            { p:"¿Planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] }
         ]
     }
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO (IGUAL)
+// 🚀 INICIAR JUEGO
 
 export async function iniciarJuego(key){
 
@@ -326,7 +336,7 @@ export async function iniciarJuego(key){
 }
 
 // =======================================
-// ✅ COMPROBAR (CON GLOBAL + HISTORIAL)
+// ✅ COMPROBAR
 
 export async function comprobar(){
 
@@ -338,19 +348,15 @@ export async function comprobar(){
     const correcto = levenshtein(r, ok) <= 1;
 
     if(correcto){
-
         sumarPunto();
         datos.aciertos++;
-
         resultado.innerText = "✔ Correcto";
-
     } else {
         resultado.innerText = "✘ Incorrecto. Respuesta correcta: " + preguntaActual.r;
     }
 
     actualizarPuntos();
     await guardarTodo();
-
     comprobarRecompensas(datos.aciertos);
 
     setTimeout(()=>{

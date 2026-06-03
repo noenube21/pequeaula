@@ -1,6 +1,6 @@
- // =======================================
- // 💾 GUARDAR PROGRESO
- // =======================================
+// =======================================
+// 💾 GUARDAR PROGRESO
+// =======================================
 
 export async function guardarProgreso(datos) {
 
@@ -39,12 +39,10 @@ window.registrarResultado = function (asignaturaNivel, acierto, error) {
         niveles: {}
     };
 
-    // Global
     datos.partidas += 1;
     datos.aciertos += acierto;
     datos.errores += error;
 
-    // Por nivel
     if (!datos.niveles[asignaturaNivel]) {
         datos.niveles[asignaturaNivel] = {
             aciertos: 0,
@@ -55,10 +53,7 @@ window.registrarResultado = function (asignaturaNivel, acierto, error) {
     datos.niveles[asignaturaNivel].aciertos += acierto;
     datos.niveles[asignaturaNivel].errores += error;
 
-    localStorage.setItem(
-        "progreso",
-        JSON.stringify(datos)
-    );
+    localStorage.setItem("progreso", JSON.stringify(datos));
 
     console.log("✅ GUARDADO LOCAL:", asignaturaNivel);
 };
@@ -70,9 +65,7 @@ window.registrarResultado = function (asignaturaNivel, acierto, error) {
 
 function mostrarEstadisticas() {
 
-    const datos = JSON.parse(
-        localStorage.getItem("progreso")
-    );
+    const datos = JSON.parse(localStorage.getItem("progreso"));
 
     if (!datos) return;
 
@@ -83,9 +76,7 @@ function mostrarEstadisticas() {
     const total = aciertos + errores;
 
     const porcentaje =
-        total > 0
-            ? Math.round((aciertos / total) * 100)
-            : 0;
+        total > 0 ? Math.round((aciertos / total) * 100) : 0;
 
     const partidasEl = document.getElementById("partidas");
     const aciertosEl = document.getElementById("aciertos");
@@ -100,7 +91,7 @@ function mostrarEstadisticas() {
 
 
 // =======================================
-// 🚀 AUTO CARGA ESTADÍSTICAS
+// 🚀 AUTO EJECUTAR
 // =======================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -109,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // =======================================
-// 🔄 RESETEAR PROGRESO
+// 🔄 RESET
 // =======================================
 
 window.resetearProgreso = function () {

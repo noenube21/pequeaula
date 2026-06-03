@@ -1,64 +1,71 @@
-import { auth, db } from "./firebase-config.js";
-
-import {
-    doc,
-    setDoc,
-    getDoc,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-
 // =======================================
-// 💾 GUARDAR PROGRESO (FIREBASE)
+// GUARDAR RESULTADOS
 // =======================================
+window.registrarResultado = function (asignaturaNivel, acierto, error) {
 
-export async function guardarProgreso(datos) {
+    // cargar datos
+    let datos = JSON.parse(localStorage.getItem("progreso")) || {
+        partidas: 0,
+        aciertos: 0,
+        errores: 0,
+        niveles: {}
+    };
 
-    const usuario = auth.currentUser;
+    // GLOBAL
+    datos.partidas += 1;
+    datos.aciertos += acierto;
+    datos.errores += error;
 
-    if (!usuario) return;
-
-    try {
-        await setDoc(
-            doc(db, "usuarios", usuario.uid),
-            {
-                progreso: datos,
-                actualizado: serverTimestamp()
-            },
-            { merge: true }
-        );
-
-    } catch (error) {
-        console.error("❌ Error guardando progreso:", error);
+    // POR NIVEL
+    if (!datos.niveles[asignaturaNivel]) {
+        datos.niveles[asignaturaNivel] = {
+            aciertos: 0,
+            errores: 0
+        };
     }
+
+    datos.niveles[asignaturaNivel].aciertos += acierto;
+    datos.niveles[asignaturaNivel].errores += error;
+
+    // guardar
+    localStorage.setItem("progreso", JSON.stringify(datos));
+
+    console.log("✅ GUARDADO LOCAL:", asignaturaNivel);
+};
+
+
+// =======================================
+// CARGAR PROGRESO
+// =======================================
+function cargarProgreso() {
+
+    let datos = JSON.parse(localStorage.getItem("progreso"));
+
+    if (!datos) return;
+
+    const partidas = datos.partidas || 0;
+    const aciertos = datos.aciertos || 0;
+    const errores = datos.errores || 0;
+
+    const total = aciertos + errores;
+    const porcentaje = total ? Math.round(aciertos / total * 100) : 0;
+
+    document.getElementById("partidas").textContent = partidas;
+    document.getElementById("aciertos").textContent = aciertos;
+    document.getElementById("errores").textContent = errores;
+    document.getElementById("porcentaje").textContent = porcentaje + "%";
 }
 
+cargarProgreso();
+
 
 // =======================================
-// 📥 CARGAR PROGRESO (FIREBASE)
+// RESET
 // =======================================
+window.resetearProgreso = function () {
 
-export async function cargarProgreso() {
+    localStorage.removeItem("progreso");
 
-    const usuario = auth.currentUser;
-
-    if (!usuario) return null;
-
-    try {
-        const ref = doc(db, "usuarios", usuario.uid);
-        const snap = await getDoc(ref);
-
-        if (snap.exists()) {
-            const data = snap.data();
-
-            // SOLO devolvemos el progreso real
-            return data.progreso || null;
-        }
-
-        return null;
-
-    } catch (error) {
-        console.error("❌ Error cargando progreso:", error);
-        return null;
-    }
-}
+    alert("Progreso reiniciado");
+    location.reload();
+};

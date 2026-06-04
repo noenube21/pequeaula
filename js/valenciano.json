@@ -1,0 +1,34 @@
+{
+  "valenciano1": [
+    {
+      "p": "Com es diu 'casa' en valencià?",
+      "r": "casa",
+      "tipo": "test",
+      "opciones": ["casa", "cotxe", "gos"]
+    },
+    {
+      "p": "Com es diu 'perro' en valencià?",
+      "r": "gos",
+      "tipo": "test",
+      "opciones": ["gos", "gat", "cavall"]
+    },
+    {
+      "p": "Com es diu 'agua' en valencià?",
+      "r": "aigua",
+      "tipo": "test",
+      "opciones": ["aigua", "foc", "terra"]
+    },
+    {
+      "p": "Com es diu 'escuela' en valencià?",
+      "r": "escola",
+      "tipo": "test",
+      "opciones": ["escola", "carrer", "llum"]
+    },
+    {
+      "p": "Com es diu 'libro' en valencià?",
+      "r": "llibre",
+      "tipo": "test",
+      "opciones": ["llibre", "porta", "taula"]
+    }
+  ]
+}

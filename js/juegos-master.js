@@ -1,7 +1,6 @@
 import { comprobarRecompensas } from "./recompensas.js";
 import { cargarProgreso } from "./progreso.js";
 import { syncProgreso } from "./sync-progreso.js";
-import { guardarProgreso } from "./supabase.js";
 import { auth } from "./firebase-config.js";
 
 // =======================================

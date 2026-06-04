@@ -249,26 +249,20 @@ const Juegos = {
 export async function cargarValenciano(){
 
     try {
-        const res = await fetch("./js/data/valenciano.json");
+        const res = await fetch("./js/valenciano.json");
+
         const data = await res.json();
 
-        Juegos.valenciano1.preguntas = data.valenciano1;
+        if(data?.valenciano1){
+            Juegos.valenciano1.preguntas = data.valenciano1;
+        }
 
         console.log("Valenciano cargado ✔");
 
     } catch (e) {
         console.error("Error cargando valenciano:", e);
-
-        Juegos.valenciano1.preguntas = [
-            {
-                p: "Error cargando JSON",
-                r: "error",
-                tipo: "input"
-            }
-        ];
     }
 }
-
 // 🔥 IMPORTANTE: se ejecuta SOLO UNA VEZ
 cargarValenciano();
 

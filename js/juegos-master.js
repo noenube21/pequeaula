@@ -249,7 +249,7 @@ const Juegos = {
 async function cargarValenciano(){
 
     try {
-        const res = await fetch("./data/valenciano.json");
+        const res = await fetch("./js/valenciano.json");
         const data = await res.json();
 
         if(data.valenciano1){

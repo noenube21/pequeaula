@@ -420,3 +420,103 @@ button:hover,
 
     padding:10px;
 }
+/* ================================== */
+/* 🧡 PORTADA PEQUE AULA */
+/* ================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap');
+
+.inicio-container{
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    padding:20px;
+}
+
+.inicio-title{
+    font-family:'Baloo 2', cursive !important;
+
+    font-size:clamp(4rem, 10vw, 6rem);
+
+    font-weight:800;
+
+    color:#ff8c00;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.15);
+
+    margin-bottom:15px;
+
+    letter-spacing:3px;
+}
+
+.subtitulo{
+    font-family:'Baloo 2', cursive !important;
+
+    font-size:clamp(1.4rem, 3vw, 2rem);
+
+    color:#ff9f43;
+
+    font-weight:700;
+
+    margin-bottom:30px;
+}
+
+.logo-img{
+    width:260px;
+    max-width:80%;
+
+    margin-bottom:35px;
+
+    transition:0.3s;
+}
+
+.logo-img:hover{
+    transform:scale(1.05);
+}
+
+/* Botón naranja a juego */
+
+.inicio-container .btn{
+    background:linear-gradient(
+        135deg,
+        #ff8c00,
+        #ffb347
+    ) !important;
+
+    color:white !important;
+
+    padding:15px 45px;
+
+    font-size:1.5rem;
+
+    font-weight:700;
+
+    border-radius:50px;
+
+    box-shadow:0 6px 18px rgba(255,140,0,0.35);
+
+    text-decoration:none;
+
+    transition:0.3s;
+}
+
+.inicio-container .btn:hover{
+    background:linear-gradient(
+        135deg,
+        #ff7700,
+        #ffa726
+    ) !important;
+
+    transform:translateY(-3px) scale(1.05);
+
+    box-shadow:0 10px 25px rgba(255,140,0,0.45);
+}

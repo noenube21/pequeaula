@@ -249,22 +249,21 @@ const Juegos = {
 async function cargarValenciano(){
 
     try {
-        const res = await fetch("./js/valenciano.json");
+        const res = await fetch("./js/data/valenciano.json");
         const data = await res.json();
 
-        if(data.valenciano1){
-            Juegos.valenciano1.preguntas = data.valenciano1;
-        }
+        Juegos.valenciano1.preguntas = data.valenciano1;
+
+        console.log("Valenciano cargado ✔");
 
     } catch (e) {
-        console.warn("No se pudo cargar valenciano:", e);
+        console.error("Error cargando valenciano:", e);
 
         Juegos.valenciano1.preguntas = [
             {
-                p: "Fallback: Com es diu 'casa'?",
-                r: "casa",
-                tipo: "test",
-                opciones: ["casa","cotxe","gos"]
+                p: "Error cargando JSON",
+                r: "error",
+                tipo: "input"
             }
         ];
     }

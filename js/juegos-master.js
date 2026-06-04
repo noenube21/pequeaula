@@ -1,19 +1,6 @@
 import { comprobarRecompensas } from "./recompensas.js";
-import { cargarProgreso } from "./progreso.js";
+import { guardarProgreso, cargarProgreso } from "./progreso.js";
 import { syncProgreso } from "./sync-progreso.js";
-import { auth } from "./firebase-config.js";
-import { guardarFirestore, cargarFirestore } from "./firestore-progreso.js";
-
-// =======================================
-// 🔐 USER SEGURO
-function getUser(){
-    return new Promise((resolve)=>{
-        const unsub = auth.onAuthStateChanged(user=>{
-            unsub();
-            resolve(user);
-        });
-    });
-}
 
 // =======================================
 
@@ -22,14 +9,14 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO
+// 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
     puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 CARGA DATOS
+// 🔥 CARGA SEGURA (NO RESETEA NADA)
 export async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
@@ -41,26 +28,13 @@ export async function cargarDatosUsuario(){
         console.warn("Firebase no disponible:", e);
     }
 
-    let remotoFirestore = null;
-
-    // 🔥 FIRESTORE (CARGA SEGURA)
-    try {
-        const user = await getUser();
-
-        if(user){
-            remotoFirestore = await cargarFirestore(user.email);
-        }
-    } catch (e) {
-        console.warn("Firestore error:", e);
-    }
-
     datos = {
         aciertos: 0,
         puntosPorNivel: {},
         historial: [],
+
         ...local,
-        ...(remoto || {}),
-        ...(remotoFirestore || {})
+        ...(remoto || {})
     };
 
     if(!datos.puntosPorNivel){
@@ -77,7 +51,6 @@ export async function cargarDatosUsuario(){
 }
 
 // =======================================
-
 function limpiar(t){
     return (t || "")
         .toLowerCase()
@@ -87,7 +60,6 @@ function limpiar(t){
 }
 
 // =======================================
-
 function levenshtein(a, b){
     const matrix = [];
 
@@ -113,7 +85,7 @@ function levenshtein(a, b){
 }
 
 // =======================================
-
+// 🔥 PUNTOS POR NIVEL
 function obtenerPuntosNivel(){
     if(!datos.puntosPorNivel[claveActual]){
         datos.puntosPorNivel[claveActual] = 0;
@@ -132,7 +104,6 @@ function sumarPunto(){
 }
 
 // =======================================
-
 function actualizarPuntos(){
     const score = document.getElementById("score");
 
@@ -146,25 +117,22 @@ function actualizarPuntos(){
 }
 
 // =======================================
-
 async function guardarTodo(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
     try {
-        const user = await getUser();
-
-        if(user){
-            await guardarFirestore(user.email, datos);
-        }
-
+        await guardarFirestore(datos);
     } catch (e) {
-        console.log(e);
+        console.warn(e);
+    }
+try {
+        await syncProgreso(datos);
+    } catch (e) {
+        console.warn(e);
     }
 }
-
 // =======================================
-
 function calc(op,max){
 
     let a=Math.floor(Math.random()*max);
@@ -203,7 +171,6 @@ const cienciasBase = [
 ];
 
 // =======================================
-
 function generarOpciones(correcta, lista){
     const otras = lista.filter(x=>x!==correcta);
     const rand = otras.sort(()=>0.5-Math.random()).slice(0,2);
@@ -244,12 +211,33 @@ const Juegos = {
         }))
     },
 
+    // 🔥 CASTELLANO 1 ARREGLADO (SELECCIÓN)
     castellano1:{
         preguntas:[
-            { p:"¿Cuál de estas palabras es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rápido"] },
-            { p:"¿Cuál de estas palabras es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","azul"] },
-            { p:"¿Cuál es un adjetivo?", r:"rápido", tipo:"test", opciones:["rápido","mesa","correr"] },
-            { p:"¿Qué palabra es un objeto?", r:"silla", tipo:"test", opciones:["silla","feliz","cantar"] }
+            {
+                p:"¿Cuál de estas palabras es un sustantivo?",
+                r:"mesa",
+                tipo:"test",
+                opciones:["mesa","correr","rápido"]
+            },
+            {
+                p:"¿Cuál de estas palabras es un verbo?",
+                r:"correr",
+                tipo:"test",
+                opciones:["correr","mesa","azul"]
+            },
+            {
+                p:"¿Cuál es un adjetivo?",
+                r:"rápido",
+                tipo:"test",
+                opciones:["rápido","mesa","correr"]
+            },
+            {
+                p:"¿Qué palabra es un objeto?",
+                r:"silla",
+                tipo:"test",
+                opciones:["silla","feliz","cantar"]
+            }
         ]
     },
 
@@ -268,8 +256,6 @@ const Juegos = {
         ]
     },
 
-    // 🔥 CIENCIAS MEJORADO (YA BIEN CON VARIAS PREGUNTAS)
-
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
             p:x[0],
@@ -280,21 +266,13 @@ const Juegos = {
 
     ciencias2:{
         preguntas:[
-            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-            { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","tierra"] },
-            { p:"¿Cuál es el planeta más grande?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","marte"] },
-            { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","marte","venus"] },
-            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] }
         ]
     },
 
     ciencias3:{
         preguntas:[
-            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
-            { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
-            { p:"¿Cuál es la estrella?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] },
-            { p:"¿Satélite de la Tierra?", r:"luna", tipo:"test", opciones:["luna","sol","marte"] }
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] }
         ]
     }
 };
@@ -405,4 +383,3 @@ export async function comprobar(){
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },500);
-}

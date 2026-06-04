@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Valenciano</title>
+</head>
+<body>
+
+<h1>Valenciano</h1>
+
+<div id="pregunta"></div>
+
+<input id="respuesta">
+<button onclick="comprobar()">Comprobar</button>
+
+<div id="resultado"></div>
+
+<script type="module">
+import { iniciarJuego, comprobar } from "./juegos-master.js";
+
+window.comprobar = comprobar;
+
+// arranca el nivel
+iniciarJuego("valenciano1");
+</script>
+
+</body>
+</html>

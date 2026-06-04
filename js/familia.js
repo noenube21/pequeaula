@@ -1,31 +1,40 @@
 import { cargarDatosUsuario } from "./juegos-master.js";
+import * as XLSX from "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm";
 
 let datos = {};
 
 // =======================================
+// 🚀 INICIAR PANEL FAMILIA
 export async function iniciarFamilia(){
 
     await cargarDatosUsuario();
 
-    datos = JSON.parse(localStorage.getItem("progreso")) || {};
+    const local = JSON.parse(localStorage.getItem("progreso")) || {};
+
+    datos = {
+        ...datos,
+        ...local
+    };
 
     renderFamilia();
 }
 
 // =======================================
+// 📊 GLOBAL
 function obtenerGlobal(){
     return Object.values(datos.puntosPorNivel || {})
         .reduce((a,b)=>a + (Number(b) || 0), 0);
 }
 
 // =======================================
+// 🧹 LIMPIAR DATOS
 function limpiarDatos(obj){
 
     const limpio = {};
 
     for(const [k,v] of Object.entries(obj || {})){
 
-        if(!k || k.trim() === "") continue; // ❌ elimina claves vacías
+        if(!k || k.trim() === "") continue;
         if(isNaN(v)) continue;
 
         limpio[k] = Number(v);
@@ -35,6 +44,7 @@ function limpiarDatos(obj){
 }
 
 // =======================================
+// 📈 GRÁFICO
 function renderGrafico(){
 
     const canvas = document.getElementById("grafico");
@@ -49,7 +59,6 @@ function renderGrafico(){
 
     const max = Math.max(...values, 1);
 
-    // 🔥 limpiar y ESCALAR bien
     canvas.width = 700;
     canvas.height = 350;
 
@@ -63,21 +72,18 @@ function renderGrafico(){
         const x = 60 + i * (barWidth + gap);
         const h = (values[i] / max) * 250;
 
-        // barra
         ctx.fillStyle = "#4fc3f7";
         ctx.fillRect(x, 300 - h, barWidth, h);
 
-        // texto nivel
         ctx.fillStyle = "#000";
         ctx.font = "14px Arial";
         ctx.fillText(nivel, x, 320);
-
-        // valor encima
         ctx.fillText(values[i], x + 20, 290 - h);
     });
 }
 
 // =======================================
+// 🖥️ RENDER PANEL
 function renderFamilia(){
 
     const cont = document.getElementById("familia");
@@ -88,6 +94,10 @@ function renderFamilia(){
 
     cont.innerHTML = `
         <h2>👨‍👩‍👧 Panel Familiar</h2>
+
+        <button onclick="exportarExcel()" style="margin-bottom:10px;">
+            📥 Exportar a Excel
+        </button>
 
         <div class="panel-grid">
 
@@ -118,3 +128,29 @@ function renderFamilia(){
 
     setTimeout(renderGrafico, 50);
 }
+
+// =======================================
+// 📥 EXPORTAR EXCEL
+function exportarExcel(){
+
+    const data = limpiarDatos(datos.puntosPorNivel);
+
+    const filas = Object.entries(data).map(([nivel, puntos]) => ({
+        nivel,
+        puntos
+    }));
+
+    filas.push({
+        nivel: "TOTAL",
+        puntos: obtenerGlobal()
+    });
+
+    const hoja = XLSX.utils.json_to_sheet(filas);
+    const libro = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(libro, hoja, "Progreso");
+
+    XLSX.writeFile(libro, "progreso_usuario.xlsx");
+}
+
+window.exportarExcel = exportarExcel;

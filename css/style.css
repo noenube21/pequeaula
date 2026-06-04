@@ -612,3 +612,48 @@ body:has(#familia) h2{
         3px 3px 0 #fff,
         6px 6px 12px rgba(0,0,0,0.15);
 }
+/* ================================== */
+/* 🔧 FIX RESPONSIVE SIN ROMPER DESKTOP */
+/* ================================== */
+
+@media(max-width:768px){
+
+    .game-box{
+        width:95%;
+    }
+
+    #respuesta{
+        width:90%;
+        max-width:300px;
+    }
+
+    #pregunta{
+        font-size:22px;
+    }
+
+    #score{
+        font-size:20px;
+    }
+
+    .opcion{
+        width:90%;
+        font-size:16px;
+    }
+
+    button{
+        max-width:90%;
+    }
+
+    .card{
+        width:140px;
+        min-height:180px;
+    }
+
+    .card img{
+        width:90px;
+    }
+
+    .titulo-app{
+        font-size:34px;
+    }
+}

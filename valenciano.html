@@ -8,11 +8,19 @@
 
 <h1>Valenciano</h1>
 
+<!-- 📌 PREGUNTA -->
 <div id="pregunta"></div>
 
+<!-- 📌 OPCIONES TEST (ESTO TE FALTABA Y ROMPÍA TODO) -->
+<div id="zona"></div>
+
+<!-- 📌 INPUT -->
 <input id="respuesta">
+
+<!-- 📌 BOTÓN -->
 <button onclick="comprobar()">Comprobar</button>
 
+<!-- 📌 RESULTADO -->
 <div id="resultado"></div>
 
 <script type="module">
@@ -20,7 +28,7 @@ import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
 window.comprobar = comprobar;
 
-// arranca el nivel
+// 🚀 ARRANCA VALENCIANO
 iniciarJuego("valenciano1");
 </script>
 

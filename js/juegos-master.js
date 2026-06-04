@@ -202,87 +202,20 @@ const Juegos = {
         ]
     },
 
-  castellano2:{
-    preguntas:[
-        {
-            p:"¿Cuál es un sustantivo?",
-            r:"mesa",
-            tipo:"test",
-            opciones:["mesa","correr","rojo"]
-        },
-        {
-            p:"¿Cuál es un verbo?",
-            r:"correr",
-            tipo:"test",
-            opciones:["correr","mesa","rápido"]
-        },
-        {
-            p:"¿Cuál es un adjetivo?",
-            r:"azul",
-            tipo:"test",
-            opciones:["azul","mesa","correr"]
-        },
-        {
-            p:"¿Cuál es un sustantivo?",
-            r:"coche",
-            tipo:"test",
-            opciones:["coche","cantar","feliz"]
-        },
-        {
-            p:"¿Cuál es un verbo?",
-            r:"comer",
-            tipo:"test",
-            opciones:["comer","mesa","rojo"]
-        },
-        {
-            p:"¿Cuál es un adjetivo?",
-            r:"rápido",
-            tipo:"test",
-            opciones:["rápido","coche","correr"]
-        }
-    ]
-},
+    castellano2:{
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] }
+        ]
+    },
 
-castellano3:{
-    preguntas:[
-        {
-            p:"¿Qué es un animal?",
-            r:"perro",
-            tipo:"test",
-            opciones:["perro","mesa","azul"]
-        },
-        {
-            p:"¿Qué es una acción?",
-            r:"correr",
-            tipo:"test",
-            opciones:["correr","rojo","mesa"]
-        },
-        {
-            p:"¿Qué es un objeto?",
-            r:"mesa",
-            tipo:"test",
-            opciones:["mesa","feliz","cantar"]
-        },
-        {
-            p:"¿Qué es un animal?",
-            r:"gato",
-            tipo:"test",
-            opciones:["gato","mesa","rojo"]
-        },
-        {
-            p:"¿Qué es una acción?",
-            r:"saltar",
-            tipo:"test",
-            opciones:["saltar","azul","mesa"]
-        },
-        {
-            p:"¿Qué es un objeto?",
-            r:"silla",
-            tipo:"test",
-            opciones:["silla","correr","feliz"]
-        }
-    ]
-},
+    castellano3:{
+        preguntas:[
+            { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
+            { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] }
+        ]
+    },
 
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
@@ -294,23 +227,51 @@ castellano3:{
 
     ciencias2:{
         preguntas:[
-            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-            { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","tierra"] },
-            { p:"¿Cuál es el planeta más grande?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","marte"] },
-            { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","marte","venus"] },
-            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] }
         ]
     },
 
     ciencias3:{
         preguntas:[
-            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
-            { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
-            { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] }
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] }
         ]
+    },
+
+    // ✅ VALENCIANO (VACÍO POR DEFECTO)
+    valenciano1:{
+        preguntas:[]
     }
 };
+
+// =======================================
+// 🌍 CARGA VALENCIANO DESDE JSON
+
+async function cargarValenciano(){
+
+    try {
+        const res = await fetch("./data/valenciano.json");
+        const data = await res.json();
+
+        if(data.valenciano1){
+            Juegos.valenciano1.preguntas = data.valenciano1;
+        }
+
+    } catch (e) {
+        console.warn("No se pudo cargar valenciano:", e);
+
+        Juegos.valenciano1.preguntas = [
+            {
+                p: "Fallback: Com es diu 'casa'?",
+                r: "casa",
+                tipo: "test",
+                opciones: ["casa","cotxe","gos"]
+            }
+        ];
+    }
+}
+
+// 🔥 IMPORTANTE: se ejecuta SOLO UNA VEZ
+cargarValenciano();
 
 // =======================================
 // 🚀 INICIAR JUEGO
@@ -327,17 +288,17 @@ export async function iniciarJuego(key){
     const input = document.getElementById("respuesta");
     const resultado = document.getElementById("resultado");
 
-    if(!juegoActual){
-        pregunta.innerText = "Nivel no encontrado";
-        return;
-    }
-
     pregunta.innerHTML = "";
     zona.innerHTML = "";
     resultado.innerHTML = "";
     input.value = "";
 
     actualizarPuntos();
+
+    if(!juegoActual){
+        pregunta.innerText = "Nivel no encontrado";
+        return;
+    }
 
     if(juegoActual.generar){
 

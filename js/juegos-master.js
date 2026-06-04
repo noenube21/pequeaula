@@ -2,6 +2,7 @@ import { comprobarRecompensas } from "./recompensas.js";
 import { cargarProgreso } from "./progreso.js";
 import { syncProgreso } from "./sync-progreso.js";
 import { auth } from "./firebase-config.js";
+import { guardarFirestore, cargarFirestore } from "./firestore-progreso.js";
 
 // =======================================
 // 🔐 USER SEGURO
@@ -54,6 +55,20 @@ export async function cargarDatosUsuario(){
 
     if(!datos.historial){
         datos.historial = [];
+    }
+
+    // 🔥 FIRESTORE (AQUÍ BIEN PUESTO)
+    const user = auth.currentUser;
+
+    if(user){
+        const remotoFirestore = await cargarFirestore(user.email);
+
+        if(remotoFirestore){
+            datos = {
+                ...datos,
+                ...remotoFirestore
+            };
+        }
     }
 
     window.datos = datos;
@@ -132,31 +147,19 @@ function actualizarPuntos(){
 
 // =======================================
 
-async function guardarTodo(){
+    async function guardarTodo(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
     try {
-        await syncProgreso(datos);
-    } catch (e) {
-        console.warn(e);
-    }
-
-    try {
-
-        const user = await getUser();
+        const user = auth.currentUser;
 
         if(user){
-            await guardarProgreso(
-                user.email,
-                datos.aciertos,
-                claveActual,
-                obtenerPuntosNivel()
-            );
+            await guardarFirestore(user.email, datos);
         }
 
     } catch (e) {
-        console.log("Supabase error:", e);
+        console.log(e);
     }
 }
 

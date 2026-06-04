@@ -547,3 +547,26 @@ button:hover,
 
     margin-top:10px;
 }
+.topbar{
+    background: transparent !important;
+    text-align:center;
+    padding:20px 0;
+}
+
+/* SOLO el texto PEQUE AULA 🌟 */
+.topbar .logo{
+    font-family:'Baloo 2', cursive;
+    
+    font-size:clamp(2.5rem, 6vw, 4rem);
+    font-weight:800;
+
+    color:#ff8c00;
+
+    letter-spacing:2px;
+
+    text-shadow:
+        3px 3px 0 #ffffff,
+        6px 6px 12px rgba(0,0,0,0.15);
+
+    display:inline-block;
+}

@@ -593,3 +593,22 @@ button:hover,
 
     padding:10px;
 }
+body:has(#familia) h2{
+    font-family:'Baloo 2', cursive;
+
+    font-size:clamp(2.2rem, 6vw, 3.5rem);
+
+    font-weight:800;
+
+    color:#ff8c00;
+
+    text-align:center;
+
+    margin:20px 0;
+
+    letter-spacing:1px;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.15);
+}

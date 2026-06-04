@@ -4,7 +4,14 @@ import { syncProgreso } from "./sync-progreso.js";
 import { guardarProgreso } from "./supabase.js";
 import { auth } from "./firebase-config.js";
 // =======================================
-
+function getUser(){
+    return new Promise((resolve)=>{
+        const unsub = auth.onAuthStateChanged(user=>{
+            unsub();
+            resolve(user);
+        });
+    });
+}
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
@@ -120,32 +127,33 @@ function actualizarPuntos(){
 // =======================================
 async function guardarTodo(){
 
+    // LOCAL STORAGE
     localStorage.setItem("progreso", JSON.stringify(datos));
 
+    // FIREBASE SYNC (NO TOCAR)
     try {
-        await guardarFirestore(datos);
-    } catch (e) {
-        console.warn(e);
-    }
-try {
         await syncProgreso(datos);
     } catch (e) {
         console.warn(e);
     }
-    try {
-    const user = auth.currentUser;
 
-    if(user){
-        await guardarProgreso(
-            user.email,
-            datos.aciertos,
-            claveActual,
-            obtenerPuntosNivel()
-        );
+    // SUPABASE (ARREGLADO)
+    try {
+
+        const user = await getUser();
+
+        if(user){
+            await guardarProgreso(
+                user.email,
+                datos.aciertos,
+                claveActual,
+                obtenerPuntosNivel()
+            );
+        }
+
+    } catch (e) {
+        console.log("Supabase error:", e);
     }
-} catch (e) {
-    console.log("Supabase error:", e);
-}
 }
 // =======================================
 function calc(op,max){

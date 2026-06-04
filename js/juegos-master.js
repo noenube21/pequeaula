@@ -1,8 +1,8 @@
 import { comprobarRecompensas } from "./recompensas.js";
-import { guardarProgreso, cargarProgreso } from "./progreso.js";
+import { cargarProgreso } from "./progreso.js";
 import { syncProgreso } from "./sync-progreso.js";
 import { guardarProgreso } from "./supabase.js";
-
+import { auth } from "./firebase-config.js";
 // =======================================
 
 let preguntaActual = null;
@@ -132,6 +132,20 @@ try {
     } catch (e) {
         console.warn(e);
     }
+    try {
+    const user = auth.currentUser;
+
+    if(user){
+        await guardarProgreso(
+            user.email,
+            datos.aciertos,
+            claveActual,
+            obtenerPuntosNivel()
+        );
+    }
+} catch (e) {
+    console.log("Supabase error:", e);
+}
 }
 // =======================================
 function calc(op,max){

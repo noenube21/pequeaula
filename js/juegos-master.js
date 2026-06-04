@@ -246,7 +246,7 @@ const Juegos = {
 // =======================================
 // 🌍 CARGA VALENCIANO DESDE JSON
 
-async function cargarValenciano(){
+export async function cargarValenciano(){
 
     try {
         const res = await fetch("./js/data/valenciano.json");

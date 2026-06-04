@@ -41,12 +41,26 @@ export async function cargarDatosUsuario(){
         console.warn("Firebase no disponible:", e);
     }
 
+    let remotoFirestore = null;
+
+    // 🔥 FIRESTORE (CARGA SEGURA)
+    try {
+        const user = await getUser();
+
+        if(user){
+            remotoFirestore = await cargarFirestore(user.email);
+        }
+    } catch (e) {
+        console.warn("Firestore error:", e);
+    }
+
     datos = {
         aciertos: 0,
         puntosPorNivel: {},
         historial: [],
         ...local,
-        ...(remoto || {})
+        ...(remoto || {}),
+        ...(remotoFirestore || {})
     };
 
     if(!datos.puntosPorNivel){
@@ -55,20 +69,6 @@ export async function cargarDatosUsuario(){
 
     if(!datos.historial){
         datos.historial = [];
-    }
-
-    // 🔥 FIRESTORE (AQUÍ BIEN PUESTO)
-    const user = auth.currentUser;
-
-    if(user){
-        const remotoFirestore = await cargarFirestore(user.email);
-
-        if(remotoFirestore){
-            datos = {
-                ...datos,
-                ...remotoFirestore
-            };
-        }
     }
 
     window.datos = datos;
@@ -147,12 +147,12 @@ function actualizarPuntos(){
 
 // =======================================
 
-    async function guardarTodo(){
+async function guardarTodo(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
     try {
-        const user = auth.currentUser;
+        const user = await getUser();
 
         if(user){
             await guardarFirestore(user.email, datos);
@@ -268,7 +268,8 @@ const Juegos = {
         ]
     },
 
-    // 🔥 CIENCIAS MEJORADO
+    // 🔥 CIENCIAS MEJORADO (YA BIEN CON VARIAS PREGUNTAS)
+
     ciencias1:{
         preguntas: cienciasBase.map(x=>({
             p:x[0],
@@ -290,16 +291,17 @@ const Juegos = {
     ciencias3:{
         preguntas:[
             { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué gas necesitamos para respirar?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
-            { p:"¿Qué gas expulsamos al respirar?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
-            { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] },
-            { p:"¿Cuál es el satélite de la Tierra?", r:"luna", tipo:"test", opciones:["luna","sol","marte"] }
+            { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
+            { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
+            { p:"¿Cuál es la estrella?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] },
+            { p:"¿Satélite de la Tierra?", r:"luna", tipo:"test", opciones:["luna","sol","marte"] }
         ]
     }
 };
 
 // =======================================
 // 🚀 INICIAR JUEGO
+
 export async function iniciarJuego(key){
 
     await cargarDatosUsuario();
@@ -378,6 +380,7 @@ export async function iniciarJuego(key){
 
 // =======================================
 // ✅ COMPROBAR
+
 export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);

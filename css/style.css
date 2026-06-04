@@ -570,3 +570,26 @@ button:hover,
 
     display:inline-block;
 }
+#tituloJuego{
+    font-family:'Baloo 2', cursive;
+
+    font-size:clamp(2.8rem, 7vw, 4.5rem);
+
+    font-weight:900;
+
+    color:#ff8c00;
+
+    text-align:center;
+
+    margin:25px 10px;
+
+    letter-spacing:2px;
+
+    text-transform: capitalize;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.18);
+
+    padding:10px;
+}

@@ -264,31 +264,18 @@ const Juegos = {
         }))
     },
 
-  ciencias2:{
-    preguntas:[
-        { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-        { p:"¿Cuál es el planeta más grande del sistema solar?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","tierra"] },
-        { p:"¿Cuál es el planeta más cercano al Sol?", r:"mercurio", tipo:"test", opciones:["mercurio","venus","marte"] },
-        { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","jupiter","marte"] },
-        { p:"¿Cuál es el planeta donde vivimos?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] },
-        { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","jupiter"] },
-        { p:"¿Qué planeta es conocido como el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","neptuno"] },
-        { p:"¿Qué planeta es el más pequeño del sistema solar?", r:"mercurio", tipo:"test", opciones:["mercurio","pluton","venus"] }
-    ]
-},
+    ciencias2:{
+        preguntas:[
+            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] }
+        ]
+    },
 
-ciencias3:{
-    preguntas:[
-        { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-        { p:"¿Qué gas necesitamos para respirar?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrogeno"] },
-        { p:"¿Qué gas expulsamos al respirar?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
-        { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] },
-        { p:"¿Cuál es el satélite de la Tierra?", r:"luna", tipo:"test", opciones:["luna","sol","marte"] },
-        { p:"¿Qué órgano bombea la sangre?", r:"corazon", tipo:"test", opciones:["corazon","pulmon","cerebro"] },
-        { p:"¿Cuál es el órgano que nos permite respirar?", r:"pulmones", tipo:"test", opciones:["pulmones","corazon","estomago"] },
-        { p:"¿Qué parte del cuerpo nos permite pensar?", r:"cerebro", tipo:"test", opciones:["cerebro","corazon","higado"] }
-    ]
-}
+    ciencias3:{
+        preguntas:[
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] }
+        ]
+    }
+};
 
 // =======================================
 // 🚀 INICIAR JUEGO

@@ -1,36 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Valenciano</title>
-</head>
-<body>
-
-<h1>Valenciano</h1>
-
-<!-- 📌 PREGUNTA -->
-<div id="pregunta"></div>
-
-<!-- 📌 OPCIONES TEST (ESTO TE FALTABA Y ROMPÍA TODO) -->
-<div id="zona"></div>
-
-<!-- 📌 INPUT -->
-<input id="respuesta">
-
-<!-- 📌 BOTÓN -->
-<button onclick="comprobar()">Comprobar</button>
-
-<!-- 📌 RESULTADO -->
-<div id="resultado"></div>
-
 <script type="module">
 import { iniciarJuego, comprobar } from "./js/juegos-master.js";
 
 window.comprobar = comprobar;
 
-// 🚀 ARRANCA VALENCIANO
-iniciarJuego("valenciano1");
+(async () => {
+    await iniciarJuego("valenciano1");
+})();
 </script>
-
-</body>
-</html>

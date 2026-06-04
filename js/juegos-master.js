@@ -194,65 +194,67 @@ const Juegos = {
             tipo:"input"
         }))
     },
-castellano1:{
-    preguntas:[
-        { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rápido"] },
-        { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","azul"] }
-    ]
-},
 
-castellano2:{
-    preguntas:[
-        { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
-        { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] },
-        { p:"¿Cuál es un adjetivo?", r:"azul", tipo:"test", opciones:["azul","mesa","correr"] },
-        { p:"¿Cuál es un sustantivo?", r:"coche", tipo:"test", opciones:["coche","cantar","feliz"] },
-        { p:"¿Cuál es un verbo?", r:"comer", tipo:"test", opciones:["comer","mesa","rojo"] },
-        { p:"¿Cuál es un adjetivo?", r:"rápido", tipo:"test", opciones:["rápido","coche","correr"] }
-    ]
-},
+    castellano1:{
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rápido"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","azul"] }
+        ]
+    },
 
-castellano3:{
-    preguntas:[
-        { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
-        { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
-        { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] },
-        { p:"¿Qué es un animal?", r:"gato", tipo:"test", opciones:["gato","mesa","rojo"] },
-        { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","azul","mesa"] },
-        { p:"¿Qué es un objeto?", r:"silla", tipo:"test", opciones:["silla","correr","feliz"] }
-    ]
-},
+    castellano2:{
+        preguntas:[
+            { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
+            { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] },
+            { p:"¿Cuál es un adjetivo?", r:"azul", tipo:"test", opciones:["azul","mesa","correr"] },
+            { p:"¿Cuál es un sustantivo?", r:"coche", tipo:"test", opciones:["coche","cantar","feliz"] },
+            { p:"¿Cuál es un verbo?", r:"comer", tipo:"test", opciones:["comer","mesa","rojo"] },
+            { p:"¿Cuál es un adjetivo?", r:"rápido", tipo:"test", opciones:["rápido","coche","correr"] }
+        ]
+    },
 
-ciencias1:{
-    preguntas: cienciasBase.map(x=>({
-        p:x[0],
-        r:x[1],
-        tipo:"input"
-    }))
-},
+    castellano3:{
+        preguntas:[
+            { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
+            { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] },
+            { p:"¿Qué es un animal?", r:"gato", tipo:"test", opciones:["gato","mesa","rojo"] },
+            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","azul","mesa"] },
+            { p:"¿Qué es un objeto?", r:"silla", tipo:"test", opciones:["silla","correr","feliz"] }
+        ]
+    },
 
-ciencias2:{
-    preguntas:[
-        { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-        { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","tierra"] },
-        { p:"¿Cuál es el planeta más grande?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","marte"] },
-        { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","marte","venus"] },
-        { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
-    ]
-},
+    ciencias1:{
+        preguntas: cienciasBase.map(x=>({
+            p:x[0],
+            r:x[1],
+            tipo:"input"
+        }))
+    },
 
-ciencias3:{
-    preguntas:[
-        { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-        { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
-        { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
-        { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] }
-    ]
-},
+    ciencias2:{
+        preguntas:[
+            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
+            { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","tierra"] },
+            { p:"¿Cuál es el planeta más grande?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","marte"] },
+            { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","marte","venus"] },
+            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+        ]
+    },
 
-valenciano1:{
-    preguntas:[]
-}
+    ciencias3:{
+        preguntas:[
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
+            { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
+            { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
+            { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] }
+        ]
+    },
+
+    valenciano1:{
+        preguntas:[]
+    }
+};
 
 // =======================================
 // 🌍 CARGA VALENCIANO DESDE JSON
@@ -261,7 +263,6 @@ export async function cargarValenciano(){
 
     try {
         const res = await fetch("./js/valenciano.json");
-
         const data = await res.json();
 
         if(data?.valenciano1){
@@ -274,7 +275,7 @@ export async function cargarValenciano(){
         console.error("Error cargando valenciano:", e);
     }
 }
-// 🔥 IMPORTANTE: se ejecuta SOLO UNA VEZ
+
 cargarValenciano();
 
 // =======================================
@@ -292,17 +293,17 @@ export async function iniciarJuego(key){
     const input = document.getElementById("respuesta");
     const resultado = document.getElementById("resultado");
 
+    if(!juegoActual){
+        pregunta.innerText = "Nivel no encontrado";
+        return;
+    }
+
     pregunta.innerHTML = "";
     zona.innerHTML = "";
     resultado.innerHTML = "";
     input.value = "";
 
     actualizarPuntos();
-
-    if(!juegoActual){
-        pregunta.innerText = "Nivel no encontrado";
-        return;
-    }
 
     if(juegoActual.generar){
 

@@ -1,6 +1,8 @@
 import { comprobarRecompensas } from "./recompensas.js";
 import { guardarProgreso, cargarProgreso } from "./progreso.js";
 import { syncProgreso } from "./sync-progreso.js";
+import { guardarProgreso } from "./supabase.js";
+
 // =======================================
 
 let preguntaActual = null;

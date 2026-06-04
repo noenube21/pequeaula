@@ -1,9 +1,10 @@
 <script type="module">
-import { iniciarJuego, comprobar } from "./js/juegos-master.js";
+import { iniciarJuego, comprobar, cargarValenciano } from "./js/juegos-master.js";
 
 window.comprobar = comprobar;
 
 (async () => {
-    await iniciarJuego("valenciano1");
+    await cargarValenciano();   // 🔥 primero carga JSON
+    await iniciarJuego("valenciano1"); // luego arranca juego
 })();
 </script>

@@ -2,46 +2,36 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Valenciano</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-    <h1>Valenciano</h1>
+<button class="btn-volver" onclick="history.back()">⬅ Volver</button>
 
-    <div id="score"></div>
+<header class="topbar menu-topbar">
+    <span class="logo menu-logo">PEQUE AULA 🌟</span>
+</header>
 
-    <div id="pregunta"></div>
+<h2 class="center menu-subtitle">
+    Elige un nivel de VALENCIANO
+</h2>
 
-    <div id="zona"></div>
+<div class="card-container menu-cards">
 
-    <input
-        type="text"
-        id="respuesta"
-        placeholder="Escribe tu respuesta"
-        autocomplete="off"
-    >
+    <div class="card" onclick="jugar()">
+        <img src="assets/img/nivel1.png">
+        <h3>Nivel 1</h3>
+    </div>
 
-    <button onclick="comprobar()">
-        Comprobar
-    </button>
+</div>
 
-    <div id="resultado"></div>
-
-    <script type="module">
-        import {
-            iniciarJuego,
-            comprobar,
-            cargarValenciano
-        } from "./js/juegos-master.js";
-
-        window.comprobar = comprobar;
-
-        (async () => {
-            await cargarValenciano();     // carga preguntas desde JSON
-            await iniciarJuego("valenciano1");
-        })();
-    </script>
+<script>
+function jugar(){
+    location.href = "valenciano-juego.html";
+}
+</script>
 
 </body>
 </html>

@@ -118,35 +118,22 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    try{
+    console.log(
+        "usuario localStorage:",
+        localStorage.getItem("usuario")
+    );
 
-        const usuario =
-            JSON.parse(localStorage.getItem("usuario"));
+    console.log(
+        "window.guardarProgreso:",
+        window.guardarProgreso
+    );
 
-        console.log("USUARIO:", usuario);
-        console.log("CLAVE:", claveActual);
-
-        if(usuario && window.guardarProgreso){
-
-            const resultado =
-                await window.guardarProgreso(
-                    usuario.nombre || "usuario",
-                    claveActual,
-                    1,
-                    obtenerPuntosNivel()
-                );
-
-            console.log("RESULTADO GUARDADO:", resultado);
-
-        } else {
-
-            console.log("No hay usuario o no existe window.guardarProgreso");
-
-        }
-
-    }catch(error){
-        console.error(error);
-    }
+    await window.guardarProgreso(
+        "prueba",
+        claveActual,
+        1,
+        obtenerPuntosNivel()
+    );
 }
 
 // =======================================

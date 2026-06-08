@@ -111,7 +111,18 @@ function actualizarPuntos(){
 // =======================================
 
 async function guardarTodo(){
-    localStorage.setItem("progreso", JSON.stringify(datos));
+
+    localStorage.setItem(
+        "progreso",
+        JSON.stringify(datos)
+    );
+
+    await guardarProgreso(
+        "usuario1",
+        claveActual,
+        1,
+        obtenerPuntosNivel()
+    );
 }
 
 // =======================================

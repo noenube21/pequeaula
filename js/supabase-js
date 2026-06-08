@@ -1,7 +1,7 @@
 // ================================
 // SUPABASE CONFIG
 // ================================
-
+console.log("SUPABASE CARGADO");
 const SUPABASE_URL = "https://adclnjzcimqktzilvldp.supabase.co";
 
 const SUPABASE_KEY = "TU_ANON_KEY_AQUI";

@@ -102,3 +102,21 @@ window.guardarProgreso = guardarProgreso;
 window.cargarProgreso = cargarProgreso;
 window.actualizarPuntosSupabase = actualizarPuntosSupabase;
 window.borrarProgreso = borrarProgreso;
+async function pruebaSupabase() {
+
+  const { data, error } = await db
+    .from("progreso")
+    .insert([
+      {
+        uid: "prueba",
+        juego: "test",
+        nivel: 1,
+        puntos: 10
+      }
+    ]);
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+}
+
+pruebaSupabase();

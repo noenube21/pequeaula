@@ -119,21 +119,31 @@ async function guardarTodo(){
     console.log("guardarTodo ejecutado");
 
     console.log(
-        "usuario localStorage:",
-        localStorage.getItem("usuario")
-    );
-
-    console.log(
         "window.guardarProgreso:",
         window.guardarProgreso
     );
 
-    await window.guardarProgreso(
-        "prueba",
-        claveActual,
-        1,
-        obtenerPuntosNivel()
-    );
+    if(window.guardarProgreso){
+
+        const resultado =
+            await window.guardarProgreso(
+                "usuario_prueba",
+                claveActual,
+                1,
+                obtenerPuntosNivel()
+            );
+
+        console.log(
+            "RESULTADO GUARDADO:",
+            resultado
+        );
+
+    } else {
+
+        console.log(
+            "window.guardarProgreso NO EXISTE"
+        );
+    }
 }
 
 // =======================================

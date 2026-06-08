@@ -117,12 +117,24 @@ async function guardarTodo(){
         JSON.stringify(datos)
     );
 
-    await guardarProgreso(
-        "usuario1",
-        claveActual,
-        1,
-        obtenerPuntosNivel()
-    );
+    try{
+
+        const usuario =
+            JSON.parse(localStorage.getItem("usuario"));
+
+        if(usuario){
+
+            await guardarProgreso(
+                usuario.nombre || "usuario",
+                claveActual,
+                1,
+                obtenerPuntosNivel()
+            );
+        }
+
+    }catch(error){
+        console.error(error);
+    }
 }
 
 // =======================================

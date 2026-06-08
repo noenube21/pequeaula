@@ -2,11 +2,9 @@
 // SUPABASE CONFIG
 // ================================
 
-const SUPABASE_URL =
-  "https://adclnjzcimqktzilvldp.supabase.co";
+const SUPABASE_URL = "https://adclnjzcimqktzilvldp.supabase.co";
 
-const SUPABASE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkY2xuanpjaW1xa3R6aWx2bGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjI1NDAsImV4cCI6MjA5NjEzODU0MH0.7v7WAeHBUiBVmnZ8ycnU30Gw9a0wWr8JPIrCEPXMHFc";
+const SUPABASE_KEY = "TU_ANON_KEY_AQUI";
 
 const db = supabase.createClient(
   SUPABASE_URL,
@@ -17,14 +15,9 @@ const db = supabase.createClient(
 // GUARDAR PROGRESO
 // ================================
 
-async function guardarProgreso(
-  uid,
-  juego,
-  nivel,
-  puntos
-) {
+async function guardarProgreso(uid, juego, nivel, puntos) {
 
-  const { data, error } = await db
+  const { error } = await db
     .from("progreso")
     .insert([
       {
@@ -36,10 +29,7 @@ async function guardarProgreso(
     ]);
 
   if (error) {
-    console.error(
-      "Error guardando:",
-      error
-    );
+    console.error("Error guardando:", error);
     return false;
   }
 
@@ -58,10 +48,7 @@ async function cargarProgreso(uid) {
     .eq("uid", uid);
 
   if (error) {
-    console.error(
-      "Error cargando:",
-      error
-    );
+    console.error("Error cargando:", error);
     return [];
   }
 
@@ -72,7 +59,7 @@ async function cargarProgreso(uid) {
 // ACTUALIZAR PUNTOS
 // ================================
 
-async function actualizarPuntos(
+async function actualizarPuntosSupabase(
   uid,
   juego,
   puntos
@@ -106,3 +93,12 @@ async function borrarProgreso(uid) {
     console.error(error);
   }
 }
+
+// ================================
+// HACER FUNCIONES GLOBALES
+// ================================
+
+window.guardarProgreso = guardarProgreso;
+window.cargarProgreso = cargarProgreso;
+window.actualizarPuntosSupabase = actualizarPuntosSupabase;
+window.borrarProgreso = borrarProgreso;

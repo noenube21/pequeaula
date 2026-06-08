@@ -116,19 +116,32 @@ async function guardarTodo(){
         JSON.stringify(datos)
     );
 
+    console.log("guardarTodo ejecutado");
+
     try{
 
         const usuario =
             JSON.parse(localStorage.getItem("usuario"));
 
+        console.log("USUARIO:", usuario);
+        console.log("CLAVE:", claveActual);
+
         if(usuario && window.guardarProgreso){
 
-            await window.guardarProgreso(
-                usuario.nombre || "usuario",
-                claveActual,
-                1,
-                obtenerPuntosNivel()
-            );
+            const resultado =
+                await window.guardarProgreso(
+                    usuario.nombre || "usuario",
+                    claveActual,
+                    1,
+                    obtenerPuntosNivel()
+                );
+
+            console.log("RESULTADO GUARDADO:", resultado);
+
+        } else {
+
+            console.log("No hay usuario o no existe window.guardarProgreso");
+
         }
 
     }catch(error){

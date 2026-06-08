@@ -26,4 +26,4 @@ async function pruebaSupabase() {
   console.log("ERROR:", error);
 }
 
-pruebaSupabase(); 
+pruebaSupabase();

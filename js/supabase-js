@@ -26,4 +26,25 @@ async function pruebaSupabase() {
   console.log("ERROR:", error);
 }
 
-pruebaSupabase();
+async function guardarProgreso(uid, juego, nivel, puntos) {
+
+  const { error } = await db
+    .from("progreso")
+    .insert([
+      {
+        uid,
+        juego,
+        nivel,
+        puntos
+      }
+    ]);
+
+  if (error) {
+    console.error("Error guardando:", error);
+    return false;
+  }
+
+  return true;
+}
+
+window.guardarProgreso = guardarProgreso;

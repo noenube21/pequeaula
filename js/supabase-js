@@ -1,34 +1,23 @@
-console.log("SUPABASE CARGADO");
-
 const SUPABASE_URL = "https://adclnjzcimqktzilvldp.supabase.co";
 
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkY2xuanpjaW1xa3R6aWx2bGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjI1NDAsImV4cCI6MjA5NjEzODU0MH0.7v7WAeHBUiBVmnZ8ycnU30Gw9a0wWr8JPIrCEPXMHFc";
+console.log("SUPABASE CARGADO");
 
 const db = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
-async function pruebaSupabase() {
-
-  const { data, error } = await db
-    .from("progreso")
-    .insert([
-      {
-        uid: "prueba",
-        juego: "test",
-        nivel: 1,
-        puntos: 10
-      }
-    ]);
-
-  console.log("DATA:", data);
-  console.log("ERROR:", error);
-}
-
 async function guardarProgreso(uid, juego, nivel, puntos) {
 
-  const { error } = await db
+  console.log("GUARDANDO EN SUPABASE", {
+    uid,
+    juego,
+    nivel,
+    puntos
+  });
+
+  const { data, error } = await db
     .from("progreso")
     .insert([
       {
@@ -39,12 +28,10 @@ async function guardarProgreso(uid, juego, nivel, puntos) {
       }
     ]);
 
-  if (error) {
-    console.error("Error guardando:", error);
-    return false;
-  }
+  console.log("SUPABASE DATA:", data);
+  console.log("SUPABASE ERROR:", error);
 
-  return true;
+  return !error;
 }
 
 window.guardarProgreso = guardarProgreso;

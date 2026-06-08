@@ -109,7 +109,6 @@ function actualizarPuntos(){
 }
 
 // =======================================
-
 async function guardarTodo(){
 
     localStorage.setItem(
@@ -122,9 +121,9 @@ async function guardarTodo(){
         const usuario =
             JSON.parse(localStorage.getItem("usuario"));
 
-        if(usuario){
+        if(usuario && window.guardarProgreso){
 
-            await guardarProgreso(
+            await window.guardarProgreso(
                 usuario.nombre || "usuario",
                 claveActual,
                 1,

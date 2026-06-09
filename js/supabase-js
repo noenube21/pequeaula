@@ -50,6 +50,18 @@ async function cargarProgresoSupabase(uid){
 
     return data;
 }
+async function guardarUsuario(usuario){
+
+  const { error } = await db
+    .from("usuarios")
+    .upsert([usuario]);
+
+  if(error){
+    console.error(error);
+  }
+}
+
+window.guardarUsuario = guardarUsuario;
 
 window.cargarProgresoSupabase =
     cargarProgresoSupabase;

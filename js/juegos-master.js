@@ -116,27 +116,30 @@ async function guardarTodo(){
         JSON.stringify(datos)
     );
 
-    console.log("guardarTodo ejecutado");
+console.log("guardarTodo ejecutado");
+
+console.log(
+    "window.guardarProgreso:",
+    window.guardarProgreso
+);
+
+if(window.guardarProgreso){
+
+    const email = window.auth?.currentUser?.email;
+
+    const resultado =
+        await window.guardarProgreso(
+            email,
+            claveActual,
+            1,
+            obtenerPuntosNivel()
+        );
 
     console.log(
-        "window.guardarProgreso:",
-        window.guardarProgreso
+        "RESULTADO GUARDADO:",
+        resultado
     );
-
-    if(window.guardarProgreso){
-
-        const resultado =
-            await window.guardarProgreso(
-                "usuario_prueba",
-                claveActual,
-                1,
-                obtenerPuntosNivel()
-            );
-
-        console.log(
-            "RESULTADO GUARDADO:",
-            resultado
-        );
+}
 
     } else {
 

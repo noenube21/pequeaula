@@ -116,30 +116,29 @@ async function guardarTodo(){
         JSON.stringify(datos)
     );
 
-console.log("guardarTodo ejecutado");
-
-console.log(
-    "window.guardarProgreso:",
-    window.guardarProgreso
-);
-
-if(window.guardarProgreso){
-
-    const email = window.auth?.currentUser?.email;
-
-    const resultado =
-        await window.guardarProgreso(
-            email,
-            claveActual,
-            1,
-            obtenerPuntosNivel()
-        );
+    console.log("guardarTodo ejecutado");
 
     console.log(
-        "RESULTADO GUARDADO:",
-        resultado
+        "window.guardarProgreso:",
+        window.guardarProgreso
     );
-}
+
+    if(window.guardarProgreso){
+
+        const email = window.auth?.currentUser?.email;
+
+        const resultado =
+            await window.guardarProgreso(
+                email,
+                claveActual,
+                1,
+                obtenerPuntosNivel()
+            );
+
+        console.log(
+            "RESULTADO GUARDADO:",
+            resultado
+        );
 
     } else {
 
@@ -148,7 +147,6 @@ if(window.guardarProgreso){
         );
     }
 }
-
 // =======================================
 
 function calc(op,max){

@@ -35,3 +35,21 @@ async function guardarProgreso(uid, juego, nivel, puntos) {
 }
 
 window.guardarProgreso = guardarProgreso;
+
+async function cargarProgresoSupabase(uid){
+
+    const { data, error } = await db
+        .from("progreso")
+        .select("*")
+        .eq("uid", uid);
+
+    if(error){
+        console.error(error);
+        return [];
+    }
+
+    return data;
+}
+
+window.cargarProgresoSupabase =
+    cargarProgresoSupabase;

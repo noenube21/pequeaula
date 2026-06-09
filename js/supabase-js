@@ -85,3 +85,20 @@ async function guardarUsuario(usuario){
 
 window.guardarUsuario =
     guardarUsuario;
+async function obtenerUsuario(email){
+
+    const { data, error } = await db
+        .from("usuarios")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+    if(error){
+        return null;
+    }
+
+    return data;
+}
+
+window.obtenerUsuario = obtenerUsuario;
+

@@ -51,6 +51,20 @@ if (formRegistro) {
           nivel: 1,
           puntos: 0
         });
+        if(window.guardarUsuario){
+
+  await window.guardarUsuario({
+    email: email,
+    nombre: nombre,
+    avatar: avatar,
+    nivel: 1,
+    puntos: 0,
+    partidas: 0,
+    aciertos: 0,
+    errores: 0
+  });
+
+}
       } catch (firestoreError) {
         console.log("ERROR FIRESTORE:", firestoreError);
         // no rompemos registro aunque falle esto

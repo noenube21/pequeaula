@@ -19,7 +19,7 @@ async function guardarProgreso(uid, juego, nivel, puntos) {
 
   const { data, error } = await db
     .from("progreso")
-    .insert([
+    .upsert([
       {
         uid,
         juego,

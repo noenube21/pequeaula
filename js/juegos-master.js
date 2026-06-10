@@ -127,6 +127,11 @@ async function guardarTodo(){
 
         const email = window.auth?.currentUser?.email;
 
+        console.log(
+            "PUNTOS ACTUALES:",
+            obtenerPuntosNivel()
+        );
+
         const resultado =
             await window.guardarProgreso(
                 email,

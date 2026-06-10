@@ -157,15 +157,24 @@ onAuthStateChanged(auth, async (user) => {
   const enRegistro = document.getElementById("form-registro");
 
   if (enLogin || enRegistro) return;
+if (user && user.emailVerified) {
 
-  if (user && user.emailVerified) {
+  console.log("EMAIL LOGIN:", user.email);
 
-    const ref = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(ref);
+  const usuarioSupabase =
+      await window.obtenerUsuario(user.email);
 
-    if (snap.exists()) {
-      localStorage.setItem("usuario", JSON.stringify(snap.data()));
-      window.location.href = "./menu.html";
-    }
+  console.log(
+      "USUARIO SUPABASE:",
+      usuarioSupabase
+  );
+
+  const ref = doc(db, "usuarios", user.uid);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    localStorage.setItem("usuario", JSON.stringify(snap.data()));
+    window.location.href = "./menu.html";
   }
-});
+
+}

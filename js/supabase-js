@@ -10,28 +10,31 @@ const db = supabase.createClient(
 
 async function guardarProgreso(uid, juego, nivel, puntos) {
 
-  console.log("GUARDANDO EN SUPABASE", {
-    uid,
-    juego,
-    nivel,
-    puntos
-  });
-
-  const { data, error } = await db
-    .from("progreso")
-    .upsert([
-      {
+    console.log("GUARDANDO EN SUPABASE", {
         uid,
         juego,
         nivel,
         puntos
-      }
-    ]);
+    });
 
-  console.log("SUPABASE DATA:", data);
-  console.log("SUPABASE ERROR:", error);
+    const { data, error } = await db
+        .from("progreso")
+        .upsert(
+            [{
+                uid,
+                juego,
+                nivel,
+                puntos
+            }],
+            {
+                onConflict: "uid,juego"
+            }
+        );
 
-  return !error;
+    console.log("SUPABASE DATA:", data);
+    console.log("SUPABASE ERROR:", error);
+
+    return !error;
 }
 
 window.guardarProgreso = guardarProgreso;

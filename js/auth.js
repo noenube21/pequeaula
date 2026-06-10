@@ -178,3 +178,4 @@ if (user && user.emailVerified) {
   }
 
 }
+});

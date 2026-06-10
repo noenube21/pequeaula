@@ -151,31 +151,37 @@ window.resetPassword = async function () {
 };
 
 /* ------------------ AUTO LOGIN CONTROLADO ------------------ */
+/* ------------------ AUTO LOGIN CONTROLADO ------------------ */
 onAuthStateChanged(auth, async (user) => {
 
-  const enLogin = document.getElementById("form-login");
-  const enRegistro = document.getElementById("form-registro");
+    const enLogin = document.getElementById("form-login");
+    const enRegistro = document.getElementById("form-registro");
 
-  if (enLogin || enRegistro) return;
-if (user && user.emailVerified) {
+    if (enLogin || enRegistro) return;
 
-  console.log("EMAIL LOGIN:", user.email);
+    if (user && user.emailVerified) {
 
-  const usuarioSupabase =
-      await window.obtenerUsuario(user.email);
+        console.log("EMAIL LOGIN:", user.email);
 
-  console.log(
-      "USUARIO SUPABASE:",
-      usuarioSupabase
-  );
+        const usuarioSupabase =
+            await window.obtenerUsuario(user.email);
 
-  const ref = doc(db, "usuarios", user.uid);
-  const snap = await getDoc(ref);
+        console.log(
+            "USUARIO SUPABASE:",
+            usuarioSupabase
+        );
 
-  if (snap.exists()) {
-    localStorage.setItem("usuario", JSON.stringify(snap.data()));
-    window.location.href = "./menu.html";
-  }
+        const ref = doc(db, "usuarios", user.uid);
+        const snap = await getDoc(ref);
 
-}
-});
+        if (snap.exists()) {
+            localStorage.setItem(
+                "usuario",
+                JSON.stringify(snap.data())
+            );
+
+            window.location.href = "./menu.html";
+        }
+    }
+
+}); 

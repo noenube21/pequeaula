@@ -1,7 +1,7 @@
 import { comprobarRecompensas } from "./recompensas.js";
 
 // =======================================
-
+let datosCargados = false;
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
@@ -17,8 +17,11 @@ let datos = {
 // 
 export async function cargarDatosUsuario(){
 
-    const email =
-        window.auth?.currentUser?.email;
+    if(datosCargados) return;
+
+    datosCargados = true;
+
+    const email = window.auth?.currentUser?.email;
 
     datos = {
         aciertos: 0,
@@ -35,14 +38,15 @@ export async function cargarDatosUsuario(){
             await window.cargarProgresoSupabase(
                 email
             );
+
         console.log("EMAIL:", email);
-console.log("FILAS:", filas);
+        console.log("FILAS:", filas);
 
         filas.forEach(fila => {
 
             datos.puntosPorNivel[
                 fila.juego
-            ] = fila.puntos;
+            ] = Number(fila.puntos) || 0;
 
         });
 
@@ -65,7 +69,6 @@ console.log("FILAS:", filas);
     }
 
     window.datos = datos;
-
 }
 // =======================================
 
@@ -346,7 +349,6 @@ cargarValenciano();
 
 // =======================================
 // 🚀 INICIAR JUEGO
-
 export async function iniciarJuego(key){
 
     claveActual = key;
@@ -394,24 +396,39 @@ export async function iniciarJuego(key){
             disponibles = [...lista];
         }
 
-        preguntaActual = disponibles[Math.floor(Math.random()*disponibles.length)];
+        preguntaActual =
+            disponibles[
+                Math.floor(Math.random()*disponibles.length)
+            ];
+
         usadas[key].add(preguntaActual.p);
     }
 
     pregunta.innerText = preguntaActual.p;
 
-    input.style.display = (preguntaActual.tipo === "input") ? "block" : "none";
+    input.style.display =
+        (preguntaActual.tipo === "input")
+        ? "block"
+        : "none";
+
     zona.innerHTML = "";
 
     if(preguntaActual.tipo === "test"){
+
         preguntaActual.opciones.forEach(op=>{
+
             const b = document.createElement("button");
+
             b.innerText = op;
             b.classList.add("opcion");
 
             b.onclick = ()=>{
-                document.querySelectorAll("#zona .opcion")
-                    .forEach(btn => btn.classList.remove("seleccionada"));
+
+                document
+                    .querySelectorAll("#zona .opcion")
+                    .forEach(btn =>
+                        btn.classList.remove("seleccionada")
+                    );
 
                 b.classList.add("seleccionada");
                 input.value = op;

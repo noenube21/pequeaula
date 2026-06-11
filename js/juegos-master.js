@@ -35,6 +35,8 @@ export async function cargarDatosUsuario(){
             await window.cargarProgresoSupabase(
                 email
             );
+        console.log("EMAIL:", email);
+console.log("FILAS:", filas);
 
         filas.forEach(fila => {
 

@@ -17,29 +17,36 @@ let datos = {
 // 
 export async function cargarDatosUsuario(){
 
-    const email = window.auth?.currentUser?.email;
+    const email =
+        window.auth?.currentUser?.email;
 
-    if(email && window.cargarProgresoSupabase){
+    datos = {
+        aciertos: 0,
+        puntosPorNivel: {},
+        historial: []
+    };
+
+    if(
+        email &&
+        window.cargarProgresoSupabase
+    ){
 
         const filas =
-            await window.cargarProgresoSupabase(email);
-
-        datos = {
-            aciertos: 0,
-            puntosPorNivel: {},
-            historial: []
-        };
+            await window.cargarProgresoSupabase(
+                email
+            );
 
         filas.forEach(fila => {
 
             datos.puntosPorNivel[
                 fila.juego
             ] = fila.puntos;
+
         });
 
-        localStorage.setItem(
-            "progreso",
-            JSON.stringify(datos)
+        console.log(
+            "DATOS CARGADOS DESDE SUPABASE",
+            datos
         );
 
     } else {
@@ -50,19 +57,9 @@ export async function cargarDatosUsuario(){
             ) || {};
 
         datos = {
-            aciertos: 0,
-            puntosPorNivel: {},
-            historial: [],
+            ...datos,
             ...local
         };
-    }
-
-    if(!datos.puntosPorNivel){
-        datos.puntosPorNivel = {};
-    }
-
-    if(!datos.historial){
-        datos.historial = [];
     }
 
     window.datos = datos;

@@ -66,7 +66,6 @@ console.log("FILAS:", filas);
 
     window.datos = datos;
 
-    actualizarPuntos();
 }
 // =======================================
 
@@ -350,9 +349,10 @@ cargarValenciano();
 
 export async function iniciarJuego(key){
 
+    claveActual = key;
+
     await cargarDatosUsuario();
 
-    claveActual = key;
     juegoActual = Juegos[key];
 
     const pregunta = document.getElementById("pregunta");

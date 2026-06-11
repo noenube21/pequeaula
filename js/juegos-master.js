@@ -14,17 +14,48 @@ let datos = {
 };
 
 // =======================================
-// 🔥 CARGA (SOLO LOCAL, SIN BACKEND)
+// 
 export async function cargarDatosUsuario(){
 
-    const local = JSON.parse(localStorage.getItem("progreso")) || {};
+    const email = window.auth?.currentUser?.email;
 
-    datos = {
-        aciertos: 0,
-        puntosPorNivel: {},
-        historial: [],
-        ...local
-    };
+    if(email && window.cargarProgresoSupabase){
+
+        const filas =
+            await window.cargarProgresoSupabase(email);
+
+        datos = {
+            aciertos: 0,
+            puntosPorNivel: {},
+            historial: []
+        };
+
+        filas.forEach(fila => {
+
+            datos.puntosPorNivel[
+                fila.juego
+            ] = fila.puntos;
+        });
+
+        localStorage.setItem(
+            "progreso",
+            JSON.stringify(datos)
+        );
+
+    } else {
+
+        const local =
+            JSON.parse(
+                localStorage.getItem("progreso")
+            ) || {};
+
+        datos = {
+            aciertos: 0,
+            puntosPorNivel: {},
+            historial: [],
+            ...local
+        };
+    }
 
     if(!datos.puntosPorNivel){
         datos.puntosPorNivel = {};
@@ -38,7 +69,6 @@ export async function cargarDatosUsuario(){
 
     actualizarPuntos();
 }
-
 // =======================================
 
 function limpiar(t){

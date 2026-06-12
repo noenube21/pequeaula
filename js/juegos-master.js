@@ -15,60 +15,63 @@ let datos = {
 
 // =======================================
 // 
-export async function cargarDatosUsuario(){
+export async function cargarDatosUsuario() {
 
-    if(datosCargados) return;
+if (datosCargados) return;
+datosCargados = true;
 
-    datosCargados = true;
+const email = window.auth?.currentUser?.email;
 
-    const email = window.auth?.currentUser?.email;
+// 🔥 reset limpio SOLO memoria
+datos = {
+    aciertos: 0,
+    puntosPorNivel: {},
+    historial: []
+};
 
-    datos = {
-        aciertos: 0,
-        puntosPorNivel: {},
-        historial: []
-    };
+// ===============================
+// 🔥 SUPABASE (PRIORIDAD REAL)
+// ===============================
+if (email && window.cargarProgresoSupabase) {
 
-    if(
-        email &&
-        window.cargarProgresoSupabase
-    ){
+    const filas = await window.cargarProgresoSupabase(email);
 
-        const filas =
-            await window.cargarProgresoSupabase(
-                email
-            );
+    console.log("📦 FILAS SUPABASE:", filas);
 
-        console.log("EMAIL:", email);
-        console.log("FILAS:", filas);
+    for (const fila of filas) {
 
-        filas.forEach(fila => {
+        const nivel = fila.juego; // 🔥 SIEMPRE MISMA CLAVE
 
-            datos.puntosPorNivel[
-                fila.juego
-            ] = Number(fila.puntos) || 0;
+        if (!nivel) continue;
 
-        });
+        const puntos = Number(fila.puntos) || 0;
 
-        console.log(
-            "DATOS CARGADOS DESDE SUPABASE",
-            datos
-        );
+        // 🔥 evita overwrite accidental
+        if (!datos.puntosPorNivel[nivel]) {
+            datos.puntosPorNivel[nivel] = 0;
+        }
 
-    } else {
-
-        const local =
-            JSON.parse(
-                localStorage.getItem("progreso")
-            ) || {};
-
-        datos = {
-            ...datos,
-            ...local
-        };
+        datos.puntosPorNivel[nivel] += puntos;
     }
 
-    window.datos = datos;
+    console.log("✅ DATOS CARGADOS:", datos);
+}
+
+// ===============================
+// 🔁 FALLBACK LOCAL (solo backup)
+// ===============================
+else {
+
+    const local = JSON.parse(
+        localStorage.getItem("progreso")
+    );
+
+    if (local?.puntosPorNivel) {
+        datos.puntosPorNivel = local.puntosPorNivel;
+    }
+}
+
+window.datos = datos;
 }
 // =======================================
 
@@ -127,16 +130,25 @@ function sumarPunto(){
 
 // =======================================
 
-function actualizarPuntos(){
-    const score = document.getElementById("score");
+function actualizarPuntos() {
 
-    if(score){
-        score.innerHTML =
-            `Puntos: ${obtenerPuntosNivel()} | Global: ${
-                Object.values(datos.puntosPorNivel || {})
-                    .reduce((a,b)=>a + (Number(b) || 0), 0)
-            }`;
-    }
+const score = document.getElementById("score");
+if (!score) return;
+
+const nivel = claveActual;
+
+// 🔥 seguridad: si no existe aún
+const puntosNivel =
+    datos.puntosPorNivel?.[nivel] || 0;
+
+// 🔥 global siempre correcto
+const global = Object.values(datos.puntosPorNivel || {})
+.reduce((a, b) => a + (Number(b) || 0), 0);
+
+// UI
+score.innerHTML =
+`Puntos: ${puntosNivel} | Global: ${global}`;
+
 }
 
 // =======================================

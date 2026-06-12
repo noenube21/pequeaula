@@ -1,12 +1,17 @@
 const SUPABASE_URL = "https://adclnjzcimqktzilvldp.supabase.co";
 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkY2xuanpjaW1xa3R6aWx2bGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjI1NDAsImV4cCI6MjA5NjEzODU0MH0.7v7WAeHBUiBVmnZ8ycnU30Gw9a0wWr8JPIrCEPXMHFc";
+const SUPABASE_KEY = "TU_KEY_AQUI";
+
 console.log("SUPABASE CARGADO");
 
-const db = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+
+// =======================
+// PROGRESO
+// =======================
+
 async function guardarProgreso(uid, juego, nivel, puntos) {
 
     console.log("GUARDANDO EN SUPABASE", {
@@ -26,69 +31,70 @@ async function guardarProgreso(uid, juego, nivel, puntos) {
                 puntos
             }],
             {
-                onConflict: "uid,juego"
+                // 🔴 FIX IMPORTANTE:
+                // ahora incluye nivel para NO pisar otros niveles
+                onConflict: "uid,juego,nivel"
             }
         )
         .select();
 
-    console.log("DATA:", data);
-    console.log("ERROR:", error);
+    if (error) {
+        console.error("ERROR PROGRESO:", error);
+        return false;
+    }
 
-    return !error;
+    console.log("DATA:", data);
+
+    return true;
 }
 
 window.guardarProgreso = guardarProgreso;
 
-async function cargarProgresoSupabase(uid){
+
+
+async function cargarProgresoSupabase(uid) {
 
     const { data, error } = await db
         .from("progreso")
         .select("*")
         .eq("uid", uid);
 
-    if(error){
-        console.error(error);
+    if (error) {
+        console.error("ERROR PROGRESO LOAD:", error);
         return [];
     }
 
     return data;
 }
-async function guardarUsuario(usuario){
 
-  const { error } = await db
-    .from("usuarios")
-    .upsert([usuario]);
+window.cargarProgresoSupabase = cargarProgresoSupabase;
 
-  if(error){
-    console.error(error);
-  }
-}
 
-window.guardarUsuario = guardarUsuario;
 
-window.cargarProgresoSupabase =
-    cargarProgresoSupabase;
+// =======================
+// USUARIOS
+// =======================
 
-async function guardarUsuario(usuario){
+async function guardarUsuario(usuario) {
 
-    const { error } = await db
+    const { data, error } = await db
         .from("usuarios")
-        .upsert([usuario]);
+        .upsert([usuario])
+        .select();
 
-    if(error){
-        console.error(
-            "ERROR USUARIO:",
-            error
-        );
+    if (error) {
+        console.error("ERROR USUARIO:", error);
         return false;
     }
 
     return true;
 }
 
-window.guardarUsuario =
-    guardarUsuario;
-async function obtenerUsuario(email){
+window.guardarUsuario = guardarUsuario;
+
+
+
+async function obtenerUsuario(email) {
 
     const { data, error } = await db
         .from("usuarios")
@@ -96,7 +102,8 @@ async function obtenerUsuario(email){
         .eq("email", email)
         .single();
 
-    if(error){
+    if (error) {
+        console.error("ERROR GET USER:", error);
         return null;
     }
 
@@ -104,4 +111,3 @@ async function obtenerUsuario(email){
 }
 
 window.obtenerUsuario = obtenerUsuario;
-

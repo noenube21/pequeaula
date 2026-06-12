@@ -4,7 +4,7 @@
 
 const SUPABASE_URL = "https://adclnjzcimqktzilvldp.supabase.co";
 
-const SUPABASE_KEY = "TU_KEY_AQUI";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkY2xuanpjaW1xa3R6aWx2bGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjI1NDAsImV4cCI6MjA5NjEzODU0MH0.7v7WAeHBUiBVmnZ8ycnU30Gw9a0wWr8JPIrCEPXMHFc";
 
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 

@@ -146,48 +146,39 @@ function actualizarPuntos(){
 }
 
 // =======================================
-async function guardarTodo(){
+async function guardarProgreso(uid, juego, nivel, puntos) {
 
-    localStorage.setItem(
-        "progreso",
-        JSON.stringify(datos)
-    );
+    console.log("GUARDANDO EN SUPABASE", {
+        uid,
+        juego,
+        nivel,
+        puntos
+    });
 
-    console.log("guardarTodo ejecutado");
-
-    console.log(
-        "window.guardarProgreso:",
-        window.guardarProgreso
-    );
-
-    if(window.guardarProgreso){
-
-        const email = window.auth?.currentUser?.email;
-
-        console.log(
-            "PUNTOS ACTUALES:",
-            obtenerPuntosNivel()
-        );
-
-        const resultado =
-            await window.guardarProgreso(
-                email,
-                claveActual,
-                1,
-                obtenerPuntosNivel()
-            );
-
-        console.log(
-            "RESULTADO GUARDADO:",
-            resultado
-        );
-
-    } else {
-
-        console.log(
-            "window.guardarProgreso NO EXISTE"
-        );
+    if (!uid) {
+        console.error("❌ UID VACÍO - usuario no logueado");
+        return false;
     }
+
+    const { data, error } = await db
+        .from("progreso")
+        .upsert([
+            {
+                uid: String(uid),
+                juego: String(juego),
+                nivel: Number(nivel),
+                puntos: Number(puntos)
+            }
+        ])
+        .select();
+
+    if (error) {
+        console.error("❌ ERROR SUPABASE:", error);
+        return false;
+    }
+
+    console.log("DATA:", data);
+    return true;
 }
 // =======================================
 

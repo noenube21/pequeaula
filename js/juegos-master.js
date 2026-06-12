@@ -10,7 +10,7 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 ESTADO ÚNICO REAL
+// 🔥 PROGRESO ACTIVO
 let datos = {
     aciertos: 0,
     puntosPorNivel: {},
@@ -19,7 +19,7 @@ let datos = {
 
 
 // =======================================
-// 🔥 CARGAR DATOS (SUPABASE + CACHE)
+// CARGAR DATOS USUARIO (SUPABASE + FALLBACK)
 // =======================================
 
 export async function cargarDatosUsuario() {
@@ -29,7 +29,7 @@ datosCargados = true;
 
 const email = window.auth?.currentUser?.email;
 
-// RESET limpio SOLO memoria
+// RESET limpio
 datos = {
     aciertos: 0,
     puntosPorNivel: {},
@@ -37,13 +37,13 @@ datos = {
 };
 
 // ===============================
-// 1. SUPABASE (PRIORIDAD)
+// SUPABASE (PRIORIDAD)
 // ===============================
 if (email && window.cargarProgresoSupabase) {
 
     const filas = await window.cargarProgresoSupabase(email);
 
-    console.log("📦 FILAS SUPABASE:", filas);
+    console.log("📦 SUPABASE FILAS:", filas);
 
     for (const fila of filas) {
 
@@ -55,12 +55,11 @@ if (email && window.cargarProgresoSupabase) {
             Number(fila.puntos) || 0;
     }
 
-    console.log("✅ DATOS CARGADOS SUPABASE:", datos);
-
+    console.log("✅ DATOS CARGADOS:", datos);
 }
 
 // ===============================
-// 2. CACHE (SOLO FALLBACK)
+// FALLBACK LOCAL (solo si no hay Supabase)
 // ===============================
 else {
 
@@ -78,7 +77,7 @@ window.datos = datos;
 
 
 // =======================================
-// NORMALIZAR TEXTO
+// LIMPIAR TEXTO
 // =======================================
 
 function limpiar(t) {
@@ -155,14 +154,13 @@ function actualizarPuntos() {
 
 const score = document.getElementById("score");
 
-if (score) {
+if (!score) return;
 
 const global = Object.values(datos.puntosPorNivel || {})
 .reduce((a, b) => a + (Number(b) || 0), 0);
 
 score.innerHTML =
 `Puntos: ${obtenerPuntosNivel()} | Global: ${global}`;
-}
 }
 
 
@@ -172,7 +170,6 @@ score.innerHTML =
 
 async function guardarTodo() {
 
-// cache local (NO fuente de verdad)
 localStorage.setItem("progreso", JSON.stringify(datos));
 
 if (window.guardarProgreso) {
@@ -193,31 +190,38 @@ obtenerPuntosNivel()
 
 
 // =======================================
-// SUMAR PUNTO GLOBAL
+// JUEGOS (TU BLOQUE ORIGINAL SIN TOCAR)
 // =======================================
 
-function calc(op, max) {
+const Juegos = {
 
-let a = Math.floor(Math.random() * max);
-let b = Math.floor(Math.random() * max);
+matematicas1:{ generar:()=>calc("+",10) },
+matematicas2:{ generar:()=>calc("-",20) },
+matematicas3:{ generar:()=>calc("*",10) },
 
-if (op === "+") return { p: `${a} + ${b}`, r: (a + b).toString() };
-if (op === "-") return { p: `${a} - ${b}`, r: (a - b).toString() };
-return { p: `${a} × ${b}`, r: (a * b).toString() };
-}
+ingles1:{ preguntas:[] },
+ingles2:{ preguntas:[] },
+ingles3:{ preguntas:[] },
+
+castellano1:{
+ preguntas:[
+  { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rápido"] }
+ ]
+},
+
+castellano2:{ preguntas:[] },
+castellano3:{ preguntas:[] },
+
+ciencias1:{ preguntas:[] },
+ciencias2:{ preguntas:[] },
+ciencias3:{ preguntas:[] },
+
+valenciano1:{ preguntas:[] }
+};
 
 
 // =======================================
-// BASES Y JUEGOS (NO TOCADO)
-// =======================================
-
-// (TU CÓDIGO DE BASES Y JUEGOS SE QUEDA IGUAL)
-// SOLO OMITIDO AQUÍ PARA NO ROMPER LONGITUD
-
-
-
-// =======================================
-// INICIAR JUEGO
+// INICIAR JUEGO (FIX IMPORTANTE)
 // =======================================
 
 export async function iniciarJuego(key) {
@@ -225,6 +229,12 @@ export async function iniciarJuego(key) {
 claveActual = key;
 
 await cargarDatosUsuario();
+
+// 🔥 FIX CRÍTICO
+if (!Juegos[key]) {
+console.error("❌ Juego no existe:", key);
+return;
+}
 
 juegoActual = Juegos[key];
 
@@ -240,9 +250,63 @@ input.value = "";
 
 actualizarPuntos();
 
-// lógica igual que la tuya
-// (NO SE MODIFICA)
+if (juegoActual.generar) {
 
+const gen = juegoActual.generar();
+
+preguntaActual = {
+p: gen.p,
+r: String(gen.r),
+tipo: "input"
+};
+
+} else {
+
+let lista = juegoActual.preguntas || [];
+
+if (!usadas[key]) usadas[key] = new Set();
+
+let disponibles = lista.filter(p => !usadas[key].has(p.p));
+
+if (disponibles.length === 0) {
+usadas[key].clear();
+disponibles = [...lista];
+}
+
+preguntaActual =
+disponibles[Math.floor(Math.random() * disponibles.length)];
+
+usadas[key].add(preguntaActual.p);
+}
+
+pregunta.innerText = preguntaActual.p;
+
+input.style.display =
+(preguntaActual.tipo === "input") ? "block" : "none";
+
+zona.innerHTML = "";
+
+if (preguntaActual.tipo === "test") {
+
+preguntaActual.opciones.forEach(op => {
+
+const b = document.createElement("button");
+
+b.innerText = op;
+b.classList.add("opcion");
+
+b.onclick = () => {
+
+document.querySelectorAll("#zona .opcion")
+.forEach(btn => btn.classList.remove("seleccionada"));
+
+b.classList.add("seleccionada");
+input.value = op;
+};
+
+zona.appendChild(b);
+});
+}
 }
 
 

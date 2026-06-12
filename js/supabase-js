@@ -7,7 +7,6 @@ const db = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
-
 async function guardarProgreso(uid, juego, nivel, puntos) {
 
     console.log("GUARDANDO EN SUPABASE", {
@@ -29,10 +28,11 @@ async function guardarProgreso(uid, juego, nivel, puntos) {
             {
                 onConflict: "uid,juego"
             }
-        );
+        )
+        .select();
 
-    console.log("SUPABASE DATA:", data);
-    console.log("SUPABASE ERROR:", error);
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
 
     return !error;
 }

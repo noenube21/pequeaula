@@ -1,21 +1,41 @@
-import { cargarDatosUsuario } from "./juegos-master.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 let datos = {};
 
 // =======================================
 export async function iniciarFamilia() {
 
-    // 🔥 primero intenta cargar Firebase (como antes)
-    await cargarDatosUsuario();
-
-    // 🔥 intenta Firebase primero, si no localStorage
-    const firebaseData = window.datosUsuario || null;
-
-    const localData = JSON.parse(localStorage.getItem("progreso")) || {};
-
-    datos = firebaseData || localData;
-
+    await cargarDatosFirebase();
     renderFamilia();
+}
+
+// =======================================
+async function cargarDatosFirebase() {
+
+    try {
+
+        const db = window.db;
+
+        if (!window.uid) {
+            console.log("⚠️ No hay usuario logueado");
+            datos = {};
+            return;
+        }
+
+        const ref = doc(db, "usuarios", window.uid);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+            datos = snap.data();
+            console.log("✅ Progreso cargado:", datos);
+        } else {
+            datos = {};
+        }
+
+    } catch (e) {
+        console.error("Error Firebase:", e);
+        datos = {};
+    }
 }
 
 // =======================================
@@ -30,53 +50,12 @@ function limpiarDatos(obj) {
     const limpio = {};
 
     for (const [k, v] of Object.entries(obj || {})) {
-
         if (!k || k.trim() === "") continue;
         if (isNaN(v)) continue;
-
         limpio[k] = Number(v);
     }
 
     return limpio;
-}
-
-// =======================================
-function renderGrafico() {
-
-    const canvas = document.getElementById("grafico");
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-
-    const data = limpiarDatos(datos.puntosPorNivel);
-
-    const keys = Object.keys(data);
-    const values = Object.values(data);
-
-    const max = Math.max(...values, 1);
-
-    canvas.width = 700;
-    canvas.height = 350;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const barWidth = 60;
-    const gap = 40;
-
-    keys.forEach((nivel, i) => {
-
-        const x = 60 + i * (barWidth + gap);
-        const h = (values[i] / max) * 250;
-
-        ctx.fillStyle = "#4fc3f7";
-        ctx.fillRect(x, 300 - h, barWidth, h);
-
-        ctx.fillStyle = "#000";
-        ctx.font = "14px Arial";
-        ctx.fillText(nivel, x, 320);
-
-        ctx.fillText(values[i], x + 20, 290 - h);
-    });
 }
 
 // =======================================
@@ -110,12 +89,5 @@ function renderFamilia() {
             </div>
 
         </div>
-
-        <div class="panel-card">
-            <h3>📈 Progreso</h3>
-            <canvas id="grafico"></canvas>
-        </div>
     `;
-
-    setTimeout(renderGrafico, 50);
 }

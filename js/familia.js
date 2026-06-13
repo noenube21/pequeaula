@@ -11,10 +11,30 @@ export async function iniciarFamilia(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
 
-    datos = {
-        ...datos,
-        ...local
-    };
+    if (window.uid && window.cargarProgreso) {
+
+        const data = await window.cargarProgreso(window.uid);
+
+        if (data && data.length > 0) {
+
+            const puntosPorNivel = {};
+
+            data.forEach(row => {
+                puntosPorNivel[row.nivel] = row.puntos || 0;
+            });
+
+            datos = {
+                ...local,
+                puntosPorNivel
+            };
+
+        } else {
+            datos = local;
+        }
+
+    } else {
+        datos = local;
+    }
 
     renderFamilia();
 }

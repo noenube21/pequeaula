@@ -5,18 +5,16 @@ let datos = {};
 // =======================================
 export async function iniciarFamilia() {
     try {
-        // ⏳ Espera a que Firebase tenga usuario listo
-        const user = await window.firebaseReady;
+        const db = window.db;
+        const uid = window.uid;
 
-        if (!user) {
+        if (!uid) {
             document.getElementById("familia").innerHTML =
-                "<p>⚠️ Usuario no logueado</p>";
+                "<p>⚠️ No hay usuario del juego conectado</p>";
             return;
         }
 
-        const db = window.db;
-
-        const ref = doc(db, "usuarios", user.uid);
+        const ref = doc(db, "usuarios", uid);
         const snap = await getDoc(ref);
 
         if (!snap.exists()) {
@@ -30,7 +28,7 @@ export async function iniciarFamilia() {
         renderFamilia();
 
     } catch (e) {
-        console.error("Error familia:", e);
+        console.error(e);
         document.getElementById("familia").innerHTML =
             "<p>Error cargando datos</p>";
     }
@@ -95,12 +93,10 @@ function renderGrafico() {
 function renderFamilia() {
     const cont = document.getElementById("familia");
 
-    if (!cont) return;
-
     const data = limpiarDatos(datos.puntosPorNivel);
 
     cont.innerHTML = `
-        <h2>👨‍👩‍👧 Supervisión Familiar</h2>
+        <h2>👨‍👩‍👧 Panel Familiar</h2>
 
         <div class="panel-grid">
 

@@ -1,4 +1,6 @@
 import { comprobarRecompensas } from "./recompensas.js";
+// ✅ IMPORTAR FIRESTORE (Desde CDN v11)
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // =======================================
 let datosCargados = false;
@@ -10,62 +12,58 @@ let usadas = {};
 // 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
-    puntosPorNivel: {}
+    puntosPorNivel: {},
+    historial: []
 };
 
 // =======================================
-// 
+// ✅ CARGAR PROGRESO DESDE CLOUD FIRESTORE
 export async function cargarDatosUsuario(){
 
     if(datosCargados) return;
 
     datosCargados = true;
 
-    const email = window.auth?.currentUser?.email;
-
+    // Estructura limpia por defecto
     datos = {
         aciertos: 0,
         puntosPorNivel: {},
         historial: []
     };
 
-    if(
-        email &&
-        window.cargarProgresoSupabase
-    ){
+    const user = window.auth?.currentUser;
 
-        const filas =
-            await window.cargarProgresoSupabase(
-                email
-            );
+    if (user && window.db) {
+        const userId = user.uid; // Usamos el UID único de Firebase
+        const docRef = doc(window.db, "progreso", userId);
 
-        console.log("EMAIL:", email);
-        console.log("FILAS:", filas);
+        try {
+            const docSnap = await getDoc(docRef);
 
-        filas.forEach(fila => {
-
-            datos.puntosPorNivel[
-                fila.juego
-            ] = Number(fila.puntos) || 0;
-
-        });
-
-        console.log(
-            "DATOS CARGADOS DESDE SUPABASE",
-            datos
-        );
-
+            if (docSnap.exists()) {
+                const firestoreDatos = docSnap.data();
+                
+                // Fusionamos la información descargada de la nube
+                datos = {
+                    aciertos: Number(firestoreDatos.aciertos) || 0,
+                    puntosPorNivel: firestoreDatos.puntosPorNivel || {},
+                    historial: firestoreDatos.historial || []
+                };
+                console.log("✅ DATOS CARGADOS DESDE FIRESTORE:", datos);
+            } else {
+                console.log("ℹ️ No hay progreso en Firestore para este usuario. Usando plantilla vacía.");
+            }
+        } catch (error) {
+            console.error("❌ Error al cargar datos de Firestore:", error);
+        }
     } else {
-
-        const local =
-            JSON.parse(
-                localStorage.getItem("progreso")
-            ) || {};
-
+        // Fallback a LocalStorage si no está autenticado o no hay conexión
+        const local = JSON.parse(localStorage.getItem("progreso")) || {};
         datos = {
             ...datos,
             ...local
         };
+        console.log("⚠️ Cargado desde LocalStorage (sin sesión activa)");
     }
 
     window.datos = datos;
@@ -140,49 +138,35 @@ function actualizarPuntos(){
 }
 
 // =======================================
+// ✅ GUARDAR TODO EN FIRESTORE Y LOCALSTORAGE
 async function guardarTodo(){
 
+    // Guardado local de respaldo
     localStorage.setItem(
         "progreso",
         JSON.stringify(datos)
     );
 
-    console.log("guardarTodo ejecutado");
+    console.log("guardarTodo ejecutado localmente");
 
-    console.log(
-        "window.guardarProgreso:",
-        window.guardarProgreso
-    );
+    const user = window.auth?.currentUser;
 
-    if(window.guardarProgreso){
+    if (user && window.db) {
+        const userId = user.uid;
+        const docRef = doc(window.db, "progreso", userId);
 
-        const email = window.auth?.currentUser?.email;
-
-        console.log(
-            "PUNTOS ACTUALES:",
-            obtenerPuntosNivel()
-        );
-
-        const resultado =
-            await window.guardarProgreso(
-                email,
-                claveActual,
-                1,
-                obtenerPuntosNivel()
-            );
-
-        console.log(
-            "RESULTADO GUARDADO:",
-            resultado
-        );
-
+        try {
+                        // Guardamos el objeto entero usando setDoc con { merge: true }
+            await setDoc(docRef, datos, { merge: true });
+            console.log("🔥 GUARDADO EXITOSO EN CLOUD FIRESTORE ✔");
+        } catch (error) {
+            console.error("❌ Error al guardar en Cloud Firestore:", error);
+        }
     } else {
-
-        console.log(
-            "window.guardarProgreso NO EXISTE"
-        );
+        console.log("⚠️ No se pudo sincronizar en la nube: usuario no autenticado o base de datos no lista.");
     }
 }
+
 // =======================================
 
 function calc(op,max){
@@ -386,57 +370,57 @@ export async function iniciarJuego(key){
 
     } else {
 
-        if(!usadas[key]) usadas[key] = new Set();
+            if(!usadas[key]) usadas[key] = new Set();
 
-        let lista = juegoActual.preguntas || [];
-        let disponibles = lista.filter(p => !usadas[key].has(p.p));
+            let lista = juegoActual.preguntas || [];
+            let disponibles = lista.filter(p => !usadas[key].has(p.p));
 
-        if(disponibles.length === 0){
-            usadas[key].clear();
-            disponibles = [...lista];
+            if(disponibles.length === 0){
+                usadas[key].clear();
+                disponibles = [...lista];
+            }
+
+            preguntaActual =
+                disponibles[
+                    Math.floor(Math.random()*disponibles.length)
+                ];
+
+            usadas[key].add(preguntaActual.p);
         }
 
-        preguntaActual =
-            disponibles[
-                Math.floor(Math.random()*disponibles.length)
-            ];
+        pregunta.innerText = preguntaActual.p;
 
-        usadas[key].add(preguntaActual.p);
-    }
+        input.style.display =
+            (preguntaActual.tipo === "input")
+            ? "block"
+            : "none";
 
-    pregunta.innerText = preguntaActual.p;
+        zona.innerHTML = "";
 
-    input.style.display =
-        (preguntaActual.tipo === "input")
-        ? "block"
-        : "none";
+        if(preguntaActual.tipo === "test"){
 
-    zona.innerHTML = "";
+            preguntaActual.opciones.forEach(op=>{
 
-    if(preguntaActual.tipo === "test"){
+                const b = document.createElement("button");
 
-        preguntaActual.opciones.forEach(op=>{
+                b.innerText = op;
+                b.classList.add("opcion");
 
-            const b = document.createElement("button");
+                b.onclick = ()=>{
 
-            b.innerText = op;
-            b.classList.add("opcion");
+                    document
+                        .querySelectorAll("#zona .opcion")
+                        .forEach(btn =>
+                            btn.classList.remove("seleccionada")
+                        );
 
-            b.onclick = ()=>{
+                    b.classList.add("seleccionada");
+                    input.value = op;
+                };
 
-                document
-                    .querySelectorAll("#zona .opcion")
-                    .forEach(btn =>
-                        btn.classList.remove("seleccionada")
-                    );
-
-                b.classList.add("seleccionada");
-                input.value = op;
-            };
-
-            zona.appendChild(b);
-        });
-    }
+                zona.appendChild(b);
+            });
+        }
 }
 
 // =======================================
@@ -465,5 +449,7 @@ export async function comprobar(){
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },500);
- }
+}
 
+
+                

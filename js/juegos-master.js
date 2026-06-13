@@ -1,4 +1,6 @@
-import { comprobarRecompensas } from "./recompensas.js";
+// =======================================
+// SIN IMPORT (no módulos)
+// =======================================
 
 // =======================================
 
@@ -7,15 +9,15 @@ let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO POR NIVEL
+// 🔥 PROGRESO
 let datos = {
     aciertos: 0,
     puntosPorNivel: {}
 };
 
 // =======================================
-// 🔥 CARGA (SOLO LOCAL, SIN BACKEND)
-export async function cargarDatosUsuario(){
+// ✅ CARGAR DATOS
+async function cargarDatosUsuario(){
 
     const local = JSON.parse(localStorage.getItem("progreso")) || {};
 
@@ -33,10 +35,17 @@ export async function cargarDatosUsuario(){
     if(!datos.historial){
         datos.historial = [];
     }
-    
+
+    // ✅ CARGAR SUPABASE
     if(window.uid && window.cargarProgreso){
-    await window.cargarProgreso(window.uid);
-}
+        const nube = await window.cargarProgreso(window.uid);
+
+        if(nube && nube.length > 0){
+            nube.forEach(row=>{
+                datos.puntosPorNivel[row.nivel] = row.puntos || 0;
+            });
+        }
+    }
 
     window.datos = datos;
 
@@ -113,6 +122,7 @@ function actualizarPuntos(){
 }
 
 // =======================================
+// ✅ GUARDAR
 async function guardarTodo(){
 
     localStorage.setItem(
@@ -122,22 +132,17 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    console.log(
-        "window.guardarProgreso:",
-        window.guardarProgreso
-    );
-    
- if (window.uid && window.guardarProgreso) {
+    if (window.uid && window.guardarProgreso) {
 
-    const resultado = await window.guardarProgreso(
-        window.uid,
-        "juego",
-        claveActual,
-        obtenerPuntosNivel()
-    );
+        const resultado = await window.guardarProgreso(
+            window.uid,
+            "juego",
+            claveActual,
+            obtenerPuntosNivel()
+        );
 
-    console.log("RESULTADO GUARDADO:", resultado);
-
+        console.log("RESULTADO GUARDADO:", resultado);
+    }
 }
 
 // =======================================
@@ -153,7 +158,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES
+// 📚 BASES (NO TOCADAS)
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -188,7 +193,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS
+// 🎮 JUEGOS (no tocado)
 
 const Juegos = {
 
@@ -275,141 +280,14 @@ const Juegos = {
             { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
             { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] }
         ]
-    },
-
-    valenciano1:{
-        preguntas:[]
     }
 };
 
 // =======================================
-// 🌍 CARGA VALENCIANO DESDE JSON
+// ✅ GLOBAL
 
-export async function cargarValenciano(){
-
-    try {
-        const res = await fetch("./js/valenciano.json");
-        const data = await res.json();
-
-        if(data?.valenciano1){
-            Juegos.valenciano1.preguntas = data.valenciano1;
-        }
-
-        console.log("Valenciano cargado ✔");
-
-    } catch (e) {
-        console.error("Error cargando valenciano:", e);
-    }
-}
-
-cargarValenciano();
+window.cargarDatosUsuario = cargarDatosUsuario;
+window.iniciarJuego = iniciarJuego;
+window.comprobar = comprobar;
 
 // =======================================
-// 🚀 INICIAR JUEGO
-
-export async function iniciarJuego(key){
-
-    await cargarDatosUsuario();
-
-    claveActual = key;
-    juegoActual = Juegos[key];
-
-    const pregunta = document.getElementById("pregunta");
-    const zona = document.getElementById("zona");
-    const input = document.getElementById("respuesta");
-    const resultado = document.getElementById("resultado");
-
-    if(!juegoActual){
-        pregunta.innerText = "Nivel no encontrado";
-        return;
-    }
-
-    pregunta.innerHTML = "";
-    zona.innerHTML = "";
-    resultado.innerHTML = "";
-    input.value = "";
-
-    actualizarPuntos();
-
-    if(juegoActual.generar){
-
-        const gen = juegoActual.generar();
-
-        preguntaActual = {
-            p: gen.p,
-            r: String(gen.r),
-            tipo: "input"
-        };
-
-    } else {
-
-        if(!usadas[key]) usadas[key] = new Set();
-
-        let lista = juegoActual.preguntas || [];
-        let disponibles = lista.filter(p => !usadas[key].has(p.p));
-
-        if(disponibles.length === 0){
-            usadas[key].clear();
-            disponibles = [...lista];
-        }
-
-        preguntaActual = disponibles[Math.floor(Math.random()*disponibles.length)];
-        usadas[key].add(preguntaActual.p);
-    }
-
-    pregunta.innerText = preguntaActual.p;
-
-    input.style.display = (preguntaActual.tipo === "input") ? "block" : "none";
-    zona.innerHTML = "";
-
-    if(preguntaActual.tipo === "test"){
-        preguntaActual.opciones.forEach(op=>{
-            const b = document.createElement("button");
-            b.innerText = op;
-            b.classList.add("opcion");
-
-            b.onclick = ()=>{
-                document.querySelectorAll("#zona .opcion")
-                    .forEach(btn => btn.classList.remove("seleccionada"));
-
-                b.classList.add("seleccionada");
-                input.value = op;
-            };
-
-            zona.appendChild(b);
-        });
-    }
-}
-
-// =======================================
-// ✅ COMPROBAR
-
-export async function comprobar(){
-
-    const r = limpiar(document.getElementById("respuesta").value);
-    const ok = limpiar(preguntaActual.r);
-
-    const resultado = document.getElementById("resultado");
-
-    const correcto = levenshtein(r, ok) <= 1;
-
-    if(correcto){
-        sumarPunto();
-        datos.aciertos++;
-        resultado.innerText = "✔ Correcto";
-    } else {
-        resultado.innerText = "✘ Incorrecto. Respuesta correcta: " + preguntaActual.r;
-    }
-
-    actualizarPuntos();
-    await guardarTodo();
-
-    setTimeout(()=>{
-        iniciarJuego(claveActual);
-    },500);
-}
-
-
-
-
-

@@ -61,9 +61,10 @@ body{
 
 <p id="resultado"></p>
 
-<script type="module">
-import { iniciarJuego, comprobar } from "./js/juegos-master.js";
+<!-- ✅ IMPORTANTE: NO MODULE -->
+<script src="js/juegos-master.js"></script>
 
+<script>
 const params = new URLSearchParams(window.location.search);
 
 const materia = params.get("materia") || "matematicas";
@@ -72,13 +73,18 @@ const nivel = params.get("nivel") || "1";
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
 
-iniciarJuego(materia + nivel);
+// ✅ iniciar juego (GLOBAL)
+window.iniciarJuego(materia + nivel);
 
-document.getElementById("btnComprobar").onclick = comprobar;
+// ✅ botón comprobar
+document.getElementById("btnComprobar").onclick = function(){
+    window.comprobar();
+};
 
+// ✅ tecla ENTER
 document.getElementById("respuesta").addEventListener("keydown",(e)=>{
     if(e.key==="Enter"){
-        comprobar();
+        window.comprobar();
     }
 });
 </script>

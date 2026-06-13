@@ -14,7 +14,7 @@
 
 <h2>👨‍👩‍👧 Supervisión Familiar</h2>
 
-<!-- 🔐 LOGIN CLAVE -->
+<!-- 🔐 LOGIN -->
 <div id="loginFamilia">
 
     <h3>Acceso familias</h3>
@@ -27,7 +27,7 @@
 
 </div>
 
-<!-- 📊 PANEL REAL -->
+<!-- 📊 PANEL -->
 <div id="panelFamilia" style="display:none;">
 
     <div id="familia"></div>
@@ -38,14 +38,12 @@
 
 import { iniciarFamilia } from "./js/familia.js";
 
-// ============================
-// CLAVE FAMILIA
-// ============================
+// 🔑 CLAVE SIMPLE
 const CLAVE_FAMILIA = "1234";
 
-// ============================
-// ACCESO
-// ============================
+// ================================
+// ACCESO FAMILIA
+// ================================
 window.accederFamilia = function () {
 
     const clave = document.getElementById("claveFamilia").value;
@@ -55,7 +53,10 @@ window.accederFamilia = function () {
         document.getElementById("loginFamilia").style.display = "none";
         document.getElementById("panelFamilia").style.display = "block";
 
-        iniciarFamilia();
+        // 🔥 IMPORTANTE: esperar DOM listo
+        setTimeout(() => {
+            iniciarFamilia();
+        }, 0);
 
     } else {
         document.getElementById("errorClave").innerText = "Clave incorrecta";

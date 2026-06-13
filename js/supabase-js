@@ -91,6 +91,7 @@ async function guardarUsuario(usuario) {
 }
 
 window.guardarUsuario = guardarUsuario;
+window.cargarProgreso = cargarProgresoSupabase;
 
 
 

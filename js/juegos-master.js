@@ -352,7 +352,7 @@ export async function iniciarJuego(key){
 
     claveActual = key;
 
-    await cargarDatosUsuario();
+    cargarDatosUsuario();
 
     juegoActual = Juegos[key];
 

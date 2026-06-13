@@ -189,7 +189,8 @@ async function guardarTodo(){
         console.log("⚠️ Usuario aún no listo (normal al inicio)");
     }
 
-} // ✅ ESTA ES LA LLAVE QUE CIERRA LA FUNCIÓN
+}
+
 // =======================================
 // 📚 BASES
 

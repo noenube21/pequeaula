@@ -3,75 +3,49 @@ import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11
 let datos = {};
 
 // =======================================
-// 🔥 ESPERAR UID DE FIREBASE (CLAVE DEL FIX)
-function esperarUID() {
-    return new Promise((resolve) => {
-
-        if (window.uid) {
-            resolve(window.uid);
-            return;
-        }
-
-        const interval = setInterval(() => {
-
-            if (window.uid) {
-                clearInterval(interval);
-                resolve(window.uid);
-            }
-
-        }, 100);
-
-        // seguridad extra
-        setTimeout(() => {
-            clearInterval(interval);
-            resolve(null);
-        }, 5000);
-    });
-}
-
-// =======================================
+// 🔥 INICIO
 export async function iniciarFamilia() {
-
-    await window.firebaseReady; // 🔥 CLAVE REAL
-
     await cargarDatos();
-
     renderFamilia();
 }
 
 // =======================================
+// 🔥 CARGA DE DATOS (FIREBASE + FALLBACK)
 async function cargarDatos() {
-
     try {
-
         const db = window.db;
 
-        const uid = await esperarUID();
+        // esperar firebase ready
+        await window.firebaseReady;
 
-        if (!uid) {
-            console.log("⚠️ UID no disponible, usando localStorage");
-            datos = JSON.parse(localStorage.getItem("progreso")) || {};
-            return;
+        const uid = window.uid;
+
+        // =========================
+        // 🔥 SI HAY USUARIO -> FIREBASE
+        // =========================
+        if (uid) {
+
+            let snap = await getDoc(doc(db, "usuarios", uid));
+
+            if (!snap.exists()) {
+                snap = await getDoc(doc(db, "progreso", uid));
+            }
+
+            if (snap.exists()) {
+                datos = snap.data();
+                console.log("✅ Datos Firebase cargados:", datos);
+                return;
+            }
         }
 
-        // 🔥 INTENTO 1: usuarios
-        let snap = await getDoc(doc(db, "usuarios", uid));
-
-        // 🔥 INTENTO 2: progreso (backup)
-        if (!snap.exists()) {
-            snap = await getDoc(doc(db, "progreso", uid));
-        }
-
-        if (snap.exists()) {
-            datos = snap.data();
-            console.log("✅ Datos cargados Firebase:", datos);
-        } else {
-            console.log("⚠️ No hay datos en Firebase, usando local");
-            datos = JSON.parse(localStorage.getItem("progreso")) || {};
-        }
+        // =========================
+        // 🔥 FALLBACK LOCAL
+        // =========================
+        console.log("⚠️ Usando localStorage");
+        datos = JSON.parse(localStorage.getItem("progreso")) || {};
 
     } catch (e) {
-        console.error("❌ Error Firebase:", e);
+        console.error("❌ Error cargando familia:", e);
         datos = JSON.parse(localStorage.getItem("progreso")) || {};
     }
 }
@@ -84,14 +58,11 @@ function obtenerGlobal() {
 
 // =======================================
 function limpiarDatos(obj) {
-
     const limpio = {};
 
     for (const [k, v] of Object.entries(obj || {})) {
-
         if (!k || k.trim() === "") continue;
         if (isNaN(v)) continue;
-
         limpio[k] = Number(v);
     }
 
@@ -99,6 +70,7 @@ function limpiarDatos(obj) {
 }
 
 // =======================================
+// 🔥 RENDER PANEL
 function renderFamilia() {
 
     const cont = document.getElementById("familia");
@@ -107,7 +79,7 @@ function renderFamilia() {
     const data = limpiarDatos(datos.puntosPorNivel);
 
     cont.innerHTML = `
-        <h2>👨‍👩‍👧 Panel Familiar</h2>
+        <h2>👨‍👩‍👧 Supervisión Familiar</h2>
 
         <div class="panel-grid">
 

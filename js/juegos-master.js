@@ -38,40 +38,41 @@ const email = window.auth?.currentUser?.email;
     };
 
     // ✅ FIREBASE (sustituye Supabase)
-if (window.userReady && window.db)
-        try {
+if (window.auth?.currentUser && window.db){
 
-            const uid = window.auth.currentUser.uid;
+    try {
 
-            const ref = window.db.collection("usuarios").doc(uid);
-            const snap = await ref.get();
+        const uid = window.auth.currentUser.uid;
 
-            if (snap.exists){
+        const ref = window.db.collection("usuarios").doc(uid);
+        const snap = await ref.get();
 
-                const nube = snap.data();
+        if (snap.exists){
 
-                datos.puntosPorNivel = nube.puntosPorNivel || {};
-                datos.aciertos = nube.aciertos || 0;
+            const nube = snap.data();
 
-                console.log("✅ Datos cargados Firebase");
-            }
+            datos.puntosPorNivel = nube.puntosPorNivel || {};
+            datos.aciertos = nube.aciertos || 0;
 
-        } catch(e){
-            console.log("Error Firebase:", e);
+            console.log("✅ Datos cargados Firebase");
         }
 
-    } else {
-
-        const local =
-            JSON.parse(
-                localStorage.getItem("progreso")
-            ) || {};
-
-        datos = {
-            ...datos,
-            ...local
-        };
+    } catch(e){
+        console.log("Error Firebase:", e);
     }
+
+} else {
+
+    // ✅ ESTE ELSE ES EL DEL IF DE ARRIBA
+    const local =
+        JSON.parse(localStorage.getItem("progreso")) || {};
+
+    datos = {
+        ...datos,
+        ...local
+    };
+}
+
 
     window.datos = datos;
 }

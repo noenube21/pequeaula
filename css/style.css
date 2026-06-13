@@ -1,311 +1,659 @@
-/* =========================
-   RESET
-========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* RESET */ 
+/* ================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* =========================
-   GLOBAL FIX
-========================= */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
+/* ================================== */
+/* BODY */
+/* ================================== */
+
+body{
+    font-family:'Poppins', Arial, sans-serif;
+
+    background-image:url("../assets/img/fondo-escolar.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+
+    min-height:100vh;
+
+    text-align:center;
 }
 
-body {
-  font-family: 'Poppins', Arial, sans-serif;
+/* ================================== */
+/* CONTENEDOR GENERAL */
+/* ================================== */
 
-  background-image: url("../assets/img/fondo-escolar.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+.contenedor-principal{
+    width:90%;
+    max-width:1000px;
 
-  min-height: 100vh;
-  text-align: center;
+    margin:30px auto;
+
+    background:rgba(255,255,255,0.92);
+
+    border-radius:25px;
+
+    padding:30px;
+
+    box-shadow:0 0 20px rgba(0,0,0,0.15);
 }
 
-img {
-  max-width: 100%;
-  height: auto;
+/* ================================== */
+/* TITULO PRINCIPAL */
+/* ================================== */
+
+.titulo-app{
+    font-size:50px;
+    font-weight:bold;
+
+    color:#ff3b3b;
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+    text-shadow:2px 2px 4px rgba(0,0,0,0.15);
 }
 
-/* =========================
-   CONTENEDOR
-========================= */
-.contenedor-principal {
-  width: 90%;
-  max-width: 1000px;
-
-  margin: 30px auto;
-
-  background: rgba(255,255,255,0.92);
-  border-radius: 25px;
-
-  padding: 30px;
-
-  box-shadow: 0 0 20px rgba(0,0,0,0.15);
+h1,h2,h3{
+    text-align:center;
+    margin:15px 0;
+    color:#ff5a5a;
 }
 
-/* =========================
-   TITULOS
-========================= */
-.titulo-app {
-  font-size: 50px;
-  font-weight: bold;
+/* ================================== */
+/* BOTON VOLVER */
+/* ================================== */
 
-  color: #ff3b3b;
+.btn-volver{
+    position:fixed;
 
-  text-align: center;
-  margin-bottom: 25px;
+    top:20px;
+    left:20px;
 
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.15);
+    background:#ff6f61;
+    color:white;
+
+    border:none;
+    border-radius:12px;
+
+    padding:10px 15px;
+
+    cursor:pointer;
+
+    z-index:999;
 }
 
-h1, h2, h3 {
-  text-align: center;
-  margin: 15px 0;
-  color: #ff5a5a;
-}
+/* ================================== */
+/* BOTONES GENERALES */
+/* ================================== */
 
-/* =========================
-   BOTONES
-========================= */
 button,
-.btn {
-  background: #4fc3f7;
-  color: white;
+.btn{
+    background:#4fc3f7;
+    color:white;
 
-  border: none;
-  border-radius: 10px;
+    border:none;
+    border-radius:10px;
 
-  padding: 10px 15px;
+    padding:10px 15px;
 
-  cursor: pointer;
+    cursor:pointer;
 
-  transition: 0.2s;
+    transition:0.2s;
 }
 
-/* =========================
-   LOGIN
-========================= */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  min-height: 100vh;
+button:hover,
+.btn:hover{
+    background:#0288d1;
 }
 
-.login-box {
-  width: 320px;
-  max-width: 90%;
+/* ================================== */
+/* LOGIN */
+/* ================================== */
 
-  background: rgba(255,255,255,0.95);
+.login-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-  padding: 25px;
-
-  border-radius: 20px;
-  border: 2px solid #ffcc4d;
+    min-height:100vh;
 }
 
-.login-box input {
-  width: 90%;
-  max-width: 100%;
+.login-box{
+    width:320px;
 
-  padding: 10px;
+    background:rgba(255,255,255,0.95);
 
-  margin: 10px 0;
+    padding:25px;
 
-  border-radius: 10px;
-  border: 2px solid #ffcc4d;
+    border-radius:20px;
+
+    border:2px solid #ffcc4d;
 }
 
-/* =========================
-   CARDS (MENÚ / NIVELES / ASIGNATURAS)
-========================= */
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
+.login-box input{
+    width:90%;
 
-  justify-items: center;
-  align-items: center;
+    padding:10px;
 
-  margin-top: 20px;
+    margin:10px 0;
+
+    border-radius:10px;
+    border:2px solid #ffcc4d;
 }
 
-.card {
-  background: white;
+/* ================================== */
+/* MENU */
+/* ================================== */
 
-  width: 100%;
-  max-width: 180px;
-  min-height: 210px;
+.card-container{
+    display:flex;
 
-  border-radius: 20px;
-  border: 2px solid #ffcc4d;
+    justify-content:center;
+    flex-wrap:wrap;
 
-  padding: 15px;
+    gap:20px;
 
-  cursor: pointer;
-
-  transition: 0.2s;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
+    margin-top:20px;
 }
 
-.card:hover {
-  transform: scale(1.05);
+.card{
+    background:white;
+
+    width:180px;
+    min-height:210px;
+
+    border-radius:20px;
+
+    border:2px solid #ffcc4d;
+
+    padding:15px;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
 }
 
-.card img {
-  width: 80%;
-  max-width: 120px;
+.card:hover{
+    transform:scale(1.05);
 }
 
-.card h3 {
-  font-size: 22px;
-  color: #ff5a5a;
+.card img{
+    width:120px;
+    height:auto;
+
+    display:block;
+
+    margin:auto;
 }
 
-/* =========================
-   JUEGO
-========================= */
-.game-box {
-  width: 420px;
-  max-width: 95%;
+.card h3{
+    margin-top:15px;
 
-  margin: 20px auto;
+    font-size:28px;
 
-  padding: 25px;
-
-  border-radius: 20px;
-  border: 2px solid #ffcc4d;
-
-  background: rgba(255,255,255,0.95);
+    color:#ff5a5a;
 }
 
-#tituloJuego {
-  font-size: 40px;
+/* ================================== */
+/* JUEGO */
+/* ================================== */
+
+.game-box{
+    width:420px;
+
+    background:rgba(255,255,255,0.95);
+
+    margin:20px auto;
+
+    padding:25px;
+
+    border-radius:20px;
+
+    border:2px solid #ffcc4d;
 }
 
-#score {
-  font-size: 32px;
-  margin: 20px 0;
+/* ================================== */
+/* TITULO DEL JUEGO */
+/* ================================== */
+
+#tituloJuego{
+    font-size:40px;
+    font-weight:bold;
 }
 
-#pregunta {
-  font-size: 32px;
+/* ================================== */
+/* PUNTOS */
+/* ================================== */
+
+#score{
+    font-size:32px;
+    font-weight:bold;
+
+    margin:20px 0;
+
+    color:black;
 }
 
-/* =========================
-   INPUTS
-========================= */
-#respuesta {
-  width: 250px;
-  max-width: 90%;
+/* ================================== */
+/* PREGUNTA */
+/* ================================== */
 
-  margin: 15px auto;
+#pregunta{
+    font-size:32px;
+    font-weight:bold;
 
-  padding: 10px;
+    margin:25px 0;
 
-  border-radius: 10px;
-  border: 2px solid #ffcc4d;
-
-  text-align: center;
+    color:black;
 }
 
-/* =========================
-   PANEL
-========================= */
-.panel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
+/* ================================== */
+/* OPCIONES */
+/* ================================== */
 
-  margin-top: 20px;
+#zona{
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:20px;
 }
 
-.panel-card {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
+.opcion{
+    min-width:140px;
 
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    background:white !important;
+    color:black !important;
+
+    border:2px solid #333 !important;
 }
 
-/* =========================
-   PORTADA
-========================= */
-.inicio-container {
-  min-height: 100vh;
+.opcion.seleccionada{
+    background:#4fc3f7 !important;
+    color:white !important;
 
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: center;
-
-  padding: 20px;
+    border:2px solid #0288d1 !important;
 }
 
-.inicio-title {
-  font-size: clamp(4rem, 10vw, 6rem);
-  color: #ff8c00;
-  font-weight: 800;
+/* ================================== */
+/* INPUT RESPUESTA */
+/* ================================== */
+
+#respuesta{
+    display:block;
+
+    width:250px;
+
+    margin:15px auto;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    border:2px solid #ffcc4d;
+
+    text-align:center;
+
+    font-size:18px;
 }
 
-.subtitulo {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  color: #ff9f43;
+/* ================================== */
+/* BOTON COMPROBAR */
+/* ================================== */
+
+#btnComprobar{
+    display:block;
+
+    margin:10px auto;
 }
 
-/* =========================
-   TOPBAR
-========================= */
-.topbar {
-  text-align: center;
-  padding: 20px 0;
+/* ================================== */
+/* RESULTADO */
+/* ================================== */
+
+#resultado{
+    margin-top:20px;
+
+    font-size:22px;
+    font-weight:bold;
 }
 
-/* =========================
-   RESPONSIVE REAL
-========================= */
-@media (max-width: 768px) {
+/* ================================== */
+/* RESPONSIVE */
+/* ================================== */
 
-  .titulo-app {
-    font-size: 36px;
-  }
+@media(max-width:768px){
 
-  .card {
-    max-width: 150px;
-  }
+    .titulo-app{
+        font-size:36px;
+    }
 
-  #tituloJuego {
-    font-size: 28px;
-  }
+    .card{
+        width:150px;
+    }
 
-  #pregunta {
-    font-size: 22px;
-  }
+    .card img{
+        width:90px;
+    }
 
-  #score {
-    font-size: 20px;
-  }
+    #tituloJuego{
+        font-size:28px;
+    }
 
-  .game-box {
-    width: 95%;
-  }
+    #pregunta{
+        font-size:24px;
+    }
 
-  #respuesta {
-    width: 90%;
-  }
+    #score{
+        font-size:24px;
+    }
+
+    .game-box{
+        width:95%;
+    }
+
+    #respuesta{
+        width:220px;
+    }
+}
+
+/* ================================== */
+/* 👨‍👩‍👧 PANEL FAMILIAR (MEJORADO PRO) */
+/* ================================== */
+
+#familia{
+    max-width:1100px;
+    margin:30px auto;
+    padding:20px;
+}
+
+/* grid mejorado */
+.panel-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:25px;
+    margin-top:20px;
+}
+
+/* tarjetas mejoradas */
+.panel-card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    transition:0.2s;
+}
+
+.panel-card:hover{
+    transform:scale(1.02);
+}
+
+/* GRÁFICO MEJORADO */
+#grafico{
+    width:100% !important;
+    max-width:900px !important;
+    height:420px !important;
+
+    margin:20px auto;
+    display:block;
+
+    background:white;
+    border-radius:15px;
+
+    padding:10px;
+}
+/* ================================== */
+/* 🧡 PORTADA PEQUE AULA */
+/* ================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap');
+
+.inicio-container{
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    padding:20px;
+}
+
+.inicio-title{
+    font-family:'Baloo 2', cursive !important;
+
+    font-size:clamp(4rem, 10vw, 6rem);
+
+    font-weight:800;
+
+    color:#ff8c00;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.15);
+
+    margin-bottom:15px;
+
+    letter-spacing:3px;
+}
+
+.subtitulo{
+    font-family:'Baloo 2', cursive !important;
+
+    font-size:clamp(1.4rem, 3vw, 2rem);
+
+    color:#ff9f43;
+
+    font-weight:700;
+
+    margin-bottom:30px;
+}
+
+.logo-img{
+    width:260px;
+    max-width:80%;
+
+    margin-bottom:35px;
+
+    transition:0.3s;
+}
+
+.logo-img:hover{
+    transform:scale(1.05);
+}
+
+/* Botón naranja a juego */
+
+.inicio-container .btn{
+    background:linear-gradient(
+        135deg,
+        #ff8c00,
+        #ffb347
+    ) !important;
+
+    color:white !important;
+
+    padding:15px 45px;
+
+    font-size:1.5rem;
+
+    font-weight:700;
+
+    border-radius:50px;
+
+    box-shadow:0 6px 18px rgba(255,140,0,0.35);
+
+    text-decoration:none;
+
+    transition:0.3s;
+}
+
+.inicio-container .btn:hover{
+    background:linear-gradient(
+        135deg,
+        #ff7700,
+        #ffa726
+    ) !important;
+
+    transform:translateY(-3px) scale(1.05);
+
+    box-shadow:0 10px 25px rgba(255,140,0,0.45);
+}
+/* ================================== */
+/* LOGO PEQUE AULA MENU */
+/* ================================== */
+
+.menu-logo{
+    font-family:'Baloo 2', cursive !important;
+
+    font-size:clamp(2.2rem, 5vw, 3.5rem);
+
+    font-weight:800;
+
+    color:#ff8c00;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.15);
+
+    letter-spacing:2px;
+
+    display:block;
+
+    text-align:center;
+
+    width:100%;
+
+    margin-top:10px;
+}
+.topbar{
+    background: transparent !important;
+    text-align:center;
+    padding:20px 0;
+}
+
+/* SOLO el texto PEQUE AULA 🌟 */
+.topbar .logo{
+    font-family:'Baloo 2', cursive;
+    
+    font-size:clamp(2.5rem, 6vw, 4rem);
+    font-weight:800;
+
+    color:#ff8c00;
+
+    letter-spacing:2px;
+
+    text-shadow:
+        3px 3px 0 #ffffff,
+        6px 6px 12px rgba(0,0,0,0.15);
+
+    display:inline-block;
+}
+#tituloJuego{
+    font-family:'Baloo 2', cursive;
+
+    font-size:clamp(2.8rem, 7vw, 4.5rem);
+
+    font-weight:900;
+
+    color:#ff8c00;
+
+    text-align:center;
+
+    margin:25px 10px;
+
+    letter-spacing:2px;
+
+    text-transform: capitalize;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.18);
+
+    padding:10px;
+}
+body:has(#familia) h2{
+    font-family:'Baloo 2', cursive;
+
+    font-size:clamp(2.2rem, 6vw, 3.5rem);
+
+    font-weight:800;
+
+    color:#ff8c00;
+
+    text-align:center;
+
+    margin:20px 0;
+
+    letter-spacing:1px;
+
+    text-shadow:
+        3px 3px 0 #fff,
+        6px 6px 12px rgba(0,0,0,0.15);
+}
+/* ================================== */
+/* 🔧 FIX RESPONSIVE SIN ROMPER DESKTOP */
+/* ================================== */
+
+@media(max-width:768px){
+
+    .game-box{
+        width:95%;
+    }
+
+    #respuesta{
+        width:90%;
+        max-width:300px;
+    }
+
+    #pregunta{
+        font-size:22px;
+    }
+
+    #score{
+        font-size:20px;
+    }
+
+    .opcion{
+        width:90%;
+        font-size:16px;
+    }
+
+    button{
+        max-width:90%;
+    }
+
+    .card{
+        width:140px;
+        min-height:180px;
+    }
+
+    .card img{
+        width:90px;
+    }
+
+    .titulo-app{
+        font-size:34px;
+    }
 }

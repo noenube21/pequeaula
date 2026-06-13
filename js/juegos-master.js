@@ -413,3 +413,9 @@ export async function comprobar(){
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },500);
+}
+
+
+
+
+

@@ -1,48 +1,55 @@
-// =======================================
-// CONFIG
-// =======================================
+// ✅ QUITAR IMPORT (no módulos)
+// import { comprobarRecompensas } from "./recompensas.js";
 
+// =======================================
+let datosCargados = false;
 let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 let usadas = {};
 
-// 🔥 PROGRESO
+// 🔥 PROGRESO POR NIVEL
 let datos = {
     aciertos: 0,
-    puntosPorNivel: {},
-    historial: []
+    puntosPorNivel: {}
 };
 
 // =======================================
-// ✅ CARGAR DATOS
+// ✅ CARGA USUARIO
 async function cargarDatosUsuario(){
 
-    const local = JSON.parse(localStorage.getItem("progreso")) || {};
+    if(datosCargados) return;
+    datosCargados = true;
+
+    const email = window.auth?.currentUser?.uid || window.userEmail;
 
     datos = {
         aciertos: 0,
         puntosPorNivel: {},
-        historial: [],
-        ...local
+        historial: []
     };
 
-    if(!datos.puntosPorNivel) datos.puntosPorNivel = {};
-    if(!datos.historial) datos.historial = [];
+    if(email && window.cargarProgreso){
 
-    // 🔥 SUPABASE
-    if(window.uid && window.cargarProgreso){
-        const nube = await window.cargarProgreso(window.uid);
+        const filas = await window.cargarProgreso(email);
 
-        if(nube && nube.length > 0){
-            nube.forEach(row=>{
-                datos.puntosPorNivel[row.nivel] = row.puntos || 0;
-            });
-        }
+        console.log("UID:", email);
+        console.log("FILAS:", filas);
+
+        filas.forEach(fila=>{
+            datos.puntosPorNivel[fila.nivel] =
+                Number(fila.puntos) || 0;
+        });
+
+    } else {
+
+        const local =
+            JSON.parse(localStorage.getItem("progreso")) || {};
+
+        datos = { ...datos, ...local };
     }
 
     window.datos = datos;
-    actualizarPuntos();
 }
 
 // =======================================
@@ -65,6 +72,7 @@ function levenshtein(a, b){
 
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
+
             if (b.charAt(i-1) === a.charAt(j-1)){
                 matrix[i][j] = matrix[i-1][j-1];
             } else {
@@ -117,20 +125,29 @@ function actualizarPuntos(){
 // ✅ GUARDAR
 async function guardarTodo(){
 
-    localStorage.setItem("progreso", JSON.stringify(datos));
+    localStorage.setItem(
+        "progreso",
+        JSON.stringify(datos)
+    );
 
-    if(window.uid && window.guardarProgreso){
+    if(window.guardarProgreso){
 
-        await window.guardarProgreso(
-            window.uid,
-            "juego",
-            claveActual,
-            obtenerPuntosNivel()
-        );
+        const uid = window.uid || window.userEmail;
+
+        const resultado =
+            await window.guardarProgreso(
+                uid,
+                "juego",
+                claveActual,
+                obtenerPuntosNivel()
+            );
+
+        console.log("GUARDADO:", resultado);
     }
 }
 
 // =======================================
+// 🔢 MATES
 
 function calc(op,max){
 
@@ -143,7 +160,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES
+// 📚 BASES (NO TOCADAS)
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -178,10 +195,9 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (TODOS TUS NIVELES)
+// 🎮 JUEGOS (TODO LO TUYO INTACTO)
 
 const Juegos = {
-
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
@@ -244,13 +260,13 @@ const Juegos = {
 };
 
 // =======================================
-// 🚀 INICIAR JUEGO
+// 🚀 INICIAR
 
 async function iniciarJuego(key){
 
+    claveActual = key;
     await cargarDatosUsuario();
 
-    claveActual = key;
     juegoActual = Juegos[key];
 
     const pregunta = document.getElementById("pregunta");
@@ -275,13 +291,16 @@ async function iniciarJuego(key){
     } else {
 
         const lista = juegoActual.preguntas;
-
-        preguntaActual = lista[Math.floor(Math.random()*lista.length)];
+        preguntaActual =
+            lista[Math.floor(Math.random()*lista.length)];
     }
 
     pregunta.innerText = preguntaActual.p;
 
-    input.style.display = (preguntaActual.tipo === "input") ? "block" : "none";
+    input.style.display =
+        (preguntaActual.tipo === "input")
+        ? "block"
+        : "none";
 
     if(preguntaActual.tipo === "test"){
 
@@ -328,8 +347,6 @@ async function comprobar(){
     },500);
 }
 
-// =======================================
 // ✅ GLOBAL
-
 window.iniciarJuego = iniciarJuego;
 window.comprobar = comprobar;

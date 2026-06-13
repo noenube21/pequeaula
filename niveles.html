@@ -16,19 +16,7 @@
 
 <h2 class="center menu-subtitle" id="titulo"></h2>
 
-
-</div>
-
-<script>
-const params = new URLSearchParams(location.search);
-const materia = params.get("materia");
-
-document.getElementById("titulo").innerText =
-    "Elige un nivel de " + materia.toUpperCase();
-
-function jugar(nivel)⬅ Volver
-
-<div class="card-container">
+<div class="card-container menu-cards">
 
     <div class="card" onclick="jugar(1)">
         <img src="assets/img/nivel1.png">
@@ -45,7 +33,16 @@ function jugar(nivel)⬅ Volver
         <h3>Nivel 3</h3>
     </div>
 
-</div>{
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const materia = params.get("materia");
+
+document.getElementById("titulo").innerText =
+    "Elige un nivel de " + materia.toUpperCase();
+
+function jugar(nivel){
     location.href = `juego.html?materia=${materia}&nivel=${nivel}`;
 }
 </script>

@@ -1,5 +1,4 @@
-// ✅ QUITAR IMPORT (no módulos)
-// import { comprobarRecompensas } from "./recompensas.js";
+import { comprobarRecompensas } from "./recompensas.js";
 
 // =======================================
 let datosCargados = false;
@@ -15,13 +14,14 @@ let datos = {
 };
 
 // =======================================
-// ✅ CARGA USUARIO
-async function cargarDatosUsuario(){
+// 
+export async function cargarDatosUsuario(){
 
     if(datosCargados) return;
+
     datosCargados = true;
 
-    const email = window.auth?.currentUser?.uid || window.userEmail;
+    const email = window.auth?.currentUser?.email;
 
     datos = {
         aciertos: 0,
@@ -29,29 +29,47 @@ async function cargarDatosUsuario(){
         historial: []
     };
 
-    if(email && window.cargarProgreso){
+    if(
+        email &&
+        window.cargarProgresoSupabase
+    ){
 
-        const filas = await window.cargarProgreso(email);
+        const filas =
+            await window.cargarProgresoSupabase(
+                email
+            );
 
-        console.log("UID:", email);
+        console.log("EMAIL:", email);
         console.log("FILAS:", filas);
 
-        filas.forEach(fila=>{
-            datos.puntosPorNivel[fila.nivel] =
-                Number(fila.puntos) || 0;
+        filas.forEach(fila => {
+
+            datos.puntosPorNivel[
+                fila.juego
+            ] = Number(fila.puntos) || 0;
+
         });
+
+        console.log(
+            "DATOS CARGADOS DESDE SUPABASE",
+            datos
+        );
 
     } else {
 
         const local =
-            JSON.parse(localStorage.getItem("progreso")) || {};
+            JSON.parse(
+                localStorage.getItem("progreso")
+            ) || {};
 
-        datos = { ...datos, ...local };
+        datos = {
+            ...datos,
+            ...local
+        };
     }
 
     window.datos = datos;
 }
-
 // =======================================
 
 function limpiar(t){
@@ -122,7 +140,6 @@ function actualizarPuntos(){
 }
 
 // =======================================
-// ✅ GUARDAR
 async function guardarTodo(){
 
     localStorage.setItem(
@@ -130,24 +147,43 @@ async function guardarTodo(){
         JSON.stringify(datos)
     );
 
+    console.log("guardarTodo ejecutado");
+
+    console.log(
+        "window.guardarProgreso:",
+        window.guardarProgreso
+    );
+
     if(window.guardarProgreso){
 
-        const uid = window.uid || window.userEmail;
+        const email = window.auth?.currentUser?.email;
+
+        console.log(
+            "PUNTOS ACTUALES:",
+            obtenerPuntosNivel()
+        );
 
         const resultado =
             await window.guardarProgreso(
-                uid,
-                "juego",
+                email,
                 claveActual,
+                1,
                 obtenerPuntosNivel()
             );
 
-        console.log("GUARDADO:", resultado);
+        console.log(
+            "RESULTADO GUARDADO:",
+            resultado
+        );
+
+    } else {
+
+        console.log(
+            "window.guardarProgreso NO EXISTE"
+        );
     }
 }
-
 // =======================================
-// 🔢 MATES
 
 function calc(op,max){
 
@@ -160,7 +196,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES (NO TOCADAS)
+// 📚 BASES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -195,9 +231,10 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (TODO LO TUYO INTACTO)
+// 🎮 JUEGOS
 
 const Juegos = {
+
     matematicas1:{ generar:()=>calc("+",10) },
     matematicas2:{ generar:()=>calc("-",20) },
     matematicas3:{ generar:()=>calc("*",10) },
@@ -238,7 +275,10 @@ const Juegos = {
         preguntas:[
             { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
             { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] },
-            { p:"¿Cuál es un adjetivo?", r:"azul", tipo:"test", opciones:["azul","mesa","correr"] }
+            { p:"¿Cuál es un adjetivo?", r:"azul", tipo:"test", opciones:["azul","mesa","correr"] },
+            { p:"¿Cuál es un sustantivo?", r:"coche", tipo:"test", opciones:["coche","cantar","feliz"] },
+            { p:"¿Cuál es un verbo?", r:"comer", tipo:"test", opciones:["comer","mesa","rojo"] },
+            { p:"¿Cuál es un adjetivo?", r:"rápido", tipo:"test", opciones:["rápido","coche","correr"] }
         ]
     },
 
@@ -246,7 +286,10 @@ const Juegos = {
         preguntas:[
             { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
             { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
-            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] }
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] },
+            { p:"¿Qué es un animal?", r:"gato", tipo:"test", opciones:["gato","mesa","rojo"] },
+            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","azul","mesa"] },
+            { p:"¿Qué es un objeto?", r:"silla", tipo:"test", opciones:["silla","correr","feliz"] }
         ]
     },
 
@@ -256,15 +299,60 @@ const Juegos = {
             r:x[1],
             tipo:"input"
         }))
+    },
+
+    ciencias2:{
+        preguntas:[
+            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
+            { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","tierra"] },
+            { p:"¿Cuál es el planeta más grande?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","marte"] },
+            { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","marte","venus"] },
+            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
+        ]
+    },
+
+    ciencias3:{
+        preguntas:[
+            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
+            { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
+            { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
+            { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] }
+        ]
+    },
+
+    valenciano1:{
+        preguntas:[]
     }
 };
 
 // =======================================
-// 🚀 INICIAR
+// 🌍 CARGA VALENCIANO DESDE JSON
 
-async function iniciarJuego(key){
+export async function cargarValenciano(){
+
+    try {
+        const res = await fetch("./js/valenciano.json");
+        const data = await res.json();
+
+        if(data?.valenciano1){
+            Juegos.valenciano1.preguntas = data.valenciano1;
+        }
+
+        console.log("Valenciano cargado ✔");
+
+    } catch (e) {
+        console.error("Error cargando valenciano:", e);
+    }
+}
+
+cargarValenciano();
+
+// =======================================
+// 🚀 INICIAR JUEGO
+export async function iniciarJuego(key){
 
     claveActual = key;
+
     await cargarDatosUsuario();
 
     juegoActual = Juegos[key];
@@ -274,9 +362,17 @@ async function iniciarJuego(key){
     const input = document.getElementById("respuesta");
     const resultado = document.getElementById("resultado");
 
+    if(!juegoActual){
+        pregunta.innerText = "Nivel no encontrado";
+        return;
+    }
+
+    pregunta.innerHTML = "";
     zona.innerHTML = "";
     resultado.innerHTML = "";
     input.value = "";
+
+    actualizarPuntos();
 
     if(juegoActual.generar){
 
@@ -290,9 +386,22 @@ async function iniciarJuego(key){
 
     } else {
 
-        const lista = juegoActual.preguntas;
+        if(!usadas[key]) usadas[key] = new Set();
+
+        let lista = juegoActual.preguntas || [];
+        let disponibles = lista.filter(p => !usadas[key].has(p.p));
+
+        if(disponibles.length === 0){
+            usadas[key].clear();
+            disponibles = [...lista];
+        }
+
         preguntaActual =
-            lista[Math.floor(Math.random()*lista.length)];
+            disponibles[
+                Math.floor(Math.random()*disponibles.length)
+            ];
+
+        usadas[key].add(preguntaActual.p);
     }
 
     pregunta.innerText = preguntaActual.p;
@@ -302,27 +411,38 @@ async function iniciarJuego(key){
         ? "block"
         : "none";
 
+    zona.innerHTML = "";
+
     if(preguntaActual.tipo === "test"){
 
         preguntaActual.opciones.forEach(op=>{
+
             const b = document.createElement("button");
+
             b.innerText = op;
+            b.classList.add("opcion");
 
             b.onclick = ()=>{
+
+                document
+                    .querySelectorAll("#zona .opcion")
+                    .forEach(btn =>
+                        btn.classList.remove("seleccionada")
+                    );
+
+                b.classList.add("seleccionada");
                 input.value = op;
             };
 
             zona.appendChild(b);
         });
     }
-
-    actualizarPuntos();
 }
 
 // =======================================
 // ✅ COMPROBAR
 
-async function comprobar(){
+export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
@@ -346,7 +466,3 @@ async function comprobar(){
         iniciarJuego(claveActual);
     },500);
 }
-
-// ✅ GLOBAL
-window.iniciarJuego = iniciarJuego;
-window.comprobar = comprobar;

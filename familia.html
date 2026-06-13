@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Familia</title>
+    <title>Supervisión Familiar</title>
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -15,7 +16,7 @@
 
 <!-- 🔐 LOGIN PADRES -->
 <div id="loginFamilia">
-    <input id="claveFamilia" type="password" placeholder="Introduce clave">
+    <input id="claveFamilia" type="password" placeholder="Introduce clave (1234)">
     <button id="btnEntrar">Entrar</button>
     <p id="errorClave"></p>
 </div>
@@ -26,16 +27,17 @@
 <script type="module">
 import { iniciarFamilia } from "./js/familia.js";
 
-document.getElementById("btnEntrar").onclick = () => {
+document.getElementById("btnEntrar").onclick = async () => {
     const clave = document.getElementById("claveFamilia").value;
 
     if (clave === "1234") {
         document.getElementById("loginFamilia").style.display = "none";
         document.getElementById("familia").style.display = "block";
 
-        iniciarFamilia();
+        await iniciarFamilia();
     } else {
-        document.getElementById("errorClave").innerText = "❌ Clave incorrecta";
+        document.getElementById("errorClave").innerText =
+            "❌ Clave incorrecta";
     }
 };
 </script>

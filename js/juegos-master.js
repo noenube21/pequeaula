@@ -50,9 +50,11 @@ if (window.auth?.currentUser && window.db){
         if (snap.exists){
 
             const nube = snap.data();
+            
+datos.puntosPorNivel = nube.puntosPorNivel || {};
+datos.aciertos = nube.aciertos || 0;
+datos.historial = nube.historial || [];
 
-            datos.puntosPorNivel = nube.puntosPorNivel || {};
-            datos.aciertos = nube.aciertos || 0;
 
             console.log("✅ Datos cargados Firebase");
         }

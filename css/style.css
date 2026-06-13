@@ -511,7 +511,51 @@ h1, h2, h3 {
     font-size: 18px;
   }
 }
+/* ===== FIX UNIVERSAL MENU / NIVELES / ASIGNATURAS ===== */
 
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+
+  justify-items: center;
+  align-items: center;
+}
+
+/* tarjeta totalmente flexible */
+.card {
+  width: 100%;
+  max-width: 180px;
+}
+
+/* imagen adaptable */
+.card img {
+  width: 80%;
+  max-width: 120px;
+  height: auto;
+}
+
+/* texto sin romper */
+.card h3 {
+  font-size: clamp(16px, 2.5vw, 28px);
+  text-align: center;
+}
+
+/* móviles */
+@media (max-width: 768px) {
+
+  .card-container {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+
+  .card {
+    max-width: 150px;
+  }
+
+  .card img {
+    max-width: 90px;
+  }
+}
 
 
 

@@ -61,9 +61,14 @@ body{
 
 <p id="resultado"></p>
 
-<script type="module">
-import { iniciarJuego, comprobar } from "./js/juegos-master.js";
+<!-- ✅ Cargar Firebase -->
+<script src="./js/firebase-config.js"></script>
 
+<!-- ✅ Cargar el juego -->
+<script src="./js/juegos-master.js"></script>
+
+<!-- ✅ Script normal (SIN import/export) -->
+<script>
 const params = new URLSearchParams(window.location.search);
 
 const materia = params.get("materia") || "matematicas";
@@ -72,16 +77,20 @@ const nivel = params.get("nivel") || "1";
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
 
-iniciarJuego(materia + nivel);
+// ✅ iniciar juego
+window.iniciarJuego(materia + nivel);
 
-document.getElementById("btnComprobar").onclick = comprobar;
+// ✅ botón comprobar
+document.getElementById("btnComprobar").onclick = window.comprobar;
 
-document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter"){
-        comprobar();
+// ✅ enter para responder
+document.getElementById("respuesta").addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+        window.comprobar();
     }
 });
 </script>
 
 </body>
 </html>
+``

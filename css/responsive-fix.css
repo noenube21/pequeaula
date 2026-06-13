@@ -1,75 +1,103 @@
-/* ================================
-   PARCHE RESPONSIVE GLOBAL
-   (NO TOCA TU CSS ORIGINAL)
-================================ */
+/* ==================================
+   FIX UNIVERSAL PARA MÓVILES
+   NO MODIFICA EL DISEÑO DESKTOP
+================================== */
 
-/* evita desbordes en TODA la web */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
+*{
+    box-sizing:border-box;
 }
 
-/* todas las imágenes responsivas */
-img {
-  max-width: 100%;
-  height: auto;
+html,
+body{
+    max-width:100%;
+    overflow-x:hidden;
 }
 
-/* fuerza adaptación en cualquier página */
-* {
-  box-sizing: border-box;
+img{
+    max-width:100%;
+    height:auto;
 }
 
-/* ================================
-   FIX CARDS (NIVELES / ASIGNATURAS / MENÚ)
-================================ */
-
-@media (max-width: 768px) {
-
-  .card-container {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 12px !important;
-  }
-
-  .card {
-    width: 45% !important;
-    min-width: 140px !important;
-    max-width: 160px !important;
-  }
-
-  .card img {
-    width: 80% !important;
-  }
-
-  .card h3 {
-    font-size: 16px !important;
-  }
-
-  /* juegos */
-  .game-box {
-    width: 95% !important;
-  }
-
-  #respuesta {
-    width: 90% !important;
-  }
-
-  /* panel familia */
-  .panel-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
+/* CONTENEDORES */
+.card-container{
+    width:100%;
 }
 
-/* móviles muy pequeños */
-@media (max-width: 420px) {
+/* MÓVILES Y TABLETS */
+@media (max-width:768px){
 
-  .card {
-    width: 90% !important;
-  }
+    /* MENÚ / NIVELES / ASIGNATURAS */
+    .card-container{
+        display:flex !important;
+        flex-wrap:wrap !important;
+        justify-content:center !important;
+        gap:12px !important;
+    }
 
-  .panel-grid {
-    grid-template-columns: 1fr !important;
-  }
+    .card{
+        width:45% !important;
+        max-width:160px !important;
+        min-height:180px !important;
+    }
+
+    .card img{
+        width:90px !important;
+        height:auto !important;
+    }
+
+    .card h3{
+        font-size:18px !important;
+    }
+
+    /* JUEGOS */
+    .game-box{
+        width:95% !important;
+    }
+
+    #respuesta{
+        width:90% !important;
+        max-width:300px !important;
+    }
+
+    #pregunta{
+        font-size:22px !important;
+    }
+
+    #score{
+        font-size:20px !important;
+    }
+
+    .opcion{
+        width:90% !important;
+    }
+
+    button{
+        max-width:90%;
+    }
+
+    /* PANEL FAMILIAR */
+    .panel-grid{
+        grid-template-columns:repeat(2,1fr) !important;
+    }
+}
+
+/* MÓVILES PEQUEÑOS */
+@media (max-width:420px){
+
+    .card{
+        width:90% !important;
+        max-width:220px !important;
+    }
+
+    .panel-grid{
+        grid-template-columns:1fr !important;
+    }
+
+    .titulo-app{
+        font-size:34px !important;
+    }
+
+    #tituloJuego{
+        font-size:28px !important;
+    }
 }

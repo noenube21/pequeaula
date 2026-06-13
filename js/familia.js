@@ -10,43 +10,38 @@ export async function iniciarFamilia() {
 }
 
 // =======================================
-// 🔥 CARGA DE DATOS (FIREBASE + FALLBACK)
+// 🔥 ESPERAR FIREBASE + CARGAR DATOS
 async function cargarDatos() {
     try {
-        const db = window.db;
-
-        // esperar firebase ready
         await window.firebaseReady;
 
         const uid = window.uid;
+        const db = window.db;
 
-        // =========================
-        // 🔥 SI HAY USUARIO -> FIREBASE
-        // =========================
-        if (uid) {
-
-            let snap = await getDoc(doc(db, "usuarios", uid));
-
-            if (!snap.exists()) {
-                snap = await getDoc(doc(db, "progreso", uid));
-            }
-
-            if (snap.exists()) {
-                datos = snap.data();
-                console.log("✅ Datos Firebase cargados:", datos);
-                return;
-            }
+        if (!uid) {
+            console.log("❌ No hay usuario logueado");
+            datos = {};   // <- vacío, pero SIN localStorage
+            return;
         }
 
-        // =========================
-        // 🔥 FALLBACK LOCAL
-        // =========================
-        console.log("⚠️ Usando localStorage");
-        datos = JSON.parse(localStorage.getItem("progreso")) || {};
+        // 🔥 intentamos solo Firebase
+        let snap = await getDoc(doc(db, "usuarios", uid));
+
+        if (!snap.exists()) {
+            snap = await getDoc(doc(db, "progreso", uid));
+        }
+
+        if (snap.exists()) {
+            datos = snap.data();
+            console.log("✅ Datos Firebase cargados:", datos);
+        } else {
+            console.log("⚠️ No hay datos en Firebase");
+            datos = {};
+        }
 
     } catch (e) {
-        console.error("❌ Error cargando familia:", e);
-        datos = JSON.parse(localStorage.getItem("progreso")) || {};
+        console.error("❌ Error Firebase:", e);
+        datos = {};
     }
 }
 
@@ -70,7 +65,6 @@ function limpiarDatos(obj) {
 }
 
 // =======================================
-// 🔥 RENDER PANEL
 function renderFamilia() {
 
     const cont = document.getElementById("familia");
@@ -96,7 +90,7 @@ function renderFamilia() {
                         ? Object.entries(data)
                             .map(([k, v]) => `<p>${k}: <b>${v}</b></p>`)
                             .join("")
-                        : "<p>No hay datos</p>"
+                        : "<p>No hay datos en Firebase</p>"
                 }
             </div>
 

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Familia</title>
-
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -14,55 +13,31 @@
 
 <h2>👨‍👩‍👧 Supervisión Familiar</h2>
 
-<!-- 🔐 LOGIN -->
+<!-- 🔐 LOGIN PADRES -->
 <div id="loginFamilia">
-
-    <h3>Acceso familias</h3>
-
-    <input type="password" id="claveFamilia" placeholder="Introduce la clave">
-
-    <button onclick="accederFamilia()">Entrar</button>
-
+    <input id="claveFamilia" type="password" placeholder="Introduce clave">
+    <button id="btnEntrar">Entrar</button>
     <p id="errorClave"></p>
-
 </div>
 
 <!-- 📊 PANEL -->
-<div id="panelFamilia" style="display:none;">
-
-    <div id="familia"></div>
-
-</div>
+<div id="familia" style="display:none;"></div>
 
 <script type="module">
-
 import { iniciarFamilia } from "./js/familia.js";
 
-// 🔑 CLAVE SIMPLE
-const CLAVE_FAMILIA = "1234";
-
-// ================================
-// ACCESO FAMILIA
-// ================================
-window.accederFamilia = function () {
-
+document.getElementById("btnEntrar").onclick = () => {
     const clave = document.getElementById("claveFamilia").value;
 
-    if (clave === CLAVE_FAMILIA) {
-
+    if (clave === "1234") {
         document.getElementById("loginFamilia").style.display = "none";
-        document.getElementById("panelFamilia").style.display = "block";
+        document.getElementById("familia").style.display = "block";
 
-        // 🔥 IMPORTANTE: esperar DOM listo
-        setTimeout(() => {
-            iniciarFamilia();
-        }, 0);
-
+        iniciarFamilia();
     } else {
-        document.getElementById("errorClave").innerText = "Clave incorrecta";
+        document.getElementById("errorClave").innerText = "❌ Clave incorrecta";
     }
 };
-
 </script>
 
 </body>

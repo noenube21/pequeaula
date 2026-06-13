@@ -38,10 +38,11 @@ const email = window.auth?.currentUser?.email;
     };
 
     // ✅ FIREBASE (sustituye Supabase)
-if (window.userReady && window.db)
+if (window.userReady && window.db){
+
     try {
 
-        const uid = window.auth.currentUser.uid;
+        const uid = window.uid;
 
         const ref = window.db.collection("usuarios").doc(uid);
         const snap = await ref.get();
@@ -49,11 +50,10 @@ if (window.userReady && window.db)
         if (snap.exists){
 
             const nube = snap.data();
-            
-datos.puntosPorNivel = nube.puntosPorNivel || {};
-datos.aciertos = nube.aciertos || 0;
-datos.historial = nube.historial || [];
 
+            datos.puntosPorNivel = nube.puntosPorNivel || {};
+            datos.aciertos = nube.aciertos || 0;
+            datos.historial = nube.historial || [];
 
             console.log("✅ Datos cargados Firebase");
         }
@@ -164,11 +164,12 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    // ✅ FIREBASE
-const uid = window.uid;
+    // ✅ FIREBASE CORRECTO
+    if (window.userReady && window.db){
+
         try {
 
-            const uid = window.auth.currentUser.uid;
+            const uid = window.uid;
 
             const ref = window.db.collection("usuarios").doc(uid);
 
@@ -190,18 +191,6 @@ const uid = window.uid;
         console.log("⚠️ No hay usuario Firebase");
     }
 }
-// =======================================
-
-function calc(op,max){
-
-    let a=Math.floor(Math.random()*max);
-    let b=Math.floor(Math.random()*max);
-
-    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
-    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
-    return {p:`${a} × ${b}`,r:(a*b).toString()};
-}
-
 // =======================================
 // 📚 BASES
 

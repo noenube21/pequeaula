@@ -164,19 +164,12 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    // ✅ FIREBASE SIN BLOQUEAR
-   if (window.auth?.currentUser && window.db){
+  // ✅ FIREBASE SIN BLOQUEAR (CORRECTO)
+if (window.uid && window.db){
 
     try {
 
-        const uid = window.auth.currentUser.uid;
-
-        if (!uid) {
-            console.log("⚠️ UID no listo");
-            return;
-        }
-
-        const ref = window.db.collection("usuarios").doc(uid);
+        const ref = window.db.collection("usuarios").doc(window.uid);
 
         await ref.set(
             {
@@ -193,7 +186,7 @@ async function guardarTodo(){
     }
 
 } else {
-    console.log("⚠️ No hay usuario Firebase");
+    console.log("⚠️ Usuario aún no listo (normal al inicio)");
 }
 // =======================================
 // 📚 BASES

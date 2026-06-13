@@ -1,43 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervisión Familiar</title>
+    <meta charset="UTF-8">
+    <title>Familia</title>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<button onclick="history.back()">⬅ Volver</button>
+<button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 
-<h2>👨‍👩‍👧 Supervisión Familiar</h2>
+<div id="accesoFamilia">
+    <h2>👨‍👩‍👧 Supervisión Familiar</h2>
 
-<!-- 🔐 LOGIN PADRES -->
-<div id="loginFamilia">
-    <input id="claveFamilia" type="password" placeholder="Introduce clave (1234)">
-    <button id="btnEntrar">Entrar</button>
-    <p id="errorClave"></p>
+    <p>Introduce la clave de acceso</p>
+
+    <input type="password" id="claveFamilia" placeholder="Clave">
+    <br><br>
+    <button onclick="accederFamilia()">Entrar</button>
+
+    <p id="errorFamilia" style="color:red;"></p>
 </div>
 
-<!-- 📊 PANEL -->
 <div id="familia" style="display:none;"></div>
 
 <script type="module">
 import { iniciarFamilia } from "./js/familia.js";
 
-document.getElementById("btnEntrar").onclick = async () => {
+window.accederFamilia = function () {
     const clave = document.getElementById("claveFamilia").value;
 
     if (clave === "1234") {
-        document.getElementById("loginFamilia").style.display = "none";
+        document.getElementById("accesoFamilia").style.display = "none";
         document.getElementById("familia").style.display = "block";
 
-        await iniciarFamilia();
+        iniciarFamilia();
     } else {
-        document.getElementById("errorClave").innerText =
-            "❌ Clave incorrecta";
+        document.getElementById("errorFamilia").innerText = "Clave incorrecta";
     }
 };
 </script>

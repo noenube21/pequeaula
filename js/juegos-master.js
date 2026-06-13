@@ -33,6 +33,10 @@ export async function cargarDatosUsuario(){
     if(!datos.historial){
         datos.historial = [];
     }
+    
+    if(window.uid && window.cargarProgreso){
+    await window.cargarProgreso(window.uid);
+}
 
     window.datos = datos;
 
@@ -122,17 +126,17 @@ async function guardarTodo(){
         "window.guardarProgreso:",
         window.guardarProgreso
     );
+    
+if(window.uid && window.guardarProgreso){
 
-    if(window.guardarProgreso){
-
-        const resultado =
-            await window.guardarProgreso(
-                "usuario_prueba",
-                claveActual,
-                1,
-                obtenerPuntosNivel()
-            );
-
+    await window.guardarProgreso(
+        window.uid,
+        "juego",
+        claveActual,
+        obtenerPuntosNivel()
+    );
+}
+    
         console.log(
             "RESULTADO GUARDADO:",
             resultado

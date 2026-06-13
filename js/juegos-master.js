@@ -74,9 +74,11 @@ datos.historial = nube.historial || [];
         ...local
     };
 }
+if (!datos.historial) {
+    datos.historial = [];
+}
 
-
-    window.datos = datos;
+window.datos = datos;
 }
 // =======================================
 

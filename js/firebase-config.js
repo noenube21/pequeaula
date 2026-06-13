@@ -23,3 +23,5 @@ const db = getFirestore(app);
 
 // ✅ Exportar solo lo necesario
 export { auth, db };
+window.auth = auth;
+window.db = db;

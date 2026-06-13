@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -15,19 +15,17 @@ const firebaseConfig = {
 // ✅ Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 
-// ✅ Autenticación
+// ✅ Auth
 const auth = getAuth(app);
 
-// ✅ Base de datos (LO IMPORTANTE)
+// ✅ Firestore
 const db = getFirestore(app);
 
-// ✅ Exportar solo lo necesario
-export { auth, db };
+// ✅ HACER GLOBAL (clave para tu juego)
 window.auth = auth;
 window.db = db;
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// ✅ escuchar usuario correctamente
+// ✅ DETECTAR USUARIO BIEN
 onAuthStateChanged(auth, (user) => {
 
     if (user) {
@@ -37,7 +35,11 @@ onAuthStateChanged(auth, (user) => {
         console.log("✅ Usuario Firebase listo:", user.uid);
 
     } else {
+        window.userReady = false;
+
         console.log("⚠️ No hay usuario");
     }
-
 });
+
+// ✅ Exportar (si lo usas en otros sitios)
+export { auth, db };

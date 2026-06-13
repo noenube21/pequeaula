@@ -165,29 +165,35 @@ async function guardarTodo(){
     console.log("guardarTodo ejecutado");
 
     // ✅ FIREBASE SIN BLOQUEAR
-    if (window.uid && window.db){
+   if (window.auth?.currentUser && window.db){
 
-        try {
+    try {
 
-            const ref = window.db.collection("usuarios").doc(window.uid);
+        const uid = window.auth.currentUser.uid;
 
-            await ref.set(
-                {
-                    puntosPorNivel: datos.puntosPorNivel,
-                    aciertos: datos.aciertos
-                },
-                { merge: true }
-            );
-
-            console.log("✅ Guardado Firebase");
-
-        } catch(e){
-            console.log("Error guardando:", e);
+        if (!uid) {
+            console.log("⚠️ UID no listo");
+            return;
         }
 
-    } else {
-        console.log("⚠️ No hay usuario Firebase");
+        const ref = window.db.collection("usuarios").doc(uid);
+
+        await ref.set(
+            {
+                puntosPorNivel: datos.puntosPorNivel,
+                aciertos: datos.aciertos
+            },
+            { merge: true }
+        );
+
+        console.log("✅ Guardado Firebase");
+
+    } catch(e){
+        console.log("Error guardando:", e);
     }
+
+} else {
+    console.log("⚠️ No hay usuario Firebase");
 }
 // =======================================
 // 📚 BASES

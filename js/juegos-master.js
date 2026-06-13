@@ -465,4 +465,4 @@ async function comprobar(){
     // ✅ hacer accesible desde HTML
 window.iniciarJuego = iniciarJuego;
 window.comprobar = comprobar;
-}
+

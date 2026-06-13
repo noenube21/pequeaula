@@ -164,23 +164,12 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    // ✅ ESPERAR USUARIO (CLAVE FINAL)
-    await new Promise(resolve => {
-        const check = () => {
-            if (window.userReady) resolve();
-            else setTimeout(check, 100);
-        };
-        check();
-    });
-
-    // ✅ FIREBASE
-    if (window.userReady && window.db){
+    // ✅ FIREBASE SIN BLOQUEAR
+    if (window.uid && window.db){
 
         try {
 
-            const uid = window.uid;
-
-            const ref = window.db.collection("usuarios").doc(uid);
+            const ref = window.db.collection("usuarios").doc(window.uid);
 
             await ref.set(
                 {

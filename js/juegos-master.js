@@ -15,7 +15,7 @@ let datos = {
 
 // =======================================
 // 
-export async function cargarDatosUsuario(){
+ async function cargarDatosUsuario(){
 
     if(datosCargados) return;
 
@@ -321,7 +321,7 @@ const Juegos = {
 // =======================================
 // 🌍 CARGA VALENCIANO DESDE JSON
 
-export async function cargarValenciano(){
+async function cargarValenciano(){
 
     try {
         const res = await fetch("./js/valenciano.json");
@@ -342,7 +342,7 @@ cargarValenciano();
 
 // =======================================
 // 🚀 INICIAR JUEGO
-export async function iniciarJuego(key){
+async function iniciarJuego(key){
 
     claveActual = key;
 
@@ -435,7 +435,7 @@ export async function iniciarJuego(key){
 // =======================================
 // ✅ COMPROBAR
 
-export async function comprobar(){
+async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
@@ -458,4 +458,8 @@ export async function comprobar(){
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },500);
+
+    // ✅ hacer accesible desde HTML
+window.iniciarJuego = iniciarJuego;
+window.comprobar = comprobar;
 }

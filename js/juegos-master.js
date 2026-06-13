@@ -188,6 +188,7 @@ if (window.uid && window.db){
 } else {
     console.log("⚠️ Usuario aún no listo (normal al inicio)");
 }
+}    
 // =======================================
 // 📚 BASES
 
@@ -458,7 +459,7 @@ async function comprobar(){
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },500);
-
+}
     // ✅ hacer accesible desde HTML
 window.iniciarJuego = iniciarJuego;
 window.comprobar = comprobar;

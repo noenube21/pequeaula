@@ -1,4 +1,16 @@
 import { comprobarRecompensas } from "./recompensas.js";
+
+// 🚀 ENLAZAR FIREBASE (Fuerza al navegador a cargar Firebase ANTES que el juego)
+import { auth, db } from "./firebase-config.js"; // 
+
+// ✅ IMPORTAR FIRESTORE (Desde CDN v11)
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// =======================================
+let datosCargados = false;
+let preguntaActual = null;
+...
+
 // ✅ IMPORTAR FIRESTORE (Desde CDN v11)
 import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 

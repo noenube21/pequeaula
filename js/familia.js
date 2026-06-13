@@ -1,18 +1,20 @@
-import { db, auth } from "./firebase-config.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 let datos = {};
 
 // =======================================
 export async function iniciarFamilia() {
     try {
-        const user = auth.currentUser;
+        // ⏳ Espera a que Firebase tenga usuario listo
+        const user = await window.firebaseReady;
 
         if (!user) {
             document.getElementById("familia").innerHTML =
                 "<p>⚠️ Usuario no logueado</p>";
             return;
         }
+
+        const db = window.db;
 
         const ref = doc(db, "usuarios", user.uid);
         const snap = await getDoc(ref);

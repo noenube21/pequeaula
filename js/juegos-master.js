@@ -126,6 +126,12 @@ function obtenerPuntosNivel(){
 }
 
 function sumarPunto(){
+
+    // ✅ ASEGURAR historial SIEMPRE (CLAVE REAL)
+    if (!datos.historial) {
+        datos.historial = [];
+    }
+
     datos.puntosPorNivel[claveActual] =
         obtenerPuntosNivel() + 1;
 
@@ -133,6 +139,7 @@ function sumarPunto(){
         nivel: claveActual,
         fecha: Date.now()
     });
+}
 }
 
 // =======================================

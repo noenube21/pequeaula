@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 
-css/style.css
+<link rel="stylesheet" href="css/style.css">
 
 <style>
 body{
@@ -58,39 +58,47 @@ Comprobar
 
 <p id="resultado"></p>
 
-<!-- ✅ 1. LIBRERÍA SUPABASE -->
-https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
+<!-- ✅ 1. Librería Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- ✅ 2. TU ARCHIVO SUPABASE -->
-js/database.js
+<!-- ✅ 2. Tu conexión (ESTE ES TU ARCHIVO REAL) -->
+<script src="./js/database.js"></script>
 
-<!-- ✅ 3. TU JUEGO -->
-js/juegos-master.js>
+<!-- ✅ 3. Tu juego -->
+<script src="./js/juegos-master.js"></script>
 
-<!-- ✅ 4. SCRIPT -->
+<!-- ✅ 4. Código principal -->
 <script>
-const params = new URLSearchParams(window.location.search);
+window.onload = function(){
 
-const materia = params.get("materia") || "matematicas";
-const nivel = params.get("nivel") || "1";
+    const params = new URLSearchParams(window.location.search);
 
-document.getElementById("tituloJuego").innerText =
-materia + " nivel " + nivel;
+    const materia = params.get("materia") || "matematicas";
+    const nivel = params.get("nivel") || "1";
 
-// ✅ iniciar juego
-window.iniciarJuego(materia + nivel);
+    document.getElementById("tituloJuego").innerText =
+        materia + " nivel " + nivel;
 
-// ✅ comprobar
-document.getElementById("btnComprobar").onclick = function(){
-window.comprobar();
+    if(typeof window.iniciarJuego !== "function"){
+        console.error("❌ juegos-master.js NO cargó");
+        return;
+    }
+
+    // ✅ iniciar juego
+    window.iniciarJuego(materia + nivel);
+
+    // ✅ botón comprobar
+    document.getElementById("btnComprobar").onclick = function(){
+        window.comprobar();
+    };
+
+    // ✅ ENTER
+    document.getElementById("respuesta").addEventListener("keydown",(e)=>{
+        if(e.key==="Enter"){
+            window.comprobar();
+        }
+    });
 };
-
-// ✅ ENTER
-document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-if(e.key==="Enter"){
-window.comprobar();
-}
-});
 </script>
 
 </body>

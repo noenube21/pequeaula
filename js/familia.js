@@ -1,7 +1,5 @@
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { auth } from "./firebase-config.js";
-
-const db = getFirestore();
+import { db, auth } from "./firebase-config.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 let datos = {};
 
@@ -30,7 +28,9 @@ export async function iniciarFamilia() {
         renderFamilia();
 
     } catch (e) {
-        console.error("Error cargando familia:", e);
+        console.error("Error familia:", e);
+        document.getElementById("familia").innerHTML =
+            "<p>Error cargando datos</p>";
     }
 }
 
@@ -85,7 +85,6 @@ function renderGrafico() {
         ctx.fillStyle = "#000";
         ctx.font = "14px Arial";
         ctx.fillText(nivel, x, 320);
-
         ctx.fillText(values[i], x + 20, 290 - h);
     });
 }
@@ -93,6 +92,7 @@ function renderGrafico() {
 // =======================================
 function renderFamilia() {
     const cont = document.getElementById("familia");
+
     if (!cont) return;
 
     const data = limpiarDatos(datos.puntosPorNivel);

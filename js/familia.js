@@ -5,21 +5,23 @@ let datos = {};
 // =======================================
 export async function iniciarFamilia() {
     try {
-        const db = window.db;
-        const uid = window.uid;
+        // ⏳ espera sesión Firebase real del juego
+        const user = await window.firebaseReady;
 
-        if (!uid) {
+        if (!user) {
             document.getElementById("familia").innerHTML =
                 "<p>⚠️ No hay usuario del juego conectado</p>";
             return;
         }
 
-        const ref = doc(db, "usuarios", uid);
+        const db = window.db;
+
+        const ref = doc(db, "usuarios", user.uid);
         const snap = await getDoc(ref);
 
         if (!snap.exists()) {
             document.getElementById("familia").innerHTML =
-                "<p>No hay datos del usuario</p>";
+                "<p>No hay datos guardados</p>";
             return;
         }
 
@@ -28,7 +30,7 @@ export async function iniciarFamilia() {
         renderFamilia();
 
     } catch (e) {
-        console.error(e);
+        console.error("Error familia:", e);
         document.getElementById("familia").innerHTML =
             "<p>Error cargando datos</p>";
     }

@@ -164,7 +164,16 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    // ✅ FIREBASE CORRECTO
+    // ✅ ESPERAR USUARIO (CLAVE FINAL)
+    await new Promise(resolve => {
+        const check = () => {
+            if (window.userReady) resolve();
+            else setTimeout(check, 100);
+        };
+        check();
+    });
+
+    // ✅ FIREBASE
     if (window.userReady && window.db){
 
         try {

@@ -21,29 +21,32 @@ body{
     margin:8px auto;
 }
 
+/* INPUT CENTRADO */
 #respuesta{
     display:block;
     width:250px;
     margin:15px auto;
 }
 
+/* BOTÓN CENTRADO */
 #btnComprobar{
     display:block;
     margin:10px auto;
 }
 </style>
+
 </head>
 
 <body>
 
 <button onclick="history.back()" class="btn-volver">
-⬅ Volver
+    ⬅ Volver
 </button>
 
 <h2 id="tituloJuego"></h2>
 
 <div id="score">
-Puntos: 0
+    Puntos: 0
 </div>
 
 <div id="pregunta"></div>
@@ -53,7 +56,7 @@ Puntos: 0
 <input id="respuesta">
 
 <button id="btnComprobar">
-Comprobar
+    Comprobar
 </button>
 
 <p id="resultado"></p>
@@ -61,45 +64,34 @@ Comprobar
 <!-- ✅ 1. LIBRERÍA SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- ✅ 2. TU ARCHIVO SUPABASE (YA CORRECTO) -->
+<!-- ✅ 2. TU ARCHIVO SUPABASE -->
 <script src="./js/supabase.js"></script>
 
 <!-- ✅ 3. TU JUEGO -->
 <script src="./js/juegos-master.js"></script>
 
-<!-- ✅ 4. SCRIPT PRINCIPAL -->
+<!-- ✅ 4. TU SCRIPT ORIGINAL (SIN MODULE) -->
 <script>
-window.onload = function(){
+const params = new URLSearchParams(window.location.search);
 
-    const params = new URLSearchParams(window.location.search);
+const materia = params.get("materia") || "matematicas";
+const nivel = params.get("nivel") || "1";
 
-    const materia = params.get("materia") || "matematicas";
-    const nivel = params.get("nivel") || "1";
+document.getElementById("tituloJuego").innerText =
+    materia + " nivel " + nivel;
 
-    document.getElementById("tituloJuego").innerText =
-        materia + " nivel " + nivel;
+// ✅ ahora funciona porque usamos window
+window.iniciarJuego(materia + nivel);
 
-    // 🔥 comprobar que cargó el juego
-    if(typeof window.iniciarJuego !== "function"){
-        console.error("❌ juegos-master.js NO cargó");
-        return;
-    }
-
-    // ✅ iniciar juego
-    window.iniciarJuego(materia + nivel);
-
-    // ✅ botón comprobar
-    document.getElementById("btnComprobar").onclick = function(){
-        window.comprobar();
-    };
-
-    // ✅ ENTER
-    document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-        if(e.key==="Enter"){
-            window.comprobar();
-        }
-    });
+document.getElementById("btnComprobar").onclick = function(){
+    window.comprobar();
 };
+
+document.getElementById("respuesta").addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){
+        window.comprobar();
+    }
+});
 </script>
 
 </body>

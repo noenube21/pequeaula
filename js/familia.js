@@ -32,7 +32,10 @@ function esperarUID() {
 // =======================================
 export async function iniciarFamilia() {
 
+    await window.firebaseReady; // 🔥 CLAVE REAL
+
     await cargarDatos();
+
     renderFamilia();
 }
 

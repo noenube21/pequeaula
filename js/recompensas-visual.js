@@ -1,7 +1,30 @@
 // =======================================
 // ✅ CARGAR PROGRESO (ACERTOS)
-let datos = JSON.parse(localStorage.getItem("progreso")) || { aciertos: 0 };
+let datos = { aciertos: 0 };
 
+const local = JSON.parse(localStorage.getItem("progreso")) || {};
+datos = { ...datos, ...local };
+
+(async () => {
+
+    if (window.uid && window.cargarProgreso) {
+
+        const nube = await window.cargarProgreso(window.uid);
+
+        if (nube && nube.length > 0) {
+
+            let totalAciertos = 0;
+
+            nube.forEach(row => {
+                totalAciertos += row.puntos || 0;
+            });
+
+            datos.aciertos = totalAciertos;
+        }
+
+    }
+
+})();
 
 // =======================================
 // 🎁 LISTA DE RECOMPENSAS

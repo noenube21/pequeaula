@@ -150,7 +150,52 @@ img{
         font-size:18px !important;
     }
 }
+/* ==================================
+   FIX MOVIL PARA MENU Y NIVELES
+================================== */
 
+@media (max-width:768px){
+
+    body{
+        text-align:center;
+    }
+
+    .card{
+        display:inline-flex !important;
+
+        width:140px !important;
+        min-height:180px !important;
+
+        margin:8px !important;
+
+        vertical-align:top;
+    }
+
+    .card img{
+        width:85px !important;
+        height:auto !important;
+    }
+
+    .card h3{
+        font-size:18px !important;
+    }
+}
+
+@media (max-width:480px){
+
+    .card{
+        width:130px !important;
+        min-height:170px !important;
+    }
+
+    .card img{
+        width:75px !important;
+    }
+
+    .card h3{
+        font-size:16px !important;
+    }
+}
 
 
 

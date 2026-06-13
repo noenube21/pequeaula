@@ -28,34 +28,30 @@ export async function cargarDatosUsuario(){
         puntosPorNivel: {},
         historial: []
     };
+    if (window.auth?.currentUser && window.db){
 
-    if(
-        email &&
-        window.cargarProgresoSupabase
-    ){
+    try {
 
-        const filas =
-            await window.cargarProgresoSupabase(
-                email
-            );
+        const uid = window.auth.currentUser.uid;
 
-        console.log("EMAIL:", email);
-        console.log("FILAS:", filas);
+        const ref = window.db.collection("usuarios").doc(uid);
+        const snap = await ref.get();
 
-        filas.forEach(fila => {
+        if (snap.exists){
 
-            datos.puntosPorNivel[
-                fila.juego
-            ] = Number(fila.puntos) || 0;
+            const nube = snap.data();
 
-        });
+            datos.puntosPorNivel = nube.puntosPorNivel || {};
+            datos.aciertos = nube.aciertos || 0;
 
-        console.log(
-            "DATOS CARGADOS DESDE SUPABASE",
-            datos
-        );
+            console.log("✅ Datos cargados Firebase");
+        }
 
-    } else {
+    } catch(e){
+        console.log("Error Firebase:", e);
+    }
+
+} else {
 
         const local =
             JSON.parse(
@@ -154,35 +150,32 @@ async function guardarTodo(){
         window.guardarProgreso
     );
 
-    if(window.guardarProgreso){
+   if (window.auth?.currentUser && window.db){
 
-        const email = window.auth?.currentUser?.email;
+    try {
 
-        console.log(
-            "PUNTOS ACTUALES:",
-            obtenerPuntosNivel()
+        const uid = window.auth.currentUser.uid;
+
+        const ref = window.db.collection("usuarios").doc(uid);
+
+        await ref.set(
+            {
+                puntosPorNivel: datos.puntosPorNivel,
+                aciertos: datos.aciertos
+            },
+            { merge: true }
         );
 
-        const resultado =
-            await window.guardarProgreso(
-                email,
-                claveActual,
-                1,
-                obtenerPuntosNivel()
-            );
+        console.log("✅ Guardado Firebase");
 
-        console.log(
-            "RESULTADO GUARDADO:",
-            resultado
-        );
-
-    } else {
-
-        console.log(
-            "window.guardarProgreso NO EXISTE"
-        );
+    } catch(e){
+        console.log("Error guardando:", e);
     }
+
+} else {
+    console.log("⚠️ No hay usuario Firebase");
 }
+
 // =======================================
 
 function calc(op,max){

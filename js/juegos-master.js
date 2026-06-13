@@ -20,8 +20,16 @@ export async function cargarDatosUsuario(){
     if(datosCargados) return;
 
     datosCargados = true;
+// ✅ esperar a que Firebase cargue usuario
+await new Promise(resolve => {
+    const check = () => {
+        if (window.auth?.currentUser) resolve();
+        else setTimeout(check, 100);
+    };
+    check();
+});
 
-    const email = window.auth?.currentUser?.email;
+const email = window.auth?.currentUser?.email;
 
     datos = {
         aciertos: 0,

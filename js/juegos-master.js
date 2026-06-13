@@ -1,7 +1,5 @@
 // =======================================
-// SIN IMPORT (no módulos)
-// =======================================
-
+// SIN IMPORT / SIN EXPORT
 // =======================================
 
 let preguntaActual = null;
@@ -28,15 +26,10 @@ async function cargarDatosUsuario(){
         ...local
     };
 
-    if(!datos.puntosPorNivel){
-        datos.puntosPorNivel = {};
-    }
+    if(!datos.puntosPorNivel) datos.puntosPorNivel = {};
+    if(!datos.historial) datos.historial = [];
 
-    if(!datos.historial){
-        datos.historial = [];
-    }
-
-    // ✅ CARGAR SUPABASE
+    // ✅ SUPABASE
     if(window.uid && window.cargarProgreso){
         const nube = await window.cargarProgreso(window.uid);
 
@@ -98,8 +91,7 @@ function obtenerPuntosNivel(){
 }
 
 function sumarPunto(){
-    datos.puntosPorNivel[claveActual] =
-        obtenerPuntosNivel() + 1;
+    datos.puntosPorNivel[claveActual] = obtenerPuntosNivel() + 1;
 
     datos.historial.push({
         nivel: claveActual,
@@ -125,23 +117,17 @@ function actualizarPuntos(){
 // ✅ GUARDAR
 async function guardarTodo(){
 
-    localStorage.setItem(
-        "progreso",
-        JSON.stringify(datos)
-    );
-
-    console.log("guardarTodo ejecutado");
+    localStorage.setItem("progreso", JSON.stringify(datos));
 
     if (window.uid && window.guardarProgreso) {
 
-        const resultado = await window.guardarProgreso(
+        await window.guardarProgreso(
             window.uid,
             "juego",
             claveActual,
             obtenerPuntosNivel()
         );
 
-        console.log("RESULTADO GUARDADO:", resultado);
     }
 }
 
@@ -158,7 +144,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES (NO TOCADAS)
+// 📚 BASES (SIN TOCAR)
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -193,7 +179,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS (no tocado)
+// 🎮 JUEGOS
 
 const Juegos = {
 
@@ -261,33 +247,61 @@ const Juegos = {
             r:x[1],
             tipo:"input"
         }))
-    },
-
-    ciencias2:{
-        preguntas:[
-            { p:"¿Cuál es el planeta rojo?", r:"marte", tipo:"test", opciones:["marte","venus","jupiter"] },
-            { p:"¿Cuál es el planeta más caliente?", r:"venus", tipo:"test", opciones:["venus","mercurio","tierra"] },
-            { p:"¿Cuál es el planeta más grande?", r:"jupiter", tipo:"test", opciones:["jupiter","saturno","marte"] },
-            { p:"¿Qué planeta tiene anillos?", r:"saturno", tipo:"test", opciones:["saturno","marte","venus"] },
-            { p:"¿Cuál es el planeta azul?", r:"tierra", tipo:"test", opciones:["tierra","marte","venus"] }
-        ]
-    },
-
-    ciencias3:{
-        preguntas:[
-            { p:"¿Cuál es la fórmula del agua?", r:"h2o", tipo:"test", opciones:["h2o","co2","o2"] },
-            { p:"¿Qué gas respiramos?", r:"oxigeno", tipo:"test", opciones:["oxigeno","co2","nitrógeno"] },
-            { p:"¿Qué gas expulsamos?", r:"co2", tipo:"test", opciones:["co2","oxigeno","hidrogeno"] },
-            { p:"¿Cuál es la estrella del sistema solar?", r:"sol", tipo:"test", opciones:["sol","luna","marte"] }
-        ]
     }
 };
 
 // =======================================
-// ✅ GLOBAL
+// 🚀 INICIAR JUEGO
 
-window.cargarDatosUsuario = cargarDatosUsuario;
-window.iniciarJuego = iniciarJuego;
-window.comprobar = comprobar;
+async function iniciarJuego(key){
+
+    await cargarDatosUsuario();
+
+    claveActual = key;
+    juegoActual = Juegos[key];
+
+    const pregunta = document.getElementById("pregunta");
+    
+    if(!juegoActual){
+        pregunta.innerText = "Nivel no encontrado";
+        return;
+    }
+
+    const lista = juegoActual.preguntas || [];
+
+    preguntaActual = lista[Math.floor(Math.random()*lista.length)];
+
+    pregunta.innerText = preguntaActual.p;
+}
 
 // =======================================
+// ✅ COMPROBAR
+
+async function comprobar(){
+
+    const r = limpiar(document.getElementById("respuesta").value);
+    const ok = limpiar(preguntaActual.r);
+
+    const resultado = document.getElementById("resultado");
+
+    if(r === ok){
+        sumarPunto();
+        datos.aciertos++;
+        resultado.innerText = "✔ Correcto";
+    } else {
+        resultado.innerText = "✘ Incorrecto. Respuesta correcta: " + preguntaActual.r;
+    }
+
+    actualizarPuntos();
+    await guardarTodo();
+
+    setTimeout(()=>{
+        iniciarJuego(claveActual);
+    },500);
+}
+
+// =======================================
+// ✅ GLOBAL
+
+window.iniciarJuego = iniciarJuego;
+window.comprobar = comprobar;

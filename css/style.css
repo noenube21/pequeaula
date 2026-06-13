@@ -458,3 +458,60 @@ button:hover,
     width: 90%;
   }
 }
+/* ===== FIX UNIVERSAL RESPONSIVE (TODAS LAS PÁGINAS) ===== */
+
+* {
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* fuerza cualquier contenedor a adaptarse */
+div, section {
+  box-sizing: border-box;
+}
+
+/* arregla grids (niveles, asignaturas, paneles) */
+.panel-grid,
+.card-container {
+  width: 100%;
+  padding: 10px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+}
+
+/* asegura que cards NO rompan móvil */
+.card,
+.panel-card {
+  width: 100% !important;
+}
+
+/* texto siempre escalable */
+.titulo-app,
+#tituloJuego,
+h1, h2, h3 {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* móviles pequeños */
+@media (max-width: 768px) {
+
+  .panel-grid,
+  .card-container {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .card h3,
+  .panel-card h3 {
+    font-size: 18px;
+  }
+}
+
+
+
+

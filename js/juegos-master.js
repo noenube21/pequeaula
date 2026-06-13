@@ -1,5 +1,5 @@
 // =======================================
-// SIN IMPORT / SIN EXPORT
+// CONFIG
 // =======================================
 
 let preguntaActual = null;
@@ -10,7 +10,8 @@ let usadas = {};
 // 🔥 PROGRESO
 let datos = {
     aciertos: 0,
-    puntosPorNivel: {}
+    puntosPorNivel: {},
+    historial: []
 };
 
 // =======================================
@@ -29,7 +30,7 @@ async function cargarDatosUsuario(){
     if(!datos.puntosPorNivel) datos.puntosPorNivel = {};
     if(!datos.historial) datos.historial = [];
 
-    // ✅ SUPABASE
+    // 🔥 SUPABASE
     if(window.uid && window.cargarProgreso){
         const nube = await window.cargarProgreso(window.uid);
 
@@ -41,7 +42,6 @@ async function cargarDatosUsuario(){
     }
 
     window.datos = datos;
-
     actualizarPuntos();
 }
 
@@ -65,7 +65,6 @@ function levenshtein(a, b){
 
     for (let i = 1; i <= b.length; i++){
         for (let j = 1; j <= a.length; j++){
-
             if (b.charAt(i-1) === a.charAt(j-1)){
                 matrix[i][j] = matrix[i-1][j-1];
             } else {
@@ -91,7 +90,8 @@ function obtenerPuntosNivel(){
 }
 
 function sumarPunto(){
-    datos.puntosPorNivel[claveActual] = obtenerPuntosNivel() + 1;
+    datos.puntosPorNivel[claveActual] =
+        obtenerPuntosNivel() + 1;
 
     datos.historial.push({
         nivel: claveActual,
@@ -119,7 +119,7 @@ async function guardarTodo(){
 
     localStorage.setItem("progreso", JSON.stringify(datos));
 
-    if (window.uid && window.guardarProgreso) {
+    if(window.uid && window.guardarProgreso){
 
         await window.guardarProgreso(
             window.uid,
@@ -127,7 +127,6 @@ async function guardarTodo(){
             claveActual,
             obtenerPuntosNivel()
         );
-
     }
 }
 
@@ -144,7 +143,7 @@ function calc(op,max){
 }
 
 // =======================================
-// 📚 BASES (SIN TOCAR)
+// 📚 BASES
 
 const inglesBase = [
 ["dog","perro"],["cat","gato"],["sun","sol"],["moon","luna"],
@@ -179,7 +178,7 @@ function generarOpciones(correcta, lista){
 }
 
 // =======================================
-// 🎮 JUEGOS
+// 🎮 JUEGOS (TODOS TUS NIVELES)
 
 const Juegos = {
 
@@ -223,10 +222,7 @@ const Juegos = {
         preguntas:[
             { p:"¿Cuál es un sustantivo?", r:"mesa", tipo:"test", opciones:["mesa","correr","rojo"] },
             { p:"¿Cuál es un verbo?", r:"correr", tipo:"test", opciones:["correr","mesa","rápido"] },
-            { p:"¿Cuál es un adjetivo?", r:"azul", tipo:"test", opciones:["azul","mesa","correr"] },
-            { p:"¿Cuál es un sustantivo?", r:"coche", tipo:"test", opciones:["coche","cantar","feliz"] },
-            { p:"¿Cuál es un verbo?", r:"comer", tipo:"test", opciones:["comer","mesa","rojo"] },
-            { p:"¿Cuál es un adjetivo?", r:"rápido", tipo:"test", opciones:["rápido","coche","correr"] }
+            { p:"¿Cuál es un adjetivo?", r:"azul", tipo:"test", opciones:["azul","mesa","correr"] }
         ]
     },
 
@@ -234,10 +230,7 @@ const Juegos = {
         preguntas:[
             { p:"¿Qué es un animal?", r:"perro", tipo:"test", opciones:["perro","mesa","azul"] },
             { p:"¿Qué es una acción?", r:"correr", tipo:"test", opciones:["correr","rojo","mesa"] },
-            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] },
-            { p:"¿Qué es un animal?", r:"gato", tipo:"test", opciones:["gato","mesa","rojo"] },
-            { p:"¿Qué es una acción?", r:"saltar", tipo:"test", opciones:["saltar","azul","mesa"] },
-            { p:"¿Qué es un objeto?", r:"silla", tipo:"test", opciones:["silla","correr","feliz"] }
+            { p:"¿Qué es un objeto?", r:"mesa", tipo:"test", opciones:["mesa","feliz","cantar"] }
         ]
     },
 
@@ -261,17 +254,50 @@ async function iniciarJuego(key){
     juegoActual = Juegos[key];
 
     const pregunta = document.getElementById("pregunta");
-    
-    if(!juegoActual){
-        pregunta.innerText = "Nivel no encontrado";
-        return;
+    const zona = document.getElementById("zona");
+    const input = document.getElementById("respuesta");
+    const resultado = document.getElementById("resultado");
+
+    zona.innerHTML = "";
+    resultado.innerHTML = "";
+    input.value = "";
+
+    if(juegoActual.generar){
+
+        const gen = juegoActual.generar();
+
+        preguntaActual = {
+            p: gen.p,
+            r: String(gen.r),
+            tipo: "input"
+        };
+
+    } else {
+
+        const lista = juegoActual.preguntas;
+
+        preguntaActual = lista[Math.floor(Math.random()*lista.length)];
     }
 
-    const lista = juegoActual.preguntas || [];
-
-    preguntaActual = lista[Math.floor(Math.random()*lista.length)];
-
     pregunta.innerText = preguntaActual.p;
+
+    input.style.display = (preguntaActual.tipo === "input") ? "block" : "none";
+
+    if(preguntaActual.tipo === "test"){
+
+        preguntaActual.opciones.forEach(op=>{
+            const b = document.createElement("button");
+            b.innerText = op;
+
+            b.onclick = ()=>{
+                input.value = op;
+            };
+
+            zona.appendChild(b);
+        });
+    }
+
+    actualizarPuntos();
 }
 
 // =======================================
@@ -284,7 +310,9 @@ async function comprobar(){
 
     const resultado = document.getElementById("resultado");
 
-    if(r === ok){
+    const correcto = levenshtein(r, ok) <= 1;
+
+    if(correcto){
         sumarPunto();
         datos.aciertos++;
         resultado.innerText = "✔ Correcto";

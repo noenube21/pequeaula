@@ -23,7 +23,7 @@ export async function cargarDatosUsuario(){
 // ✅ esperar a que Firebase cargue usuario
 await new Promise(resolve => {
     const check = () => {
-        if (window.auth?.currentUser) resolve();
+        if (window.userReady) resolve();
         else setTimeout(check, 100);
     };
     check();
@@ -38,8 +38,7 @@ const email = window.auth?.currentUser?.email;
     };
 
     // ✅ FIREBASE (sustituye Supabase)
-    if (window.auth?.currentUser && window.db){
-
+if (window.userReady && window.db)
         try {
 
             const uid = window.auth.currentUser.uid;

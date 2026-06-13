@@ -127,27 +127,17 @@ async function guardarTodo(){
         window.guardarProgreso
     );
     
-if(window.uid && window.guardarProgreso){
+ if (window.uid && window.guardarProgreso) {
 
-    await window.guardarProgreso(
+    const resultado = await window.guardarProgreso(
         window.uid,
         "juego",
         claveActual,
         obtenerPuntosNivel()
     );
-}
-    
-        console.log(
-            "RESULTADO GUARDADO:",
-            resultado
-        );
 
-    } else {
+    console.log("RESULTADO GUARDADO:", resultado);
 
-        console.log(
-            "window.guardarProgreso NO EXISTE"
-        );
-    }
 }
 
 // =======================================

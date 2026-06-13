@@ -20,6 +20,6 @@ const auth = getAuth(app);
 
 // ✅ Base de datos (LO IMPORTANTE)
 const db = getFirestore(app);
-window.auth = auth;
+
 // ✅ Exportar solo lo necesario
 export { auth, db };

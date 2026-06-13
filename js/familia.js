@@ -9,26 +9,27 @@ export async function iniciarFamilia() {
 
     try {
 
-        // 🔥 1. Cargar datos desde Firebase (tu función)
         await cargarDatosUsuario();
 
-        // 🔥 2. Leer datos de forma segura
-        const raw = localStorage.getItem("progreso");
+        // 🔥 PRIORIDAD: Firebase real (no localStorage como fuente principal)
+        const rawLocal = localStorage.getItem("progreso");
 
-        datos = raw ? JSON.parse(raw) : {};
+        datos = rawLocal ? JSON.parse(rawLocal) : {};
 
-        // 🔥 3. Seguridad extra (evita errores)
+        // 🧠 fallback de seguridad
+        if (!datos || Object.keys(datos).length === 0) {
+            console.warn("⚠️ localStorage vacío, posible problema en Firebase sync");
+        }
+
         if (!datos.puntosPorNivel) datos.puntosPorNivel = {};
         if (!datos.aciertos) datos.aciertos = 0;
 
-        // 🔥 4. Render
         renderFamilia();
 
     } catch (e) {
-        console.error("Error iniciando familia:", e);
+        console.error("Error cargando familia:", e);
     }
 }
-
 // =======================================
 // GLOBAL
 // =======================================

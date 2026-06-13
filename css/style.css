@@ -753,5 +753,22 @@ body:has(#familia) h2{
     }
 }
 
+#loginFamilia{
+    max-width:400px;
+    margin:80px auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
 
+#loginFamilia input{
+    width:80%;
+    padding:10px;
+    margin:10px 0;
+}
+
+#errorClave{
+    color:red;
+}
 

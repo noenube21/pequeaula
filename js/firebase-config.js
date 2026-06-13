@@ -41,6 +41,18 @@ window.firebaseReady = new Promise((resolve) => {
         }
     });
 });
+window.firebaseReady = new Promise((resolve) => {
+    onAuthStateChanged(auth, (user) => {
 
+        if (user) {
+            window.uid = user.uid;
+            resolve(user);
+        } else {
+            window.uid = null;
+            resolve(null);
+        }
+
+    });
+});
 // ✅ Exportar (si lo usas en otros sitios)
 export { auth, db };

@@ -152,7 +152,8 @@ window.resetPassword = async function () {
 
 /* ------------------ AUTO LOGIN CONTROLADO ------------------ */
 onAuthStateChanged(auth, async (user) => {
-
+window.uid = user.uid;
+window.userEmail = user.email;
   const enLogin = document.getElementById("form-login");
   const enRegistro = document.getElementById("form-registro");
 

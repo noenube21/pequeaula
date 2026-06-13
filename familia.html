@@ -13,15 +13,19 @@
 <button onclick="history.back()" class="btn-volver">⬅ Volver</button>
 
 <div id="accesoFamilia">
+
     <h2>👨‍👩‍👧 Supervisión Familiar</h2>
 
     <p>Introduce la clave de acceso</p>
 
     <input type="password" id="claveFamilia" placeholder="Clave">
+
     <br><br>
+
     <button onclick="accederFamilia()">Entrar</button>
 
     <p id="errorFamilia" style="color:red;"></p>
+
 </div>
 
 <div id="familia" style="display:none;"></div>
@@ -29,18 +33,23 @@
 <script type="module">
 import { iniciarFamilia } from "./js/familia.js";
 
+// 🔥 PIN simple
 window.accederFamilia = function () {
+
     const clave = document.getElementById("claveFamilia").value;
 
     if (clave === "1234") {
+
         document.getElementById("accesoFamilia").style.display = "none";
         document.getElementById("familia").style.display = "block";
 
         iniciarFamilia();
+
     } else {
         document.getElementById("errorFamilia").innerText = "Clave incorrecta";
     }
 };
+
 </script>
 
 </body>

@@ -17,6 +17,7 @@ let datos = {
 };
 
 // =======================================
+// =======================================
 // ✅ CARGAR PROGRESO DESDE CLOUD FIRESTORE
 export async function cargarDatosUsuario(){
 
@@ -31,7 +32,8 @@ export async function cargarDatosUsuario(){
         historial: []
     };
 
-    const user = window.auth?.currentUser;
+    // ⏳ ESPERAR A FIREBASE: Detiene la ejecución aquí hasta que Firebase responda si hay sesión
+    const user = window.firebaseReady ? await window.firebaseReady : window.auth?.currentUser;
 
     if (user && window.db) {
         const userId = user.uid; // Usamos el UID único de Firebase
@@ -68,6 +70,7 @@ export async function cargarDatosUsuario(){
 
     window.datos = datos;
 }
+
 // =======================================
 
 function limpiar(t){

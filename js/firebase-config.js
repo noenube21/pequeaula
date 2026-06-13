@@ -25,3 +25,19 @@ const db = getFirestore(app);
 export { auth, db };
 window.auth = auth;
 window.db = db;
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+// ✅ escuchar usuario correctamente
+onAuthStateChanged(auth, (user) => {
+
+    if (user) {
+        window.uid = user.uid;
+        window.userReady = true;
+
+        console.log("✅ Usuario Firebase listo:", user.uid);
+
+    } else {
+        console.log("⚠️ No hay usuario");
+    }
+
+});

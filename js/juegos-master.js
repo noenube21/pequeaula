@@ -38,8 +38,7 @@ const email = window.auth?.currentUser?.email;
     };
 
     // ✅ FIREBASE (sustituye Supabase)
-if (window.auth?.currentUser && window.db){
-
+if (window.userReady && window.db)
     try {
 
         const uid = window.auth.currentUser.uid;
@@ -166,8 +165,7 @@ async function guardarTodo(){
     console.log("guardarTodo ejecutado");
 
     // ✅ FIREBASE
-    if (window.auth?.currentUser && window.db){
-
+const uid = window.uid;
         try {
 
             const uid = window.auth.currentUser.uid;

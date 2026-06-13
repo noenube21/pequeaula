@@ -15,21 +15,13 @@ let datos = {
 
 // =======================================
 // 
- async function cargarDatosUsuario(){
+export async function cargarDatosUsuario(){
 
     if(datosCargados) return;
 
     datosCargados = true;
-// ✅ esperar a que Firebase cargue usuario
-await new Promise(resolve => {
-    const check = () => {
-        if (window.userReady) resolve();
-        else setTimeout(check, 100);
-    };
-    check();
-});
 
-const email = window.auth?.currentUser?.email;
+    const email = window.auth?.currentUser?.email;
 
     datos = {
         aciertos: 0,
@@ -37,47 +29,46 @@ const email = window.auth?.currentUser?.email;
         historial: []
     };
 
-    // ✅ FIREBASE (sustituye Supabase)
-if (window.userReady && window.db){
+    if(
+        email &&
+        window.cargarProgresoSupabase
+    ){
 
-    try {
+        const filas =
+            await window.cargarProgresoSupabase(
+                email
+            );
 
-        const uid = window.uid;
+        console.log("EMAIL:", email);
+        console.log("FILAS:", filas);
 
-        const ref = window.db.collection("usuarios").doc(uid);
-        const snap = await ref.get();
+        filas.forEach(fila => {
 
-        if (snap.exists){
+            datos.puntosPorNivel[
+                fila.juego
+            ] = Number(fila.puntos) || 0;
 
-            const nube = snap.data();
+        });
 
-            datos.puntosPorNivel = nube.puntosPorNivel || {};
-            datos.aciertos = nube.aciertos || 0;
-            datos.historial = nube.historial || [];
+        console.log(
+            "DATOS CARGADOS DESDE SUPABASE",
+            datos
+        );
 
-            console.log("✅ Datos cargados Firebase");
-        }
+    } else {
 
-    } catch(e){
-        console.log("Error Firebase:", e);
+        const local =
+            JSON.parse(
+                localStorage.getItem("progreso")
+            ) || {};
+
+        datos = {
+            ...datos,
+            ...local
+        };
     }
 
-} else {
-
-    // ✅ ESTE ELSE ES EL DEL IF DE ARRIBA
-    const local =
-        JSON.parse(localStorage.getItem("progreso")) || {};
-
-    datos = {
-        ...datos,
-        ...local
-    };
-}
-if (!datos.historial) {
-    datos.historial = [];
-}
-
-window.datos = datos;
+    window.datos = datos;
 }
 // =======================================
 
@@ -125,12 +116,6 @@ function obtenerPuntosNivel(){
 }
 
 function sumarPunto(){
-
-    // ✅ ASEGURAR historial SIEMPRE (CLAVE REAL)
-    if (!datos.historial) {
-        datos.historial = [];
-    }
-
     datos.puntosPorNivel[claveActual] =
         obtenerPuntosNivel() + 1;
 
@@ -164,31 +149,50 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-    // ✅ FIREBASE SIN BLOQUEAR
-    if (window.uid && window.db){
+    console.log(
+        "window.guardarProgreso:",
+        window.guardarProgreso
+    );
 
-        try {
+    if(window.guardarProgreso){
 
-            const ref = window.db.collection("usuarios").doc(window.uid);
+        const email = window.auth?.currentUser?.email;
 
-            await ref.set(
-                {
-                    puntosPorNivel: datos.puntosPorNivel,
-                    aciertos: datos.aciertos
-                },
-                { merge: true }
+        console.log(
+            "PUNTOS ACTUALES:",
+            obtenerPuntosNivel()
+        );
+
+        const resultado =
+            await window.guardarProgreso(
+                email,
+                claveActual,
+                1,
+                obtenerPuntosNivel()
             );
 
-            console.log("✅ Guardado Firebase");
-
-        } catch(e){
-            console.log("Error guardando:", e);
-        }
+        console.log(
+            "RESULTADO GUARDADO:",
+            resultado
+        );
 
     } else {
-        console.log("⚠️ Usuario aún no listo (normal al inicio)");
-    }
 
+        console.log(
+            "window.guardarProgreso NO EXISTE"
+        );
+    }
+}
+// =======================================
+
+function calc(op,max){
+
+    let a=Math.floor(Math.random()*max);
+    let b=Math.floor(Math.random()*max);
+
+    if(op==="+") return {p:`${a} + ${b}`,r:(a+b).toString()};
+    if(op==="-") return {p:`${a} - ${b}`,r:(a-b).toString()};
+    return {p:`${a} × ${b}`,r:(a*b).toString()};
 }
 
 // =======================================
@@ -324,7 +328,7 @@ const Juegos = {
 // =======================================
 // 🌍 CARGA VALENCIANO DESDE JSON
 
-async function cargarValenciano(){
+export async function cargarValenciano(){
 
     try {
         const res = await fetch("./js/valenciano.json");
@@ -345,11 +349,11 @@ cargarValenciano();
 
 // =======================================
 // 🚀 INICIAR JUEGO
-async function iniciarJuego(key){
+export async function iniciarJuego(key){
 
     claveActual = key;
 
-    cargarDatosUsuario();
+    await cargarDatosUsuario();
 
     juegoActual = Juegos[key];
 
@@ -438,7 +442,7 @@ async function iniciarJuego(key){
 // =======================================
 // ✅ COMPROBAR
 
-async function comprobar(){
+export async function comprobar(){
 
     const r = limpiar(document.getElementById("respuesta").value);
     const ok = limpiar(preguntaActual.r);
@@ -461,8 +465,3 @@ async function comprobar(){
     setTimeout(()=>{
         iniciarJuego(claveActual);
     },500);
-}
-    // ✅ hacer accesible desde HTML
-window.iniciarJuego = iniciarJuego;
-window.comprobar = comprobar;
-

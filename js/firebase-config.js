@@ -25,20 +25,21 @@ const db = getFirestore(app);
 window.auth = auth;
 window.db = db;
 
-// ✅ DETECTAR USUARIO BIEN
-onAuthStateChanged(auth, (user) => {
-
-    if (user) {
-        window.uid = user.uid;
-        window.userReady = true;
-
-        console.log("✅ Usuario Firebase listo:", user.uid);
-
-    } else {
-        window.userReady = false;
-
-        console.log("⚠️ No hay usuario");
-    }
+// ✅ DETECTAR USUARIO CON PROMESA DE ESPERA (Solución para la asincronía)
+window.firebaseReady = new Promise((resolve) => {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.uid = user.uid;
+            window.userReady = true;
+            console.log("✅ Usuario Firebase listo:", user.uid);
+            resolve(user); // Resolvemos la promesa entregando el usuario activo
+        } else {
+            window.uid = null;
+            window.userReady = false;
+            console.log("⚠️ No hay usuario autenticado");
+            resolve(null); // Resolvemos con null si es un invitado
+        }
+    });
 });
 
 // ✅ Exportar (si lo usas en otros sitios)

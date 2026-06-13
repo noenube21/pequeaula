@@ -3,38 +3,73 @@ import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11
 let datos = {};
 
 // =======================================
+// 🔥 ESPERAR UID DE FIREBASE (CLAVE DEL FIX)
+function esperarUID() {
+    return new Promise((resolve) => {
+
+        if (window.uid) {
+            resolve(window.uid);
+            return;
+        }
+
+        const interval = setInterval(() => {
+
+            if (window.uid) {
+                clearInterval(interval);
+                resolve(window.uid);
+            }
+
+        }, 100);
+
+        // seguridad extra
+        setTimeout(() => {
+            clearInterval(interval);
+            resolve(null);
+        }, 5000);
+    });
+}
+
+// =======================================
 export async function iniciarFamilia() {
 
-    await cargarDatosFirebase();
+    await cargarDatos();
     renderFamilia();
 }
 
 // =======================================
-async function cargarDatosFirebase() {
+async function cargarDatos() {
 
     try {
 
         const db = window.db;
 
-        if (!window.uid) {
-            console.log("⚠️ No hay usuario logueado");
-            datos = {};
+        const uid = await esperarUID();
+
+        if (!uid) {
+            console.log("⚠️ UID no disponible, usando localStorage");
+            datos = JSON.parse(localStorage.getItem("progreso")) || {};
             return;
         }
 
-        const ref = doc(db, "usuarios", window.uid);
-        const snap = await getDoc(ref);
+        // 🔥 INTENTO 1: usuarios
+        let snap = await getDoc(doc(db, "usuarios", uid));
+
+        // 🔥 INTENTO 2: progreso (backup)
+        if (!snap.exists()) {
+            snap = await getDoc(doc(db, "progreso", uid));
+        }
 
         if (snap.exists()) {
             datos = snap.data();
-            console.log("✅ Progreso cargado:", datos);
+            console.log("✅ Datos cargados Firebase:", datos);
         } else {
-            datos = {};
+            console.log("⚠️ No hay datos en Firebase, usando local");
+            datos = JSON.parse(localStorage.getItem("progreso")) || {};
         }
 
     } catch (e) {
-        console.error("Error Firebase:", e);
-        datos = {};
+        console.error("❌ Error Firebase:", e);
+        datos = JSON.parse(localStorage.getItem("progreso")) || {};
     }
 }
 
@@ -50,8 +85,10 @@ function limpiarDatos(obj) {
     const limpio = {};
 
     for (const [k, v] of Object.entries(obj || {})) {
+
         if (!k || k.trim() === "") continue;
         if (isNaN(v)) continue;
+
         limpio[k] = Number(v);
     }
 

@@ -61,13 +61,13 @@ Comprobar
 <!-- ✅ 1. LIBRERÍA SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- ✅ 2. TU ARCHIVO REAL -->
+<!-- ✅ 2. TU ARCHIVO SUPABASE (YA CORRECTO) -->
 <script src="./js/supabase.js"></script>
 
 <!-- ✅ 3. TU JUEGO -->
 <script src="./js/juegos-master.js"></script>
 
-<!-- ✅ 4. SCRIPT -->
+<!-- ✅ 4. SCRIPT PRINCIPAL -->
 <script>
 window.onload = function(){
 
@@ -79,6 +79,7 @@ window.onload = function(){
     document.getElementById("tituloJuego").innerText =
         materia + " nivel " + nivel;
 
+    // 🔥 comprobar que cargó el juego
     if(typeof window.iniciarJuego !== "function"){
         console.error("❌ juegos-master.js NO cargó");
         return;

@@ -9,14 +9,6 @@ import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/f
 // =======================================
 let datosCargados = false;
 let preguntaActual = null;
-...
-
-// ✅ IMPORTAR FIRESTORE (Desde CDN v11)
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-// =======================================
-let datosCargados = false;
-let preguntaActual = null;
 let juegoActual = null;
 let claveActual = "";
 let usadas = {};

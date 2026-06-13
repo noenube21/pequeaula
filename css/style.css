@@ -6,11 +6,17 @@
 }
 
 /* FIX GLOBAL RESPONSIVE */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 img {
   max-width: 100%;
   height: auto;
 }
 
+/* BODY */
 body {
   font-family: 'Poppins', Arial, sans-serif;
 
@@ -22,8 +28,6 @@ body {
 
   min-height: 100vh;
   text-align: center;
-
-  overflow-x: hidden;
 }
 
 /* CONTENEDOR GENERAL */
@@ -37,6 +41,7 @@ body {
   border-radius: 25px;
 
   padding: 30px;
+
   box-shadow: 0 0 20px rgba(0,0,0,0.15);
 }
 
@@ -79,7 +84,7 @@ h1, h2, h3 {
   z-index: 999;
 }
 
-/* BOTONES GENERALES */
+/* BOTONES */
 button,
 .btn {
   background: #4fc3f7;
@@ -143,8 +148,6 @@ button:hover,
   gap: 20px;
 
   margin-top: 20px;
-
-  align-items: center;
 }
 
 .card {
@@ -230,7 +233,7 @@ button:hover,
   color: black;
 }
 
-/* OPCIONES */
+/* ZONA OPCIONES */
 #zona {
   display: flex;
   flex-direction: column;
@@ -293,30 +296,24 @@ button:hover,
 /* PANEL FAMILIAR */
 #familia {
   max-width: 1100px;
-
   margin: 30px auto;
   padding: 20px;
 }
 
+/* GRID */
 .panel-grid {
   display: grid;
-
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
-
   margin-top: 20px;
 }
 
+/* TARJETAS */
 .panel-card {
   background: white;
-
   border-radius: 20px;
-
   padding: 25px;
-
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-
   transition: 0.2s;
 }
 
@@ -331,15 +328,12 @@ button:hover,
   height: 420px !important;
 
   margin: 20px auto;
-
   display: block;
 
   background: white;
   border-radius: 15px;
 
   padding: 10px;
-
-  overflow-x: auto;
 }
 
 /* PORTADA */
@@ -359,7 +353,6 @@ button:hover,
 
 .inicio-title {
   font-size: clamp(4rem, 10vw, 6rem);
-
   font-weight: 800;
 
   color: #ff8c00;
@@ -371,7 +364,6 @@ button:hover,
 
 .subtitulo {
   font-size: clamp(1.4rem, 3vw, 2rem);
-
   color: #ff9f43;
 
   font-weight: 700;
@@ -395,20 +387,16 @@ button:hover,
 /* BOTON INICIO */
 .inicio-container .btn {
   background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
-
   color: white !important;
 
   padding: 15px 45px;
 
   font-size: 1.5rem;
-
   font-weight: 700;
 
   border-radius: 50px;
 
   box-shadow: 0 6px 18px rgba(255,140,0,0.35);
-
-  text-decoration: none;
 }
 
 /* TOPBAR */
@@ -423,7 +411,6 @@ button:hover,
   font-family: 'Baloo 2', cursive;
 
   font-size: clamp(2.5rem, 6vw, 4rem);
-
   font-weight: 800;
 
   color: #ff8c00;
@@ -444,7 +431,7 @@ button:hover,
   }
 
   .card {
-    width: 150px;
+    width: 140px;
   }
 
   .card img {
@@ -456,11 +443,11 @@ button:hover,
   }
 
   #pregunta {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   #score {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .game-box {
@@ -469,22 +456,5 @@ button:hover,
 
   #respuesta {
     width: 90%;
-    /* FIX TIPOGRAFÍA GLOBAL (NO CAMBIA DISEÑO, SOLO EVITA ERRORES) */
-
-body {
-  font-family: 'Poppins', Arial, sans-serif;
-}
-
-button,
-.btn,
-.card,
-.game-box,
-.login-box,
-.panel-card,
-input,
-h1, h2, h3,
-p {
-  font-family: inherit;
-}
   }
 }

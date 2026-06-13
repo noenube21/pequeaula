@@ -469,5 +469,22 @@ button:hover,
 
   #respuesta {
     width: 90%;
+    /* FIX TIPOGRAFÍA GLOBAL (NO CAMBIA DISEÑO, SOLO EVITA ERRORES) */
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+button,
+.btn,
+.card,
+.game-box,
+.login-box,
+.panel-card,
+input,
+h1, h2, h3,
+p {
+  font-family: inherit;
+}
   }
 }

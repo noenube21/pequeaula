@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Juego</title>
 
-<link rel="stylesheet" href="css/style.css">
+css/style.css
 
 <style>
 body{
@@ -32,19 +32,18 @@ body{
     margin:10px auto;
 }
 </style>
-
 </head>
 
 <body>
 
 <button onclick="history.back()" class="btn-volver">
-    ⬅ Volver
+⬅ Volver
 </button>
 
 <h2 id="tituloJuego"></h2>
 
 <div id="score">
-    Puntos: 0
+Puntos: 0
 </div>
 
 <div id="pregunta"></div>
@@ -54,21 +53,21 @@ body{
 <input id="respuesta">
 
 <button id="btnComprobar">
-    Comprobar
+Comprobar
 </button>
 
 <p id="resultado"></p>
 
-<!-- ✅ 1. SUPABASE LIBRERÍA -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ✅ 1. LIBRERÍA SUPABASE -->
+https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 
-<!-- ✅ 2. TU CONEXIÓN SUPABASE -->
-<script src="js/supabase.js"></script>
+<!-- ✅ 2. TU ARCHIVO SUPABASE -->
+js/database.js
 
 <!-- ✅ 3. TU JUEGO -->
-<script src="js/juegos-master.js"></script>
+js/juegos-master.js>
 
-<!-- ✅ 4. SCRIPT PRINCIPAL -->
+<!-- ✅ 4. SCRIPT -->
 <script>
 const params = new URLSearchParams(window.location.search);
 
@@ -76,21 +75,21 @@ const materia = params.get("materia") || "matematicas";
 const nivel = params.get("nivel") || "1";
 
 document.getElementById("tituloJuego").innerText =
-    materia + " nivel " + nivel;
+materia + " nivel " + nivel;
 
 // ✅ iniciar juego
 window.iniciarJuego(materia + nivel);
 
-// ✅ botón comprobar
+// ✅ comprobar
 document.getElementById("btnComprobar").onclick = function(){
-    window.comprobar();
+window.comprobar();
 };
 
-// ✅ tecla ENTER
+// ✅ ENTER
 document.getElementById("respuesta").addEventListener("keydown",(e)=>{
-    if(e.key==="Enter"){
-        window.comprobar();
-    }
+if(e.key==="Enter"){
+window.comprobar();
+}
 });
 </script>
 

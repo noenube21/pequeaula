@@ -17,7 +17,7 @@ import {
 const formRegistro = document.getElementById("form-registro");
 const formLogin = document.getElementById("form-login");
 
-/* ------------------ UI ------------------ */
+/* ------------------ UI HELPERS (NUEVO) ------------------ */
 function showMessage(text, type = "error") {
   const box = document.getElementById("login-message");
   if (!box) return;
@@ -37,9 +37,13 @@ if (formRegistro) {
     const avatar = e.target.avatar.value;
 
     try {
+      // 1. Crear usuario en Auth
       const cred = await createUserWithEmailAndPassword(auth, email, password);
+
+      // 2. Enviar verificación
       await sendEmailVerification(cred.user);
 
+      // 3. Guardar datos en Firestore (controlado)
       try {
         await setDoc(doc(db, "usuarios", cred.user.uid), {
           nombre,
@@ -47,41 +51,43 @@ if (formRegistro) {
           nivel: 1,
           puntos: 0
         });
-
-        if(window.guardarUsuario){
-          await window.guardarUsuario({
-            email: email,
-            nombre: nombre,
-            avatar: avatar,
-            nivel: 1,
-            puntos: 0,
-            partidas: 0,
-            aciertos: 0,
-            errores: 0
-          });
-        }
-
-      } catch (err) {
-        console.log("ERROR FIRESTORE:", err);
+      } catch (firestoreError) {
+        console.log("ERROR FIRESTORE:", firestoreError);
+        // no rompemos registro aunque falle esto
       }
 
-      alert("Cuenta creada. Verifica tu email ⛔");
+      // 4. Mensaje correcto (esto es lo que te pide el profe)
+      alert("Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesión.");
+
+      // 5. Cerrar sesión (importante para obligar verificación)
       await signOut(auth);
+
+      // 6. Redirigir al login
       window.location.href = "login.html";
 
     } catch (error) {
 
+      console.log("ERROR AUTH:", error);
+
+      // mensajes claros
       if (error.code === "auth/email-already-in-use") {
-        alert("Email ya registrado");
-      } else if (error.code === "auth/weak-password") {
-        alert("Contraseña débil");
-      } else {
-        alert("Error al crear cuenta");
+        alert("Este email ya está registrado.");
+      }
+
+      else if (error.code === "auth/weak-password") {
+        alert("La contraseña es demasiado débil (mínimo 6 caracteres).");
+      }
+
+      else if (error.code === "auth/invalid-email") {
+        alert("El email no es válido.");
+      }
+
+      else {
+        alert("Error al crear la cuenta. Intenta de nuevo.");
       }
     }
   });
 }
-
 /* ------------------ LOGIN ------------------ */
 if (formLogin) {
   formLogin.addEventListener("submit", async (e) => {
@@ -94,34 +100,43 @@ if (formLogin) {
       const cred = await signInWithEmailAndPassword(auth, email, password);
 
       if (!cred.user.emailVerified) {
-        showMessage("Verifica tu email");
+        showMessage("Debes verificar tu correo antes de entrar.");
         await signOut(auth);
         return;
       }
 
+      // 🔥 MEJORA UX: feedback antes de redirigir
       showMessage("Accediendo...", "success");
+
       window.location.href = "menu.html";
 
     } catch (error) {
-      showMessage("Login incorrecto");
+
+      // 🔥 MEJORA: mensaje visible en pantalla (no solo alert)
+      showMessage("Email o contraseña incorrectos");
     }
   });
 }
 
-/* ------------------ RESET PASSWORD ------------------ */
+/* ------------------ RECUPERAR CONTRASEÑA ------------------ */
 window.resetPassword = async function () {
+
   const email = prompt("Introduce tu email:");
+
   if (!email) return;
 
   try {
     await sendPasswordResetEmail(auth, email);
-    alert("Correo enviado ✅");
-  } catch {
-    alert("Error ❌");
+
+    alert("Correo enviado ✅. Revisa tu bandeja de entrada.");
+
+  } catch (error) {
+
+    alert("No se pudo enviar el correo ❌");
   }
 };
 
-/* ------------------ CONTROL LOGIN ------------------ */
+/* ------------------ AUTO LOGIN CONTROLADO ------------------ */
 onAuthStateChanged(auth, async (user) => {
 
   const enLogin = document.getElementById("form-login");
@@ -129,27 +144,14 @@ onAuthStateChanged(auth, async (user) => {
 
   if (enLogin || enRegistro) return;
 
-  // 🔥 SOLUCIÓN CLAVE
-  if (!user) {
-    console.log("⚠️ Usuario no logueado");
-    return;
-  }
+  if (user && user.emailVerified) {
 
-  if (!user.emailVerified) {
-    return;
-  }
+    const ref = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(ref);
 
-  // ✅ SOLO AQUÍ usamos uid
-  window.uid = user.uid;
-  window.userEmail = user.email;
-
-  console.log("✅ UID:", window.uid);
-
-  const ref = doc(db, "usuarios", user.uid);
-  const snap = await getDoc(ref);
-
-  if (snap.exists()) {
-    localStorage.setItem("usuario", JSON.stringify(snap.data()));
-    window.location.href = "./menu.html";
+    if (snap.exists()) {
+      localStorage.setItem("usuario", JSON.stringify(snap.data()));
+      window.location.href = "./menu.html";
+    }
   }
 });

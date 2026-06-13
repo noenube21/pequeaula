@@ -21,14 +21,12 @@ body{
     margin:8px auto;
 }
 
-/* INPUT CENTRADO */
 #respuesta{
     display:block;
     width:250px;
     margin:15px auto;
 }
 
-/* BOTÓN CENTRADO */
 #btnComprobar{
     display:block;
     margin:10px auto;
@@ -61,9 +59,16 @@ body{
 
 <p id="resultado"></p>
 
-<!-- ✅ IMPORTANTE: NO MODULE -->
+<!-- ✅ 1. SUPABASE LIBRERÍA -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ✅ 2. TU CONEXIÓN SUPABASE -->
+<script src="js/supabase.js"></script>
+
+<!-- ✅ 3. TU JUEGO -->
 <script src="js/juegos-master.js"></script>
 
+<!-- ✅ 4. SCRIPT PRINCIPAL -->
 <script>
 const params = new URLSearchParams(window.location.search);
 
@@ -73,7 +78,7 @@ const nivel = params.get("nivel") || "1";
 document.getElementById("tituloJuego").innerText =
     materia + " nivel " + nivel;
 
-// ✅ iniciar juego (GLOBAL)
+// ✅ iniciar juego
 window.iniciarJuego(materia + nivel);
 
 // ✅ botón comprobar

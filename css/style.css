@@ -1,22 +1,20 @@
-/* RESET */
+/* =========================
+   RESET
+========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* FIX GLOBAL RESPONSIVE */
+/* =========================
+   GLOBAL FIX
+========================= */
 html, body {
   max-width: 100%;
   overflow-x: hidden;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* BODY */
 body {
   font-family: 'Poppins', Arial, sans-serif;
 
@@ -30,7 +28,14 @@ body {
   text-align: center;
 }
 
-/* CONTENEDOR GENERAL */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* =========================
+   CONTENEDOR
+========================= */
 .contenedor-principal {
   width: 90%;
   max-width: 1000px;
@@ -45,7 +50,9 @@ body {
   box-shadow: 0 0 20px rgba(0,0,0,0.15);
 }
 
-/* TITULO PRINCIPAL */
+/* =========================
+   TITULOS
+========================= */
 .titulo-app {
   font-size: 50px;
   font-weight: bold;
@@ -64,27 +71,9 @@ h1, h2, h3 {
   color: #ff5a5a;
 }
 
-/* BOTON VOLVER */
-.btn-volver {
-  position: fixed;
-
-  top: 20px;
-  left: 20px;
-
-  background: #ff6f61;
-  color: white;
-
-  border: none;
-  border-radius: 12px;
-
-  padding: 10px 15px;
-
-  cursor: pointer;
-
-  z-index: 999;
-}
-
-/* BOTONES */
+/* =========================
+   BOTONES
+========================= */
 button,
 .btn {
   background: #4fc3f7;
@@ -100,12 +89,9 @@ button,
   transition: 0.2s;
 }
 
-button:hover,
-.btn:hover {
-  transform: scale(1.05);
-}
-
-/* LOGIN */
+/* =========================
+   LOGIN
+========================= */
 .login-container {
   display: flex;
   justify-content: center;
@@ -138,14 +124,16 @@ button:hover,
   border: 2px solid #ffcc4d;
 }
 
-/* MENU */
+/* =========================
+   CARDS (MENÚ / NIVELES / ASIGNATURAS)
+========================= */
 .card-container {
-  display: flex;
-
-  justify-content: center;
-  flex-wrap: wrap;
-
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 20px;
+
+  justify-items: center;
+  align-items: center;
 
   margin-top: 20px;
 }
@@ -153,8 +141,8 @@ button:hover,
 .card {
   background: white;
 
-  width: 180px;
-  max-width: 45%;
+  width: 100%;
+  max-width: 180px;
   min-height: 210px;
 
   border-radius: 20px;
@@ -179,25 +167,21 @@ button:hover,
 }
 
 .card img {
-  width: 120px;
-  height: auto;
-
-  display: block;
-  margin: auto;
+  width: 80%;
+  max-width: 120px;
 }
 
 .card h3 {
-  margin-top: 15px;
-  font-size: 28px;
+  font-size: 22px;
   color: #ff5a5a;
 }
 
-/* JUEGO */
+/* =========================
+   JUEGO
+========================= */
 .game-box {
   width: 420px;
   max-width: 95%;
-
-  background: rgba(255,255,255,0.95);
 
   margin: 20px auto;
 
@@ -205,66 +189,27 @@ button:hover,
 
   border-radius: 20px;
   border: 2px solid #ffcc4d;
+
+  background: rgba(255,255,255,0.95);
 }
 
-/* TITULO JUEGO */
 #tituloJuego {
   font-size: 40px;
-  font-weight: bold;
 }
 
-/* SCORE */
 #score {
   font-size: 32px;
-  font-weight: bold;
-
   margin: 20px 0;
-
-  color: black;
 }
 
-/* PREGUNTA */
 #pregunta {
   font-size: 32px;
-  font-weight: bold;
-
-  margin: 25px 0;
-
-  color: black;
 }
 
-/* ZONA OPCIONES */
-#zona {
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-
-  gap: 15px;
-
-  margin-bottom: 20px;
-}
-
-.opcion {
-  min-width: 140px;
-
-  background: white !important;
-  color: black !important;
-
-  border: 2px solid #333 !important;
-}
-
-.opcion.seleccionada {
-  background: #4fc3f7 !important;
-  color: white !important;
-
-  border: 2px solid #0288d1 !important;
-}
-
-/* INPUT */
+/* =========================
+   INPUTS
+========================= */
 #respuesta {
-  display: block;
-
   width: 250px;
   max-width: 90%;
 
@@ -276,67 +221,30 @@ button:hover,
   border: 2px solid #ffcc4d;
 
   text-align: center;
-  font-size: 18px;
 }
 
-/* BOTON COMPROBAR */
-#btnComprobar {
-  display: block;
-  margin: 10px auto;
-}
-
-/* RESULTADO */
-#resultado {
-  margin-top: 20px;
-
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* PANEL FAMILIAR */
-#familia {
-  max-width: 1100px;
-  margin: 30px auto;
-  padding: 20px;
-}
-
-/* GRID */
+/* =========================
+   PANEL
+========================= */
 .panel-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
+
   margin-top: 20px;
 }
 
-/* TARJETAS */
 .panel-card {
   background: white;
   border-radius: 20px;
   padding: 25px;
+
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  transition: 0.2s;
 }
 
-.panel-card:hover {
-  transform: scale(1.02);
-}
-
-/* GRAFICO */
-#grafico {
-  width: 100% !important;
-  max-width: 900px !important;
-  height: 420px !important;
-
-  margin: 20px auto;
-  display: block;
-
-  background: white;
-  border-radius: 15px;
-
-  padding: 10px;
-}
-
-/* PORTADA */
+/* =========================
+   PORTADA
+========================= */
 .inicio-container {
   min-height: 100vh;
 
@@ -346,84 +254,31 @@ button:hover,
   justify-content: center;
   align-items: center;
 
-  text-align: center;
-
   padding: 20px;
 }
 
 .inicio-title {
   font-size: clamp(4rem, 10vw, 6rem);
-  font-weight: 800;
-
   color: #ff8c00;
-
-  margin-bottom: 15px;
-
-  letter-spacing: 3px;
+  font-weight: 800;
 }
 
 .subtitulo {
   font-size: clamp(1.4rem, 3vw, 2rem);
   color: #ff9f43;
-
-  font-weight: 700;
-
-  margin-bottom: 30px;
 }
 
-.logo-img {
-  width: 260px;
-  max-width: 80%;
-
-  margin-bottom: 35px;
-
-  transition: 0.3s;
-}
-
-.logo-img:hover {
-  transform: scale(1.05);
-}
-
-/* BOTON INICIO */
-.inicio-container .btn {
-  background: linear-gradient(135deg, #ff8c00, #ffb347) !important;
-  color: white !important;
-
-  padding: 15px 45px;
-
-  font-size: 1.5rem;
-  font-weight: 700;
-
-  border-radius: 50px;
-
-  box-shadow: 0 6px 18px rgba(255,140,0,0.35);
-}
-
-/* TOPBAR */
+/* =========================
+   TOPBAR
+========================= */
 .topbar {
-  background: transparent !important;
   text-align: center;
-
   padding: 20px 0;
 }
 
-.topbar .logo {
-  font-family: 'Baloo 2', cursive;
-
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 800;
-
-  color: #ff8c00;
-
-  letter-spacing: 2px;
-
-  text-shadow: 3px 3px 0 #fff,
-               6px 6px 12px rgba(0,0,0,0.15);
-
-  display: inline-block;
-}
-
-/* RESPONSIVE FINAL */
+/* =========================
+   RESPONSIVE REAL
+========================= */
 @media (max-width: 768px) {
 
   .titulo-app {
@@ -431,11 +286,7 @@ button:hover,
   }
 
   .card {
-    width: 140px;
-  }
-
-  .card img {
-    width: 90px;
+    max-width: 150px;
   }
 
   #tituloJuego {
@@ -458,104 +309,3 @@ button:hover,
     width: 90%;
   }
 }
-/* ===== FIX UNIVERSAL RESPONSIVE (TODAS LAS PÁGINAS) ===== */
-
-* {
-  max-width: 100%;
-}
-
-body {
-  overflow-x: hidden;
-}
-
-/* fuerza cualquier contenedor a adaptarse */
-div, section {
-  box-sizing: border-box;
-}
-
-/* arregla grids (niveles, asignaturas, paneles) */
-.panel-grid,
-.card-container {
-  width: 100%;
-  padding: 10px;
-
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-}
-
-/* asegura que cards NO rompan móvil */
-.card,
-.panel-card {
-  width: 100% !important;
-}
-
-/* texto siempre escalable */
-.titulo-app,
-#tituloJuego,
-h1, h2, h3 {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-/* móviles pequeños */
-@media (max-width: 768px) {
-
-  .panel-grid,
-  .card-container {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
-
-  .card h3,
-  .panel-card h3 {
-    font-size: 18px;
-  }
-}
-/* ===== FIX UNIVERSAL MENU / NIVELES / ASIGNATURAS ===== */
-
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-
-  justify-items: center;
-  align-items: center;
-}
-
-/* tarjeta totalmente flexible */
-.card {
-  width: 100%;
-  max-width: 180px;
-}
-
-/* imagen adaptable */
-.card img {
-  width: 80%;
-  max-width: 120px;
-  height: auto;
-}
-
-/* texto sin romper */
-.card h3 {
-  font-size: clamp(16px, 2.5vw, 28px);
-  text-align: center;
-}
-
-/* móviles */
-@media (max-width: 768px) {
-
-  .card-container {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  }
-
-  .card {
-    max-width: 150px;
-  }
-
-  .card img {
-    max-width: 90px;
-  }
-}
-
-
-

@@ -3,30 +3,51 @@ import { cargarDatosUsuario } from "./juegos-master.js";
 let datos = {};
 
 // =======================================
-export async function iniciarFamilia(){
+// INICIALIZAR FAMILIA
+// =======================================
+export async function iniciarFamilia() {
 
-    await cargarDatosUsuario();
+    try {
 
-    datos = JSON.parse(localStorage.getItem("progreso")) || {};
+        // 🔥 1. Cargar datos desde Firebase (tu función)
+        await cargarDatosUsuario();
 
-    renderFamilia();
+        // 🔥 2. Leer datos de forma segura
+        const raw = localStorage.getItem("progreso");
+
+        datos = raw ? JSON.parse(raw) : {};
+
+        // 🔥 3. Seguridad extra (evita errores)
+        if (!datos.puntosPorNivel) datos.puntosPorNivel = {};
+        if (!datos.aciertos) datos.aciertos = 0;
+
+        // 🔥 4. Render
+        renderFamilia();
+
+    } catch (e) {
+        console.error("Error iniciando familia:", e);
+    }
 }
 
 // =======================================
-function obtenerGlobal(){
+// GLOBAL
+// =======================================
+function obtenerGlobal() {
     return Object.values(datos.puntosPorNivel || {})
-        .reduce((a,b)=>a + (Number(b) || 0), 0);
+        .reduce((a, b) => a + (Number(b) || 0), 0);
 }
 
 // =======================================
-function limpiarDatos(obj){
+// LIMPIEZA SEGURA
+// =======================================
+function limpiarDatos(obj) {
 
     const limpio = {};
 
-    for(const [k,v] of Object.entries(obj || {})){
+    for (const [k, v] of Object.entries(obj || {})) {
 
-        if(!k || k.trim() === "") continue; // ❌ elimina claves vacías
-        if(isNaN(v)) continue;
+        if (!k || k.trim() === "") continue;
+        if (isNaN(v)) continue;
 
         limpio[k] = Number(v);
     }
@@ -35,10 +56,12 @@ function limpiarDatos(obj){
 }
 
 // =======================================
-function renderGrafico(){
+// GRAFICO
+// =======================================
+function renderGrafico() {
 
     const canvas = document.getElementById("grafico");
-    if(!canvas) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
 
@@ -49,40 +72,37 @@ function renderGrafico(){
 
     const max = Math.max(...values, 1);
 
-    // 🔥 limpiar y ESCALAR bien
     canvas.width = 700;
     canvas.height = 350;
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const barWidth = 60;
     const gap = 40;
 
-    keys.forEach((nivel, i)=>{
+    keys.forEach((nivel, i) => {
 
         const x = 60 + i * (barWidth + gap);
         const h = (values[i] / max) * 250;
 
-        // barra
         ctx.fillStyle = "#4fc3f7";
         ctx.fillRect(x, 300 - h, barWidth, h);
 
-        // texto nivel
         ctx.fillStyle = "#000";
         ctx.font = "14px Arial";
-        ctx.fillText(nivel, x, 320);
 
-        // valor encima
+        ctx.fillText(nivel, x, 320);
         ctx.fillText(values[i], x + 20, 290 - h);
     });
 }
 
 // =======================================
-function renderFamilia(){
+// RENDER PRINCIPAL
+// =======================================
+function renderFamilia() {
 
     const cont = document.getElementById("familia");
-
-    if(!cont) return;
+    if (!cont) return;
 
     const data = limpiarDatos(datos.puntosPorNivel);
 
@@ -101,10 +121,10 @@ function renderFamilia(){
                 <h3>📚 Por asignatura</h3>
                 ${
                     Object.keys(data).length
-                    ? Object.entries(data)
-                        .map(([k,v])=>`<p>${k}: <b>${v}</b></p>`)
-                        .join("")
-                    : "<p>No hay datos</p>"
+                        ? Object.entries(data)
+                            .map(([k, v]) => `<p>${k}: <b>${v}</b></p>`)
+                            .join("")
+                        : "<p>No hay datos</p>"
                 }
             </div>
 

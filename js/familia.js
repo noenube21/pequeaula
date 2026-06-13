@@ -1,48 +1,47 @@
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 let datos = {};
 
-// =======================================
+// ==============================
 export async function iniciarFamilia() {
+    await cargarDatosFirebase();
+    renderFamilia();
+}
+
+// ==============================
+async function cargarDatosFirebase() {
     try {
-        // ⏳ espera sesión Firebase real del juego
-        const user = await window.firebaseReady;
-
-        if (!user) {
-            document.getElementById("familia").innerHTML =
-                "<p>⚠️ No hay usuario del juego conectado</p>";
-            return;
-        }
-
         const db = window.db;
 
-        const ref = doc(db, "usuarios", user.uid);
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
-            document.getElementById("familia").innerHTML =
-                "<p>No hay datos guardados</p>";
+        if (!window.uid) {
+            console.log("⚠️ No hay usuario logueado");
+            datos = {};
             return;
         }
 
-        datos = snap.data();
+        const ref = doc(db, "usuarios", window.uid);
+        const snap = await getDoc(ref);
 
-        renderFamilia();
+        if (snap.exists()) {
+            datos = snap.data();
+            console.log("✅ Datos familia cargados:", datos);
+        } else {
+            datos = {};
+        }
 
     } catch (e) {
-        console.error("Error familia:", e);
-        document.getElementById("familia").innerHTML =
-            "<p>Error cargando datos</p>";
+        console.error("Error cargando Firebase:", e);
+        datos = {};
     }
 }
 
-// =======================================
+// ==============================
 function obtenerGlobal() {
     return Object.values(datos.puntosPorNivel || {})
         .reduce((a, b) => a + (Number(b) || 0), 0);
 }
 
-// =======================================
+// ==============================
 function limpiarDatos(obj) {
     const limpio = {};
 
@@ -55,45 +54,10 @@ function limpiarDatos(obj) {
     return limpio;
 }
 
-// =======================================
-function renderGrafico() {
-    const canvas = document.getElementById("grafico");
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-
-    const data = limpiarDatos(datos.puntosPorNivel);
-
-    const keys = Object.keys(data);
-    const values = Object.values(data);
-
-    const max = Math.max(...values, 1);
-
-    canvas.width = 700;
-    canvas.height = 350;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const barWidth = 60;
-    const gap = 40;
-
-    keys.forEach((nivel, i) => {
-        const x = 60 + i * (barWidth + gap);
-        const h = (values[i] / max) * 250;
-
-        ctx.fillStyle = "#4fc3f7";
-        ctx.fillRect(x, 300 - h, barWidth, h);
-
-        ctx.fillStyle = "#000";
-        ctx.font = "14px Arial";
-        ctx.fillText(nivel, x, 320);
-        ctx.fillText(values[i], x + 20, 290 - h);
-    });
-}
-
-// =======================================
+// ==============================
 function renderFamilia() {
     const cont = document.getElementById("familia");
+    if (!cont) return;
 
     const data = limpiarDatos(datos.puntosPorNivel);
 
@@ -113,19 +77,12 @@ function renderFamilia() {
                 ${
                     Object.keys(data).length
                         ? Object.entries(data)
-                            .map(([k, v]) => `<p>${k}: <b>${v}</b></p>`)
+                            .map(([k,v]) => `<p>${k}: <b>${v}</b></p>`)
                             .join("")
                         : "<p>No hay datos</p>"
                 }
             </div>
 
         </div>
-
-        <div class="panel-card">
-            <h3>📈 Progreso</h3>
-            <canvas id="grafico"></canvas>
-        </div>
     `;
-
-    setTimeout(renderGrafico, 50);
 }

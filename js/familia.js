@@ -1,28 +1,31 @@
-import { cargarDatosUsuario } from "./juegos-master.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { auth } from "./firebase-config.js";
+
+const db = getFirestore();
 
 let datos = {};
 
 // =======================================
-// INICIALIZAR FAMILIA
-// =======================================
 export async function iniciarFamilia() {
-
     try {
+        const user = auth.currentUser;
 
-        await cargarDatosUsuario();
-
-        // 🔥 PRIORIDAD: Firebase real (no localStorage como fuente principal)
-        const rawLocal = localStorage.getItem("progreso");
-
-        datos = rawLocal ? JSON.parse(rawLocal) : {};
-
-        // 🧠 fallback de seguridad
-        if (!datos || Object.keys(datos).length === 0) {
-            console.warn("⚠️ localStorage vacío, posible problema en Firebase sync");
+        if (!user) {
+            document.getElementById("familia").innerHTML =
+                "<p>⚠️ Usuario no logueado</p>";
+            return;
         }
 
-        if (!datos.puntosPorNivel) datos.puntosPorNivel = {};
-        if (!datos.aciertos) datos.aciertos = 0;
+        const ref = doc(db, "usuarios", user.uid);
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+            document.getElementById("familia").innerHTML =
+                "<p>No hay datos del usuario</p>";
+            return;
+        }
+
+        datos = snap.data();
 
         renderFamilia();
 
@@ -30,8 +33,7 @@ export async function iniciarFamilia() {
         console.error("Error cargando familia:", e);
     }
 }
-// =======================================
-// GLOBAL
+
 // =======================================
 function obtenerGlobal() {
     return Object.values(datos.puntosPorNivel || {})
@@ -39,17 +41,12 @@ function obtenerGlobal() {
 }
 
 // =======================================
-// LIMPIEZA SEGURA
-// =======================================
 function limpiarDatos(obj) {
-
     const limpio = {};
 
     for (const [k, v] of Object.entries(obj || {})) {
-
         if (!k || k.trim() === "") continue;
         if (isNaN(v)) continue;
-
         limpio[k] = Number(v);
     }
 
@@ -57,10 +54,7 @@ function limpiarDatos(obj) {
 }
 
 // =======================================
-// GRAFICO
-// =======================================
 function renderGrafico() {
-
     const canvas = document.getElementById("grafico");
     if (!canvas) return;
 
@@ -82,7 +76,6 @@ function renderGrafico() {
     const gap = 40;
 
     keys.forEach((nivel, i) => {
-
         const x = 60 + i * (barWidth + gap);
         const h = (values[i] / max) * 250;
 
@@ -91,24 +84,21 @@ function renderGrafico() {
 
         ctx.fillStyle = "#000";
         ctx.font = "14px Arial";
-
         ctx.fillText(nivel, x, 320);
+
         ctx.fillText(values[i], x + 20, 290 - h);
     });
 }
 
 // =======================================
-// RENDER PRINCIPAL
-// =======================================
 function renderFamilia() {
-
     const cont = document.getElementById("familia");
     if (!cont) return;
 
     const data = limpiarDatos(datos.puntosPorNivel);
 
     cont.innerHTML = `
-        <h2>👨‍👩‍👧 Panel Familiar</h2>
+        <h2>👨‍👩‍👧 Supervisión Familiar</h2>
 
         <div class="panel-grid">
 

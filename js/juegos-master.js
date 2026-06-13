@@ -164,31 +164,32 @@ async function guardarTodo(){
 
     console.log("guardarTodo ejecutado");
 
-  // ✅ FIREBASE SIN BLOQUEAR (CORRECTO)
-if (window.uid && window.db){
+    // ✅ FIREBASE SIN BLOQUEAR
+    if (window.uid && window.db){
 
-    try {
+        try {
 
-        const ref = window.db.collection("usuarios").doc(window.uid);
+            const ref = window.db.collection("usuarios").doc(window.uid);
 
-        await ref.set(
-            {
-                puntosPorNivel: datos.puntosPorNivel,
-                aciertos: datos.aciertos
-            },
-            { merge: true }
-        );
+            await ref.set(
+                {
+                    puntosPorNivel: datos.puntosPorNivel,
+                    aciertos: datos.aciertos
+                },
+                { merge: true }
+            );
 
-        console.log("✅ Guardado Firebase");
+            console.log("✅ Guardado Firebase");
 
-    } catch(e){
-        console.log("Error guardando:", e);
+        } catch(e){
+            console.log("Error guardando:", e);
+        }
+
+    } else {
+        console.log("⚠️ Usuario aún no listo (normal al inicio)");
     }
 
-} else {
-    console.log("⚠️ Usuario aún no listo (normal al inicio)");
-}
-}    
+} // ✅ ESTA ES LA LLAVE QUE CIERRA LA FUNCIÓN
 // =======================================
 // 📚 BASES
 
